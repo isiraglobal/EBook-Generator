@@ -585,7 +585,8 @@ def end_to_end(
             bp = BrandProfile(id=builtin.id, name=builtin.name, description=builtin.description,
                             design_tokens=builtin.design_tokens, cover_conventions=builtin.cover_conventions,
                             section_opener_conventions=builtin.section_opener_conventions)
-            db.create_brand_profile(bp)
+            if not db.get_brand_profile(bp.id):
+                db.create_brand_profile(bp)
             project.brand_profile_id = bp.id
 
         # Generate plan

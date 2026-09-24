@@ -130,6 +130,7 @@ class RepairRequest(BaseModel):
     project_id: str
     page_number: int
     issue_ids: list[str] = []
+    strict_layout: bool = False
 
 
 class ExportRequest(BaseModel):
@@ -432,7 +433,7 @@ async def repair_page(project_id: str, request: RepairRequest):
     if not qa_report:
         raise HTTPException(status_code=404, detail="QA report not found")
 
-    success, messages = qa_engine.repair_defects(qa_report, job, project.manuscript_id, plan_id=project.editorial_plan_id)
+    success, messages = qa_engine.repair_defects(qa_report, job, project.manuscript_id, project.editorial_plan_id)
 
     if success and job.retry_count > 0:
         # Re-render

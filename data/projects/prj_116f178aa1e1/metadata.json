@@ -1,0 +1,37 @@
+{
+  "project": {
+    "id": "prj_116f178aa1e1",
+    "name": "Test Course",
+    "version": 1,
+    "status": "draft",
+    "created_at": "2026-09-25T01:14:56.481941",
+    "updated_at": "2026-09-25T01:14:56.481946"
+  },
+  "manuscript": {
+    "id": "ms_49af5e5fa98a",
+    "title": "Test Course",
+    "author": "Instructor",
+    "word_count": 18,
+    "block_count": 8,
+    "chapters": 2
+  },
+  "editorial_plan": {
+    "id": "ep_7cf67bfc6dba",
+    "page_count": 8,
+    "asset_brief_count": 0
+  },
+  "render_job": {
+    "id": "rj_75b27d9ca132",
+    "status": "completed",
+    "retry_count": 0,
+    "output_pdf": "/Users/lakshitsinghvi/Documents/Repos/EBook-Generator/test_output.pdf"
+  },
+  "qa_report": {
+    "id": "qar_e55ccc4f13a7",
+    "passed": true,
+    "score": 100.0,
+    "total_issues": 0,
+    "hard_failures": 0
+  },
+  "exported_at": "2026-09-25T01:14:56.729534"
+}

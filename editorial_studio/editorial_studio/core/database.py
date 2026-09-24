@@ -848,7 +848,7 @@ class Database:
     def create_qa_report(self, report: QAReport) -> QAReport:
         with self.transaction() as conn:
             conn.execute(
-                """INSERT INTO qa_reports VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                """INSERT INTO qa_reports VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
                 (
                     report.id,
                     report.publication_id,
