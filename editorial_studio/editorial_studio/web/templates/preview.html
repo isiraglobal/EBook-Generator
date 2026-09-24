@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Preview - Project {{ project_id }}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <nav class="bg-white border-b border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center space-x-4">
+                    <a href="/projects/{{ project_id }}" class="text-xl font-bold text-gray-900">Editorial Studio</a>
+                    <span class="text-gray-400">/</span>
+                    <span class="text-gray-700">Preview</span>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button onclick="loadPreview()" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Refresh</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="grid gap-6 lg:grid-cols-4">
+            <div class="lg:col-span-1">
+                <div class="bg-white rounded-xl border border-gray-200 p-4">
+                    <h3 class="font-semibold text-gray-900 mb-4">Pages</h3>
+                    <div id="thumbnails" class="space-y-2 max-h-[70vh] overflow-y-auto">
+                        <p class="text-gray-500 text-sm">Loading...</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="lg:col-span-3">
+                <div class="bg-white rounded-xl border border-gray-200 p-4">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-lg font-semibold text-gray-900" id="page-title">Select a page</h2>
+                        <div class="flex space-x-2">
+                            <button onclick="prevPage()" class="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded hover:bg-gray-200">← Prev</button>
+                            <button onclick="nextPage()" class="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded hover:bg-gray-200">Next →</button>
+                        </div>
+                    </div>
+                    <div class="bg-gray-50 rounded-lg p-4 min-h-[60vh] flex items-center justify-center">
+                        <img id="page-image" src="" alt="Page preview" class="max-w-full max-h-[60vh] shadow-lg hidden">
+                        <p id="no-page" class="text-gray-400">Select a page from the thumbnails</p>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl border border-gray-200 p-4 mt-4">
+                    <h3 class="font-semibold text-gray-900 mb-3">QA Issues</h3>
+                    <div id="qa-issues" class="space-y-2 text-sm">
+                        <p class="text-gray-500">Run QA from project page</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const PROJECT_ID = '{{ project_id }}';
+        let currentPage = 0;
+        let pageImages = [];
+
+        async function loadPreview() {
+            const res = await fetch(`/projects/${PROJECT_ID}/pages`);
+            const data = await res.json();
+            pageImages = data.page_images || [];
+
+            const container = document.getElementById('thumbnails');
+            container.innerHTML = '';
+
+            pageImages.forEach((img, i) => {
+                const thumb = document.createElement('div');
+                thumb.className = `p-2 rounded cursor-pointer hover:bg-gray-100 ${i === 0 ? 'bg-blue-50' : ''}`;
+                thumb.onclick = () => showPage(i);
+                thumb.innerHTML = `
+                    <img src="${img}" alt="Page ${i+1}" class="w-full h-auto rounded shadow-sm border">
+                    <p class="text-xs text-gray-500 mt-1 text-center">Page ${i+1}</p>
+                `;
+                container.appendChild(thumb);
+            });
+
+            if (pageImages.length > 0) showPage(0);
+        }
+
+        function showPage(index) {
+            if (index < 0 || index >= pageImages.length) return;
+            currentPage = index;
+            document.getElementById('page-image').src = pageImages[index];
+            document.getElementById('page-image').classList.remove('hidden');
+            document.getElementById('no-page').classList.add('hidden');
+            document.getElementById('page-title').textContent = `Page ${index + 1} of ${pageImages.length}`;
+
+            document.querySelectorAll('#thumbnails > div').forEach((el, i) => {
+                el.className = `p-2 rounded cursor-pointer hover:bg-gray-100 ${i === index ? 'bg-blue-50' : ''}`;
+            });
+        }
+
+        function prevPage() { showPage(currentPage - 1); }
+        function nextPage() { showPage(currentPage + 1); }
+
+        loadPreview();
+    </script>
+</body>
+</html>

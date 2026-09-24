@@ -1,0 +1,349 @@
+Metadata-Version: 2.4
+Name: editorial-studio
+Version: 1.0.0
+Summary: AI Editorial Publishing Software
+Home-page: https://github.com/editorial-studio/editorial-studio
+Author: Editorial Studio Team
+Author-email: Editorial Studio Team <team@editorial-studio.dev>
+License: MIT
+Classifier: Development Status :: 4 - Beta
+Classifier: Intended Audience :: Developers
+Classifier: Intended Audience :: End Users/Desktop
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.10
+Classifier: Programming Language :: Python :: 3.11
+Classifier: Programming Language :: Python :: 3.12
+Classifier: Programming Language :: Python :: 3.13
+Classifier: Topic :: Publishing
+Classifier: Topic :: Text Processing :: Markup
+Classifier: Topic :: Multimedia :: Graphics :: Presentation
+Requires-Python: >=3.10
+Description-Content-Type: text/markdown
+Requires-Dist: fastapi>=0.109.0
+Requires-Dist: uvicorn[standard]>=0.27.0
+Requires-Dist: pydantic>=2.5.3
+Requires-Dist: pydantic-settings>=2.1.0
+Requires-Dist: typer[all]>=0.9.0
+Requires-Dist: rich>=13.7.0
+Requires-Dist: aiosqlite>=0.19.0
+Requires-Dist: python-docx>=1.1.0
+Requires-Dist: beautifulsoup4>=4.12.2
+Requires-Dist: pypdf>=4.0.0
+Requires-Dist: pdf2image>=1.16.3
+Requires-Dist: Pillow>=10.1.0
+Requires-Dist: numpy>=1.26.2
+Requires-Dist: anthropic>=0.18.1
+Requires-Dist: openai>=1.12.0
+Requires-Dist: litellm>=1.48.0
+Requires-Dist: fastmcp>=0.2.0
+Requires-Dist: pyyaml>=6.0.1
+Requires-Dist: python-multipart>=0.0.6
+Requires-Dist: aiofiles>=23.2.1
+Requires-Dist: httpx>=0.26.0
+Requires-Dist: watchfiles>=0.21.0
+Provides-Extra: dev
+Requires-Dist: pytest>=7.4.4; extra == "dev"
+Requires-Dist: pytest-asyncio>=0.23.3; extra == "dev"
+Requires-Dist: pytest-cov>=4.1.0; extra == "dev"
+Requires-Dist: mypy>=1.7.1; extra == "dev"
+Requires-Dist: ruff>=0.1.15; extra == "dev"
+Requires-Dist: black>=23.12.0; extra == "dev"
+Requires-Dist: isort>=5.13.0; extra == "dev"
+Requires-Dist: pre-commit>=3.6.0; extra == "dev"
+Provides-Extra: web
+Requires-Dist: jinja2>=3.1.3; extra == "web"
+Provides-Extra: ai
+Requires-Dist: replicate>=0.20.0; extra == "ai"
+Requires-Dist: stability-sdk>=0.8.0; extra == "ai"
+Provides-Extra: mcp
+Requires-Dist: fastmcp[server]>=0.2.0; extra == "mcp"
+Dynamic: author
+Dynamic: home-page
+Dynamic: requires-python
+
+# Editorial Studio
+
+**AI Editorial Publishing Software** — Transform AI-generated manuscripts into professionally typeset, multi-page PDF publications.
+
+## Overview
+
+Editorial Studio is a complete, reusable publishing infrastructure that accepts manuscripts from AI agents and independently handles:
+
+- **Editorial design & art direction** — AI art director plans the publication as a complete editorial product
+- **Typography & layout** — Professional typesetting with Typst, supporting multiple design systems
+- **Asset management** — Image generation, diagram creation, visual reference library
+- **PDF rendering** — High-quality multi-page PDF output with proper pagination
+- **Visual QA** — Automated page inspection, defect detection, and repair
+- **Agent integration** — REST API, MCP server, and CLI for AI agent connectivity
+
+## Architecture
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                     Editorial Studio                        │
+├─────────────────────────────────────────────────────────────┤
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────────────┐  │
+│  │  Ingestion  │──│ Intelligence│──│  Art Director       │  │
+│  │  (MD/TXT/   │  │  (analysis, │  │  (plan, design,     │  │
+│  │   DOCX/HTML)│  │   brief)    │  │   pagination)       │  │
+│  └─────────────┘  └─────────────┘  └──────────┬──────────┘  │
+│                                               │             │
+│  ┌─────────────┐  ┌─────────────┐  ┌──────────▼──────────┐  │
+│  │    Asset    │──│   Renderer  │──│       QA Engine     │  │
+│  │  (images,   │  │  (Typst)    │  │  (inspect, repair)  │  │
+│  │   diagrams) │  └─────────────┘  └──────────┬──────────┘  │
+│  └─────────────┘                              │             │
+│                                               ▼             │
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────────────┐  │
+│  │  Publisher  │──│   Project   │──│  Agent Integration  │  │
+│  │  (export,   │  │  Storage    │  │  (API, MCP, CLI)    │  │
+│  │   bundle)   │  │  (SQLite)   │  └─────────────────────┘  │
+│  └─────────────┘  └─────────────┘                            │
+└─────────────────────────────────────────────────────────────┘
+```
+
+## Quick Start
+
+### Installation
+
+```bash
+# Install Typst (required for PDF rendering)
+brew install typst  # macOS
+# or download from https://github.com/typst/typst/releases
+
+# Install Editorial Studio
+cd editorial_studio
+pip install -e .
+```
+
+### CLI Usage
+
+```bash
+# Create a project and publish end-to-end
+editorial-studio end-to-end manuscript.md \
+  --brand educational \
+  --title "My Course" \
+  --author "Instructor" \
+  --output course.pdf
+
+# Or step by step:
+editorial-studio create "My Project"
+editorial-studio import --project <id> --file manuscript.md
+editorial-studio configure-design --project <id> --brand educational
+editorial-studio plan --project <id>
+editorial-studio render --project <id>
+editorial-studio export --project <id>
+```
+
+### API Server
+
+```bash
+# Start REST API server
+editorial-studio api
+
+# Or with uvicorn directly
+uvicorn editorial_studio.api.server:app --host 127.0.0.1 --port 8765
+```
+
+### MCP Server
+
+```bash
+# Run MCP server for AI agent integration
+editorial-studio mcp
+```
+
+Configure in your MCP client (Claude Desktop, Cursor, etc.):
+
+```json
+{
+  "mcpServers": {
+    "editorial-studio": {
+      "command": "editorial-studio",
+      "args": ["mcp"]
+    }
+  }
+}
+```
+
+### Web Interface
+
+```bash
+# Start web management interface
+editorial-studio web
+# Open http://localhost:3000
+```
+
+## Supported Manuscript Formats
+
+- **Markdown/MDX** — Full support including headings, lists, code blocks, tables, images
+- **Plain Text** — Automatic structure detection
+- **JSON** — Structured content blocks
+- **HTML** — Semantic element extraction
+- **DOCX** — Word document import with styles
+
+## Design Systems
+
+Built-in brand profiles:
+
+| Profile | Use Case | Typography | Colors |
+|---------|----------|------------|--------|
+| `landnow` | Land investment publications | Source Serif 4 + Source Sans 3 | Navy + Brass |
+| `institutional` | Financial reports | Source Serif 4 + Source Sans 3 | Navy |
+| `educational` | Courses & workbooks | PT Serif + PT Sans | Teal |
+| `scientific` | Technical guides | IBM Plex Serif + Sans | IBM Blue |
+| `nature` | Travel & visual features | Lora + Cormorant | Violet |
+| `minimalist` | Professional manuals | Inter + JetBrains Mono | Slate |
+
+## Page Composition Families
+
+- Cover, Title, Copyright, TOC
+- Chapter/Part Openers
+- Long-form Reading (single & two-column)
+- Image-led & Full-width Image
+- Diagrams, Tables, Comparison Tables
+- Definitions, Sidebars, Pull Quotes
+- Exercises, Worksheets, Quizzes
+- Case Studies, Worked Examples
+- Recaps, Summaries, Glossaries
+- References, Appendices, Back Cover
+
+## Agent Integration
+
+### MCP Tools
+
+| Tool | Description |
+|------|-------------|
+| `create_publication` | Create new project |
+| `import_manuscript` | Import from file or content |
+| `configure_design_system` | Set brand profile & overrides |
+| `add_visual_reference` | Add Pinterest URL or image |
+| `analyze_manuscript` | Analyze structure & content |
+| `generate_editorial_plan` | Create full publication plan |
+| `validate_editorial_plan` | Check plan for issues |
+| `render_publication` | Generate PDF |
+| `inspect_publication` | View QA results |
+| `inspect_page` | Check specific page issues |
+| `repair_page` | Fix layout defects |
+| `regenerate_chapter` | Re-render single chapter |
+| `get_job_status` | Check render progress |
+| `get_qa_report` | Detailed QA report |
+| `export_publication` | Get final PDF + source bundle |
+
+### REST API
+
+```
+POST   /projects                    Create project
+GET    /projects                    List projects
+GET    /projects/{id}               Get project
+POST   /projects/{id}/manuscript    Import manuscript
+POST   /projects/{id}/design        Configure design
+POST   /projects/{id}/references    Add visual reference
+POST   /projects/{id}/plan          Generate editorial plan
+POST   /projects/{id}/render        Render PDF
+GET    /projects/{id}/status        Job status
+GET    /projects/{id}/qa            QA report
+GET    /projects/{id}/pages         Page previews
+POST   /projects/{id}/repair        Repair page
+POST   /projects/{id}/export        Export package
+```
+
+## Quality Assurance
+
+Every render passes through automated QA:
+
+1. **Page rendering** — Each PDF page rendered to high-DPI image
+2. **Geometry checks** — Margins, safe areas, content bounds
+3. **Content completeness** — No missing/duplicated blocks
+4. **Typography** — Widows, orphans, line length, hyphenation
+5. **Layout** — Overlap, clipping, balance, consistency
+6. **Repair loop** — Auto-fix defects, re-render, re-inspect (max 3 attempts)
+
+## Project Structure
+
+```
+editorial_studio/
+├── core/                 # Models, database, config
+├── content/              # Ingestion, intelligence
+├── art_director/         # Editorial planning
+├── design_system/        # Brand profiles, tokens
+├── asset_engine/         # Images, diagrams, references
+├── renderer/             # Typst PDF rendering
+├── qa/                   # Visual QA & repair
+├── export/               # Publishing & bundles
+├── api/                  # FastAPI REST server
+├── mcp/                  # Model Context Protocol server
+├── cli/                  # Typer CLI
+├── web/                  # Browser interface
+├── assets/               # Fonts, templates
+├── data/                 # SQLite, projects
+└── tests/                # Test suite
+```
+
+## Configuration
+
+`config.yaml` controls:
+
+```yaml
+storage:
+  database_path: "data/editorial_studio.db"
+  projects_root: "data/projects"
+
+rendering:
+  engine: "typst"
+  typst_path: "typst"
+  fonts_dir: "assets/fonts"
+
+qa:
+  max_repair_attempts: 3
+  strict_layout: false
+
+api:
+  host: "127.0.0.1"
+  port: 8765
+```
+
+Environment variables override config:
+- `EDITORIAL_STUDIO_DB_PATH`
+- `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`, `REPLICATE_API_KEY`
+
+## Testing
+
+```bash
+# Run all tests
+pytest editorial_studio/tests/ -v
+
+# Run with coverage
+pytest editorial_studio/tests/ --cov=editorial_studio
+
+# Type checking
+mypy editorial_studio/
+
+# Linting
+ruff editorial_studio/
+```
+
+## Requirements
+
+- Python 3.10+
+- Typst 0.14+ (for PDF rendering)
+- Poppler (for `pdftoppm` - PDF to image conversion in QA)
+- Optional: Image generation APIs (OpenAI, Replicate, Stability)
+
+## License
+
+MIT License — see LICENSE file for details.
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make changes with tests
+4. Run `pytest`, `mypy`, `ruff`
+5. Submit a pull request
+
+## Support
+
+- Documentation: [docs.editorial-studio.dev](https://docs.editorial-studio.dev)
+- Issues: [GitHub Issues](https://github.com/editorial-studio/editorial-studio/issues)
+- Discussions: [GitHub Discussions](https://github.com/editorial-studio/editorial-studio/discussions)

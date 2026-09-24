@@ -1,0 +1,73 @@
+# Editorial Studio Configuration
+app:
+  name: "Editorial Studio"
+  version: "1.0.0"
+  debug: true
+
+storage:
+  database_path: "data/editorial_studio.db"
+  projects_root: "data/projects"
+  assets_root: "data/assets"
+  temp_root: "data/temp"
+
+rendering:
+  engine: "typst"
+  typst_path: "typst"
+  fonts_dir: "assets/fonts"
+  templates_dir: "assets/templates"
+  default_paper: "a4"
+  default_dpi: 300
+  preview_dpi: 144
+
+qa:
+  enabled: true
+  max_repair_attempts: 3
+  vision_model: null
+  render_dpi_for_qa: 200
+  strict_layout: false
+
+api:
+  host: "127.0.0.1"
+  port: 8765
+  cors_origins:
+    - "http://localhost:3000"
+    - "http://127.0.0.1:3000"
+
+mcp:
+  server_name: "editorial-studio"
+  transport: "stdio"
+
+cli:
+  default_output_dir: "output"
+
+web:
+  host: "127.0.0.1"
+  port: 3000
+
+providers:
+  image_generation:
+    default: "local"
+    local:
+      enabled: true
+    openai:
+      enabled: false
+      api_key_env: "OPENAI_API_KEY"
+    replicate:
+      enabled: false
+      api_key_env: "REPLICATE_API_KEY"
+  llm:
+    default: "local"
+    local:
+      enabled: true
+    anthropic:
+      enabled: false
+      api_key_env: "ANTHROPIC_API_KEY"
+    openai:
+      enabled: false
+      api_key_env: "OPENAI_API_KEY"
+
+limits:
+  max_file_size_mb: 100
+  max_pages_per_document: 500
+  max_images_per_document: 200
+  job_timeout_seconds: 300

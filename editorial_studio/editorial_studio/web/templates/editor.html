@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editor - Project {{ project_id }}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <nav class="bg-white border-b border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center space-x-4">
+                    <a href="/projects/{{ project_id }}" class="text-xl font-bold text-gray-900">Editorial Studio</a>
+                    <span class="text-gray-400">/</span>
+                    <span class="text-gray-700">Editor</span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="grid gap-6 lg:grid-cols-12">
+            <div class="lg:col-span-8 space-y-6">
+                <div class="bg-white rounded-xl border border-gray-200 p-6">
+                    <h2 class="text-lg font-semibold text-gray-900 mb-4">Manuscript Editor</h2>
+                    <textarea id="manuscript-editor" class="w-full h-96 font-mono text-sm px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" placeholder="Paste or edit your manuscript here (Markdown)..."></textarea>
+                    <div class="flex justify-end mt-4">
+                        <button onclick="saveManuscript()" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Save Manuscript</button>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl border border-gray-200 p-6">
+                    <h2 class="text-lg font-semibold text-gray-900 mb-4">Editorial Plan</h2>
+                    <div id="plan-editor" class="space-y-4">
+                        <p class="text-gray-500">Generate a plan first from the project page.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="lg:col-span-4 space-y-6">
+                <div class="bg-white rounded-xl border border-gray-200 p-6">
+                    <h2 class="text-lg font-semibold text-gray-900 mb-4">Design Settings</h2>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Brand Profile</label>
+                            <select id="brand-select" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                                <option value="institutional">Institutional Financial</option>
+                                <option value="educational">Educational Course</option>
+                                <option value="scientific">Scientific Technical</option>
+                                <option value="nature">Nature Travel</option>
+                                <option value="minimalist">Minimalist Manual</option>
+                                <option value="landnow">LandNow Institutional</option>
+                            </select>
+                        </div>
+                        <button onclick="applyDesign()" class="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Apply Design</button>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl border border-gray-200 p-6">
+                    <h2 class="text-lg font-semibold text-gray-900 mb-4">Visual References</h2>
+                    <div class="space-y-3">
+                        <input type="url" id="ref-url" placeholder="Pinterest URL" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                        <input type="text" id="ref-title" placeholder="Reference title" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                        <button onclick="addReference()" class="w-full px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">Add Reference</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const PROJECT_ID = '{{ project_id }}';
+
+        async function loadManuscript() {
+            const projectRes = await fetch(`/projects/${PROJECT_ID}`);
+            const project = await projectRes.json();
+
+            if (project.manuscript_id) {
+                const msRes = await fetch(`/manuscripts/${project.manuscript_id}`);
+                const ms = await msRes.json();
+                document.getElementById('manuscript-editor').value = ms.content_blocks?.map(b => b.content).join('\n\n') || '';
+            }
+        }
+
+        async function saveManuscript() {
+            const content = document.getElementById('manuscript-editor').value;
+            const res = await fetch(`/projects/${PROJECT_ID}/manuscript`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ content, format: 'markdown' })
+            });
+            if (res.ok) alert('Manuscript saved');
+        }
+
+        async function applyDesign() {
+            const brand = document.getElementById('brand-select').value;
+            const res = await fetch(`/projects/${PROJECT_ID}/design`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ brand_profile_id: brand })
+            });
+            if (res.ok) alert('Design applied');
+        }
+
+        async function addReference() {
+            const url = document.getElementById('ref-url').value;
+            const title = document.getElementById('ref-title').value;
+            const res = await fetch(`/projects/${PROJECT_ID}/references`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ source_url: url, source_title: title })
+            });
+            if (res.ok) alert('Reference added');
+        }
+
+        loadManuscript();
+    </script>
+</body>
+</html>
