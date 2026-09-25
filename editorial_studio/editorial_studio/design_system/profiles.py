@@ -5,6 +5,27 @@ from typing import Any
 
 from editorial_studio.core.models import BrandProfile, DesignTokens
 
+# Shared editorial palette: warm paper, ink, brass, terracotta. Brand profiles
+# inherit it and override individual roles as needed. The renderer reads this
+# from ``DesignTokens.colors["palette"]`` and falls back to the same values, so
+# the Typst component library and the Python design system stay in step.
+EDITORIAL_PALETTE: dict[str, str] = {
+    "paper": "#F7F3EC",
+    "ink": "#1A1815",
+    "brass": "#B08D57",
+    "terracotta": "#A0523D",
+    "slate": "#6B6560",
+    "rule": "#D9CFBF",
+    "cream": "#EFE8DB",
+    "cream_deep": "#E4D9C6",
+    "green": "#5C7A5C",
+    "warn_bg": "#F6ECE6",
+    "panel_bg": "#F3EDE3",
+    "panel_bg_2": "#F6F1E7",
+    "ink_on_dark": "#F7F3EC",
+    "dark_note": "#C8BCA8",
+}
+
 
 @dataclass
 class BuiltinBrandProfile:
@@ -40,6 +61,7 @@ def create_landnow_profile() -> BuiltinBrandProfile:
             paragraph_spacing_em=0.75,
             first_line_indent_em=1.5,
             colors={
+                "palette": dict(EDITORIAL_PALETTE),
                 "accent": "#0f172a",
                 "accent_light": "#1e293b",
                 "accent_brass": "#c4a35a",
@@ -107,6 +129,7 @@ def create_institutional_financial_profile() -> BuiltinBrandProfile:
             paragraph_spacing_em=0.7,
             first_line_indent_em=1.25,
             colors={
+                "palette": dict(EDITORIAL_PALETTE),
                 "accent": "#1d3557",
                 "heading": "#1d3557",
                 "body": "#1a1a1a",
@@ -153,6 +176,7 @@ def create_educational_course_profile() -> BuiltinBrandProfile:
             paragraph_spacing_em=1.0,
             first_line_indent_em=0,
             colors={
+                "palette": dict(EDITORIAL_PALETTE),
                 "accent": "#0d9488",
                 "heading": "#111827",
                 "body": "#1f2937",
@@ -201,6 +225,7 @@ def create_scientific_technical_profile() -> BuiltinBrandProfile:
             paragraph_spacing_em=0.8,
             first_line_indent_em=0,
             colors={
+                "palette": dict(EDITORIAL_PALETTE),
                 "accent": "#0f62fe",
                 "heading": "#161616",
                 "body": "#161616",
@@ -249,6 +274,7 @@ def create_nature_travel_profile() -> BuiltinBrandProfile:
             paragraph_spacing_em=1.0,
             first_line_indent_em=1.5,
             colors={
+                "palette": dict(EDITORIAL_PALETTE),
                 "accent": "#7c3aed",
                 "heading": "#1e1a14",
                 "body": "#1e1a14",
@@ -295,6 +321,7 @@ def create_minimalist_manual_profile() -> BuiltinBrandProfile:
             paragraph_spacing_em=1.0,
             first_line_indent_em=0,
             colors={
+                "palette": dict(EDITORIAL_PALETTE),
                 "accent": "#475569",
                 "heading": "#1e293b",
                 "body": "#334155",
