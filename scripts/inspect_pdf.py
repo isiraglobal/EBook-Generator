@@ -75,8 +75,18 @@ def _parse_pages(pdf: str) -> list[dict]:
     return pages
 
 
+# How much of the shorter box two words must share before it counts as a
+# collision. pdftotext reports a word box that includes the face's full
+# ascender-to-descender extent, which is taller than the leading it is set at:
+# a 30pt contents entry on a 31.7pt pitch reports boxes 34pt tall, so the line
+# below overlaps the line above by about 2pt with no ink anywhere near the other
+# word. A quarter of the box height is well past that artefact and still far
+# short of two words genuinely printed on top of one another.
+_OVERLAP_FRACTION = 0.25
+
+
 def _overlaps(words: list[dict]) -> list[tuple[dict, dict]]:
-    """Pairs of words whose boxes intersect by more than a rounding sliver.
+    """Pairs of words whose boxes are printed on top of one another.
 
     Sorted by vertical position so only nearby lines are compared.
     """
@@ -88,7 +98,10 @@ def _overlaps(words: list[dict]) -> list[tuple[dict, dict]]:
                 break
             dx = min(a["x1"], b["x1"]) - max(a["x0"], b["x0"])
             dy = min(a["y1"], b["y1"]) - max(a["y0"], b["y0"])
-            if dx > 0.6 and dy > 0.6:
+            if dx <= 0.6 or dy <= 0.6:
+                continue
+            shorter = min(a["y1"] - a["y0"], b["y1"] - b["y0"])
+            if dy > _OVERLAP_FRACTION * shorter:
                 out.append((a, b))
     return out
 

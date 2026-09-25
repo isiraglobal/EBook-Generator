@@ -205,15 +205,33 @@ def _context(text: str, needle: str) -> str:
     return repr(text[max(0, i - 40):i + 40]) if i >= 0 else ""
 
 
+# The cover, title page, imprint and contents are not numbered, and the book's
+# chrome is suppressed on them (book_pages.typ sets skip-foot to 4).
+UNNUMBERED_FRONT_MATTER = 4
+
+
+def _folio(page: dict) -> int | None:
+    """The page number printed in the foot of a page, or None.
+
+    The folio is the last number in the bottom band, not the whole band: the
+    running foot carries the book title on the same line, and an opener with a
+    deeper bottom margin sets its own foot lower than the rest of the book.
+    """
+    band = [w for w in page["words"] if float(w["y0"]) > page["height"] * 0.92]
+    numbers = [w for w in band if w["text"].strip().isdigit()]
+    if not numbers:
+        return None
+    return int(numbers[-1]["text"].strip())
+
+
 def test_folios_are_continuous(pdf: Path) -> None:
     pages = _pages(pdf)
     folios = []
     for number, page in enumerate(pages, start=1):
-        tail = [w for w in page["words"] if float(w["y0"]) > 770]
-        text = "".join(w["text"] for w in tail)
-        if text.strip().isdigit():
-            folios.append((number, int(text.strip())))
-    check(len(folios) >= len(pages) - 6,
+        folio = _folio(page)
+        if folio is not None:
+            folios.append((number, folio))
+    check(len(folios) >= len(pages) - UNNUMBERED_FRONT_MATTER,
           f"only {len(folios)} of {len(pages)} pages carry a folio")
     for number, folio in folios:
         check(folio == number,
@@ -243,10 +261,16 @@ def test_chapter_openers_and_recaps_render(pdf: Path) -> None:
     text = _text(pdf)
     chapters = re.findall(r"^\s*(\d{1,2})\s*$", text, re.MULTILINE)
     check(len(chapters) >= 12, f"found {len(chapters)} chapter numerals, expected 12")
-    for label in ("IN THIS CHAPTER", "CHAPTER RECAP", "WHAT TO PRACTISE",
-                  "CHAPTER SUMMARY", "IMPRINT", "Contents"):
+    # The page-family set the redesign settled on. Chapter openers, recaps and
+    # workbook spreads each carry one kicker, and the book uses the same wording
+    # on every spread of a kind -- "CHAPTER RECAP" replaced the older mix of
+    # "CHAPTER SUMMARY" and "WHAT TO PRACTISE", so those are gone by design.
+    for label in ("IN THIS CHAPTER", "CHAPTER RECAP", "WORKSHEET",
+                  "WORKED EXAMPLE", "IMPRINT", "Contents"):
         check(label.replace(" ", "") in text.replace(" ", "").replace("\n", ""),
               f"the book has no {label!r} section")
+    check(text.count("CHAPTER RECAP") >= 12,
+          f"found {text.count('CHAPTER RECAP')} chapter recaps, expected 12")
 
 
 def test_typography_is_single_sized(pdf: Path) -> None:

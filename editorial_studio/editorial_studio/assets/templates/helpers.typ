@@ -183,7 +183,7 @@
 ]
 
 // ── Figure ──────────────────────────────────────────────────────────────────
-#let figure-block(img, th) = {
+#let figure-block(img, th, height: none, tail: 1.1em) = {
   let path = str(img.at("path", default: ""))
   let caption = str(img.at("caption", default: ""))
   if path != "" {
@@ -196,7 +196,18 @@
         inset: 0pt,
         clip: true,
       )[
-        #image(path, width: 100%, fit: "contain")
+        // A page family that composes to a fixed height can cap the artwork
+        // here, so the figure never becomes the thing that pushes a page over.
+        // `fit` needs both dimensions to be meaningful. With a height alone,
+        // Typst fell back to the artwork's natural size and the cap did
+        // nothing, which is what pushed composed openers onto a second sheet.
+        #if height == none [
+          #image(path, width: 100%, fit: "contain")
+        ] else [
+          #align(center + horizon)[
+            #image(path, width: 100%, height: height, fit: "contain")
+          ]
+        ]
       ]
       #if caption != "" [
         #v(0.5em)
@@ -204,7 +215,7 @@
         #v(0.35em)
         #muted-note(caption, th)
       ]
-      #v(1.1em)
+      #v(tail)
     ]
   } else if caption != "" {
     v(0.7em)
@@ -520,16 +531,12 @@
   let body = text(raw)
 
   if kind == "heading" {
+    // A real heading element, so section titles reach the contents page and the
+    // PDF bookmarks. book_pages.typ owns the treatment for each level; drawing
+    // the title here as loose text left the book's own navigation empty.
     let lvl = int(blk.at("level", default: 2))
-    let size = if lvl <= 1 { th.h1-size } else if lvl == 2 { th.h2-size } else { th.h3-size }
-    block(width: 100%, breakable: false)[
-      #set par(justify: false, first-line-indent: 0em, leading: 1.15em)
-      #v(if lvl <= 1 { 0.8em } else { 1.05em })
-      #text(font: th.heading-font, size: size, weight: "bold", fill: th.ink)[#raw]
-      #v(if lvl <= 1 { 0.28em } else { 0.18em })
-      #hair-rule(th, width: if lvl <= 1 { 2.4cm } else { 1.3cm }, thickness: if lvl <= 1 { 1.6pt } else { 0.9pt }, color: if lvl <= 1 { th.brass } else { th.rule })
-      #v(if lvl <= 1 { 0.4em } else { 0.3em })
-    ]
+    let level = if lvl <= 1 { 1 } else if lvl == 2 { 2 } else { 3 }
+    heading(level: level)[#raw]
   } else if kind == "paragraph" or kind == "unknown" {
     block(breakable: true, width: 100%)[#text(size: th.text-size)[#raw]]
   } else if kind == "list" or kind == "list_item" {

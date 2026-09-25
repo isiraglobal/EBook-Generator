@@ -115,15 +115,12 @@
 
 // Chapter titles are the only level-1 headings in this book, so the display
 // treatment belongs to every level-1 heading.
-#show heading.where(level: 1): it => block(
-  width: 100%,
-  breakable: false,
-  below: 0.9em,
-  above: 0.7em,
-)[
-  #set par(justify: false, first-line-indent: 0em, leading: 1.06em)
-  #text(font: th.heading-font, size: th.h1-size + 5pt, weight: "bold", fill: th.ink, tracking: -0.3pt)[#it.body]
-]
+// The body of a level-1 heading arrives already set by the opener family, which
+// composes the chapter numeral, the title and the accent rule around it. The
+// rule therefore passes the body through instead of re-styling it; what it
+// still owns is the outline entry, which is what makes the contents page and
+// the PDF bookmarks work at all.
+#show heading.where(level: 1): it => it.body
 
 #show heading.where(level: 2): it => block(
   width: 100%,
@@ -172,7 +169,11 @@
 ]
 
 // ── Emit the book ───────────────────────────────────────────────────────────
+// `pagebreak(weak: true)` only breaks when the flow is not already at the top
+// of a page. A plain `pagebreak()` after a page that filled exactly to its
+// bottom started a second, empty sheet -- which is where the blank page after
+// every chapter's recap was coming from.
 #for pg in pages {
   resolve-layout(pg.at("layout_function", default: "reading"))(pg, doc, th)
-  if pg != pages.last() { pagebreak() }
+  if pg != pages.last() { pagebreak(weak: true) }
 }

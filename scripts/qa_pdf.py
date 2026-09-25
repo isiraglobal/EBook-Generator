@@ -49,10 +49,29 @@ FORBIDDEN_WORDS = [
 PAGE_W_PT, PAGE_H_PT = 595.2756, 841.8898
 
 
+# Raster resolution for the ink analysis. At 72dpi a 0.5pt rule anti-aliases to
+# a gray above the 200 cutoff, so every hairline in the book -- answer rules,
+# column rules, table separators -- read as blank paper. That made workbook
+# pages, whose content is mostly rules, score as underfilled when they were not.
+# 144dpi puts a 0.5pt rule at a full pixel.
+INK_ANALYSIS_DPI = 144
+
+# Paper is #F7F3EC, which rasterises to about 243. A 0.55pt rule anti-aliases
+# to roughly 208, and a 0.6pt one lower still, so a cutoff at 200 counted every
+# hairline in the book as paper and scored a full page of ruled writing space as
+# an underfilled page. 235 sits eight levels below the paper tone and well above
+# the lightest rule, so it detects hairlines without picking up the background.
+INK_CUTOFF = 235
+
+# Column-overlap detection keeps the stricter cutoff: light rules span the full
+# measure and would otherwise look like two columns colliding.
+STRICT_CUTOFF = 200
+
+
 def _load_pages(pdf: Path) -> list[np.ndarray]:
     """Rasterise every page to a grayscale coverage map."""
     out: list[np.ndarray] = []
-    for png in _render_pngs(pdf, 72):
+    for png in _render_pngs(pdf, INK_ANALYSIS_DPI):
         with Image.open(png) as im:
             out.append(np.asarray(im.convert("L"), dtype=np.uint8))
         Path(png).unlink(missing_ok=True)
@@ -167,17 +186,23 @@ def scan(pdf_path: str, png_dir: str | None = None, dpi: int = 96) -> dict:
 
     h, w = pages_px[0].shape if pages_px else (0, 0)
     for i, arr in enumerate(pages_px, start=1):
-        mask = arr < 200  # any non-paper ink
+        mask = arr < INK_CUTOFF  # any non-paper ink, hairlines included
         # Trim the running head and footer bands before measuring fill.
         body = mask[int(h * 0.10):int(h * 0.92), :]
         body_ink = float(body.sum()) / max(1, body.size)
-        ink_rows = _ink_runs(body)
-        fill = (ink_rows[-1][1] - ink_rows[0][0]) / max(1, h * 0.82) if ink_rows else 0.0
+        # Measure the page's used depth as the span from its first inked body
+        # row to its last, not the extent of contiguous ink bands. A workbook
+        # page is a header and then eighteen ruled writing lines, each one row
+        # of ink separated by a band of paper: the run-based span scored it at
+        # the height of the header alone and reported a full page of writing
+        # space as an underfilled page.
+        inked = np.where(body.any(axis=1))[0]
+        fill = ((inked[-1] - inked[0]) / max(1, h * 0.82)) if inked.size else 0.0
         page_stats.append({
             "page": i,
             "ink_ratio": round(body_ink, 4),
             "vertical_fill": round(float(fill), 3),
-            "column_runs": _overlap_regions(mask),
+            "column_runs": _overlap_regions(arr < STRICT_CUTOFF),
         })
 
         if fill == 0.0:

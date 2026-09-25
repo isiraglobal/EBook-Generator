@@ -195,3 +195,168 @@ def step_diagram_svg(steps: list[str], path: str | Path, width: int = 960, heigh
     out.append("</svg>")
     Path(path).write_text("".join(out), encoding="utf-8")
     return str(path)
+
+
+def risk_matrix_svg(
+    axes: tuple[str, str],
+    cells: list[tuple[str, str]],
+    path: str | Path,
+    width: int = 900,
+    height: int = 620,
+) -> str:
+    """Probability/impact grid with the book's risks placed on it.
+
+    `cells` is a list of (probability, impact) pairs in 0..1. Each labelled
+    region gets a numeral so the figure stays readable at body size, and the
+    shading steps through the palette rather than introducing new hues.
+    """
+    Path(path).parent.mkdir(parents=True, exist_ok=True)
+    pad_l, pad_b, pad_t, pad_r = 118, 96, 54, 40
+    cols = rows = 4
+    cw = (width - pad_l - pad_r) / cols
+    ch = (height - pad_t - pad_b) / rows
+
+    # Low-to-high shading, warm and desaturated so labels stay the loudest thing.
+    tints = ["#F6F1E7", "#EFE6D4", "#E5D3B8", "#D8BC94", "#C79E68"]
+    out = [
+        f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {width} {height}" '
+        f'width="{width}" height="{height}" role="img" aria-label="Risk matrix">',
+        f'<rect width="{width}" height="{height}" fill="{PAPER}"/>',
+    ]
+    for r in range(rows):
+        for c in range(cols):
+            level = min(4, (r + c) // 2)
+            x = pad_l + c * cw
+            y = pad_t + (rows - 1 - r) * ch
+            out.append(
+                f'<rect x="{x:.1f}" y="{y:.1f}" width="{cw:.1f}" height="{ch:.1f}" '
+                f'fill="{tints[level]}" stroke="{RULE}" stroke-width="1"/>'
+            )
+    # Axis rules, heavier than the cell grid so the axes read as structure.
+    out.append(f'<line x1="{pad_l}" y1="{pad_t}" x2="{pad_l}" y2="{pad_t + rows * ch}" '
+               f'stroke="{INK}" stroke-width="1.6"/>')
+    out.append(f'<line x1="{pad_l}" y1="{pad_t + rows * ch}" x2="{pad_l + cols * cw}" '
+               f'y2="{pad_t + rows * ch}" stroke="{INK}" stroke-width="1.6"/>')
+
+    for i in range(cols):
+        x = pad_l + (i + 0.5) * cw
+        out.append(f'<text x="{x:.1f}" y="{pad_t + rows * ch + 26:.1f}" text-anchor="middle" '
+                   f'font-family="PT Sans, Helvetica, Arial, sans-serif" font-size="13" '
+                   f'fill="{SLATE}">{_esc(_truncate(axes[1], 14))} {i + 1}</text>')
+    for i in range(rows):
+        y = pad_t + (rows - 1 - i + 0.5) * ch
+        out.append(f'<text x="{pad_l - 14:.1f}" y="{y + 5:.1f}" text-anchor="end" '
+                   f'font-family="PT Sans, Helvetica, Arial, sans-serif" font-size="13" '
+                   f'fill="{SLATE}">{i + 1}</text>')
+
+    out.append(f'<text x="{pad_l - 96}" y="{pad_t + rows * ch / 2:.1f}" text-anchor="middle" '
+               f'transform="rotate(-90 {pad_l - 96} {pad_t + rows * ch / 2:.1f})" '
+               f'font-family="PT Sans, Helvetica, Arial, sans-serif" font-size="13" '
+               f'font-weight="bold" fill="{INK}" letter-spacing="1.2">'
+               f'{_esc(_truncate(axes[0], 28).upper())}</text>')
+    out.append(f'<text x="{pad_l + cols * cw / 2:.1f}" y="{height - 22}" text-anchor="middle" '
+               f'font-family="PT Sans, Helvetica, Arial, sans-serif" font-size="13" '
+               f'font-weight="bold" fill="{INK}" letter-spacing="1.2">'
+               f'{_esc(_truncate(axes[1], 28).upper())}</text>')
+
+    for i, (p, im) in enumerate(cells):
+        c = max(0, min(cols - 1, int(round(p * cols)) - 1 if p > 0 else 0))
+        r = max(0, min(rows - 1, int(round(im * rows)) - 1 if im > 0 else 0))
+        x = pad_l + (c + 0.5) * cw
+        y = pad_t + (rows - 1 - r + 0.5) * ch
+        out.append(f'<circle cx="{x:.1f}" cy="{y:.1f}" r="15" fill="{PAPER}" '
+                   f'stroke="{TERRACOTTA}" stroke-width="2"/>')
+        out.append(f'<text x="{x:.1f}" y="{y + 5:.1f}" text-anchor="middle" '
+                   f'font-family="PT Mono, monospace" font-size="13" font-weight="bold" '
+                   f'fill="{INK}">{i + 1:02d}</text>')
+    out.append("</svg>")
+    Path(path).write_text("\n".join(out), encoding="utf-8")
+    return str(path)
+
+
+def decision_tree_svg(
+    question: str,
+    branches: list[tuple[str, str]],
+    path: str | Path,
+    outcome_text: list[str] | None = None,
+    width: int = 900,
+    height: int = 560,
+) -> str:
+    """A yes/no gate with two outcomes, drawn as the book draws everything else.
+
+    `branches` is (yes_label, no_label). The trunk carries the question and each
+    panel states the action that follows, so the figure is a decision tool
+    rather than an ornament. `outcome_text` is the action line per branch and is
+    supplied by the caller: the generator knows nothing about the subject, so
+    the same drawing serves a land manual, a course or an engineering report.
+    """
+    if outcome_text is None:
+        outcome_text = [
+            "Record the finding in the primary source, then price the constraint "
+            "rather than the hope.",
+            "Hold the decision open until the missing evidence is in hand.",
+        ]
+    Path(path).parent.mkdir(parents=True, exist_ok=True)
+    trunk_w, gate_h = 300, 86
+    top = 40
+    trunk_x = (width - trunk_w) / 2
+
+    out = [
+        f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {width} {height}" '
+        f'width="{width}" height="{height}" role="img" aria-label="Decision">',
+        f'<rect width="{width}" height="{height}" fill="{PAPER}"/>',
+        f'<rect x="{trunk_x:.1f}" y="{top}" width="{trunk_w}" height="{gate_h}" rx="4" '
+        f'fill="none" stroke="{INK}" stroke-width="1.6"/>',
+        f'<rect x="{trunk_x:.1f}" y="{top}" width="{trunk_w}" height="4" fill="{BRASS}"/>',
+    ]
+    words = _truncate(question, 90).split()
+    line, lines = "", []
+    for w in words:
+        if len(line) + len(w) + 1 > 26:
+            lines.append(line)
+            line = w
+        else:
+            line = f"{line} {w}".strip()
+    lines.append(line)
+    for i, ln in enumerate(lines[:3]):
+        out.append(f'<text x="{width / 2:.1f}" y="{top + 34 + i * 20:.1f}" text-anchor="middle" '
+                   f'font-family="PT Serif, Georgia, serif" font-size="17" fill="{INK}">'
+                   f'{_esc(ln)}</text>')
+
+    stem_bottom = top + gate_h
+    mid_y = height / 2 + 20
+    out.append(f'<line x1="{width / 2:.1f}" y1="{stem_bottom}" x2="{width / 2:.1f}" '
+               f'y2="{mid_y - 12}" stroke="{INK}" stroke-width="1.6"/>')
+
+    panel_w = (width - 120) / 2
+    for i, lbl in enumerate(branches):
+        px = 60 if i == 0 else width - 60 - panel_w
+        out.append(f'<line x1="{width / 2:.1f}" y1="{mid_y - 12}" x2="{px + panel_w / 2:.1f}" '
+                   f'y2="{mid_y - 12}" stroke="{INK}" stroke-width="1.6"/>')
+        out.append(f'<line x1="{px + panel_w / 2:.1f}" y1="{mid_y - 12}" '
+                   f'y2="{px + panel_w / 2:.1f}" y2="{mid_y:.1f}" stroke="{INK}" stroke-width="1.6"/>')
+        tone = BRASS if i == 0 else TERRACOTTA
+        out.append(f'<rect x="{px:.1f}" y="{mid_y:.1f}" width="{panel_w:.1f}" '
+                   f'height="{height - mid_y - 60:.1f}" fill="none" stroke="{RULE}" '
+                   f'stroke-width="1.2" rx="4"/>')
+        out.append(f'<rect x="{px:.1f}" y="{mid_y:.1f}" width="{panel_w:.1f}" height="4" fill="{tone}"/>')
+        out.append(f'<text x="{px + 18:.1f}" y="{mid_y + 34:.1f}" '
+                   f'font-family="PT Sans, Helvetica, Arial, sans-serif" font-size="13" '
+                   f'font-weight="bold" fill="{tone}" letter-spacing="1.6">'
+                   f'{_esc(_truncate(lbl, 30).upper())}</text>')
+        body = _truncate(outcome_text[i], 130)
+        blines, cur = [], ""
+        for w in body.split():
+            if len(cur) + len(w) + 1 > 30:
+                blines.append(cur)
+                cur = w
+            else:
+                cur = f"{cur} {w}".strip()
+        blines.append(cur)
+        for j, ln in enumerate(blines[:5]):
+            out.append(f'<text x="{px + 18:.1f}" y="{mid_y + 62 + j * 21:.1f}" '
+                       f'font-family="PT Serif, Georgia, serif" font-size="15" fill="{INK}">'
+                       f'{_esc(ln)}</text>')
+    out.append("</svg>")
+    Path(path).write_text("\n".join(out), encoding="utf-8")
+    return str(path)

@@ -412,6 +412,33 @@
   ]
 }
 
+// ── Composed page design families ───────────────────────────────────────────
+// The sixteen editorial geometries live in page_families.typ. They are
+// registered here alongside the original reading layouts so a page that falls
+// back to a plain measure still has a home, and so the renderer can address any
+// family by name.
+#import "page_families.typ": (
+  layout-minimal-editorial,
+  layout-opener-split,
+  layout-opener-stacked,
+  layout-opener-vertical,
+  layout-opener-centered,
+  layout-dark-feature-opener,
+  layout-asymmetric-grid,
+  layout-text-visual-split,
+  layout-framed-feature,
+  layout-full-width-feature,
+  layout-case-study-editorial,
+  layout-worked-example-page,
+  layout-workbook-exercise,
+  layout-checklist-page,
+  layout-pull-quote-page,
+  layout-diagram-page,
+  layout-data-table-page,
+  layout-recap-plan-page,
+  layout-reference-page,
+)
+
 // ── Registry ────────────────────────────────────────────────────────────────
 // Keys must match the strings emitted by typst_renderer.layout_function_map.
 #let layout-functions = (
@@ -432,6 +459,36 @@
   "glossary": layout-glossary,
   "references": layout-references,
   "back-cover": layout-back-cover,
+
+  // Editorial design families (A–P).
+  "minimal-editorial": layout-minimal-editorial,
+  "opener-split": layout-opener-split,
+  "opener-stacked": layout-opener-stacked,
+  "opener-vertical": layout-opener-vertical,
+  "opener-centered": layout-opener-centered,
+  "dark-feature-opener": layout-dark-feature-opener,
+  "asymmetric-grid": layout-asymmetric-grid,
+  "text-visual-split": layout-text-visual-split,
+  "framed-feature": layout-framed-feature,
+  "full-width-feature": layout-full-width-feature,
+  "case-study-editorial": layout-case-study-editorial,
+  "worked-example-page": layout-worked-example-page,
+  "workbook-exercise": layout-workbook-exercise,
+  "checklist-page": layout-checklist-page,
+  "pull-quote-page": layout-pull-quote-page,
+  "diagram-page": layout-diagram-page,
+  "data-table-page": layout-data-table-page,
+  "recap-plan-page": layout-recap-plan-page,
+  "reference-page": layout-reference-page,
+)
+
+// Families whose geometry is a fixed frame: the renderer must not hand them
+// more text than the frame can hold.
+#let fixed-geometry-families = (
+  "framed-feature",
+  "case-study-editorial",
+  "diagram-page",
+  "pull-quote-page",
 )
 
 #let resolve-layout(name) = {
