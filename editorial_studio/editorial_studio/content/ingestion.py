@@ -139,6 +139,7 @@ class ManuscriptIngester:
         current_section = 0
         current_subsection = 0
         paragraph_buffer: list[str] = []
+        matter = "front"  # Start with front matter, switch to body at first chapter, back at back matter
 
         def flush_paragraph():
             nonlocal paragraph_buffer
@@ -147,7 +148,7 @@ class ManuscriptIngester:
                 if text:
                     blocks.append(self._make_block(
                         text, ContentType.PARAGRAPH, SemanticRole.BODY,
-                        current_chapter, current_section, current_subsection
+                        current_chapter, current_section, current_subsection, matter=matter
                     ))
                 paragraph_buffer = []
 
@@ -157,7 +158,7 @@ class ManuscriptIngester:
                 for item in list_items:
                     blocks.append(self._make_block(
                         item, ContentType.LIST_ITEM, SemanticRole.BODY,
-                        current_chapter, current_section, current_subsection
+                        current_chapter, current_section, current_subsection, matter=matter
                     ))
                 list_items = []
                 in_list = False
@@ -179,7 +180,7 @@ class ManuscriptIngester:
                     blocks.append(self._make_block(
                         code_text, ContentType.CODE, SemanticRole.CODE,
                         current_chapter, current_section, current_subsection,
-                        metadata={"language": code_block_lang}
+                        metadata={"language": code_block_lang}, matter=matter
                     ))
                     code_block_content = []
                     code_block_lang = ""
@@ -196,7 +197,29 @@ class ManuscriptIngester:
                 flush_list()
                 level = len(heading_match.group(1))
                 heading_text = heading_match.group(2).strip()
-                if level == 1:
+                
+                # Detect back matter sections
+                back_matter_keywords = ["glossary", "references", "bibliography", "index", "about the author", "appendix", "colophon"]
+                if level == 1 and any(kw in heading_text.lower() for kw in back_matter_keywords):
+                    matter = "back"
+                    current_chapter = 0
+                    current_section = 0
+                    current_subsection = 0
+                    role = SemanticRole.BODY
+                    if "glossary" in heading_text.lower():
+                        role = SemanticRole.GLOSSARY
+                    elif "reference" in heading_text.lower() or "bibliography" in heading_text.lower():
+                        role = SemanticRole.REFERENCE
+                    elif "index" in heading_text.lower():
+                        role = SemanticRole.INDEX
+                    elif "appendix" in heading_text.lower():
+                        role = SemanticRole.APPENDIX
+                    elif "about" in heading_text.lower() and "author" in heading_text.lower():
+                        role = SemanticRole.BODY
+                elif level == 1:
+                    # First chapter heading switches from front to body matter
+                    if matter == "front":
+                        matter = "body"
                     current_chapter += 1
                     current_section = 0
                     current_subsection = 0
@@ -213,7 +236,7 @@ class ManuscriptIngester:
                 blocks.append(self._make_block(
                     heading_text, ContentType.HEADING, role,
                     current_chapter, current_section, current_subsection,
-                    level=level
+                    level=level, matter=matter
                 ))
                 continue
 
@@ -231,7 +254,7 @@ class ManuscriptIngester:
                 flush_list()
                 blocks.append(self._make_block(
                     "", ContentType.SECTION_BREAK, SemanticRole.BODY,
-                    current_chapter, current_section, current_subsection
+                    current_chapter, current_section, current_subsection, matter=matter
                 ))
                 continue
 
@@ -242,7 +265,7 @@ class ManuscriptIngester:
                 quote_text = stripped[1:].strip()
                 blocks.append(self._make_block(
                     quote_text, ContentType.QUOTATION, SemanticRole.PULL_QUOTE,
-                    current_chapter, current_section, current_subsection
+                    current_chapter, current_section, current_subsection, matter=matter
                 ))
                 continue
 
@@ -254,7 +277,7 @@ class ManuscriptIngester:
                 if not re.match(r"^\s*\|?\s*[:-]+\s*\|", stripped):
                     blocks.append(self._make_block(
                         stripped, ContentType.TABLE, SemanticRole.TABLE,
-                        current_chapter, current_section, current_subsection
+                        current_chapter, current_section, current_subsection, matter=matter
                     ))
                 continue
 
@@ -268,7 +291,7 @@ class ManuscriptIngester:
                 blocks.append(self._make_block(
                     f"Image: {alt_text} ({src})", ContentType.IMAGE_INSTRUCTION, SemanticRole.FIGURE,
                     current_chapter, current_section, current_subsection,
-                    metadata={"alt_text": alt_text, "src": src}
+                    metadata={"alt_text": alt_text, "src": src}, matter=matter
                 ))
                 continue
 
@@ -583,6 +606,7 @@ class ManuscriptIngester:
         subsection: int,
         level: int = 0,
         metadata: dict[str, Any] | None = None,
+        matter: str = "body",
     ) -> ContentBlock:
         return ContentBlock(
             id=self._next_block_id(),
@@ -596,4 +620,5 @@ class ManuscriptIngester:
             level=level,
             source_ref=f"ch{chapter}_s{section}_ss{subsection}_{self.block_counter}",
             metadata=metadata or {},
+            matter=matter,
         )

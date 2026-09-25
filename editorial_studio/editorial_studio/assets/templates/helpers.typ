@@ -10,8 +10,6 @@
 
 #let callout-box(body, kind) = {
   let colors = callout-colors.at(kind, default: callout-colors.info)
-  // Escape bare # (hex colors, anchors) but preserve #link(...) we inserted
-  let safe-body = body.replace("#", "\\#").replace("\\#link(", "#link(")
   v(0.6em)
   block(
     width: 100%,
@@ -21,7 +19,7 @@
     radius: (right: 3pt),
   )[
     #set text(size: 0.92em)
-    #eval(safe-body, mode: "markup")
+    body
   ]
   v(0.6em)
 }

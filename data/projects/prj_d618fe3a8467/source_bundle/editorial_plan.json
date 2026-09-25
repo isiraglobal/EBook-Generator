@@ -1,0 +1,355 @@
+{
+  "id": "ep_b337105a5b69",
+  "manuscript_id": "ms_fd40b613ec0c",
+  "brand_profile_id": "builtin_institutional",
+  "design_tokens": {
+    "brand_name": "Institutional",
+    "page_width_mm": 210.0,
+    "page_height_mm": 297.0,
+    "margin_top_mm": 25.0,
+    "margin_bottom_mm": 25.0,
+    "margin_inner_mm": 28.0,
+    "margin_outer_mm": 22.0,
+    "columns": 1,
+    "column_gutter_mm": 5.0,
+    "body_font_family": "Source Serif 4",
+    "heading_font_family": "Source Sans 3",
+    "mono_font_family": "Source Code Pro",
+    "body_font_size_pt": 10.5,
+    "heading_font_sizes": {
+      "1": 18.0,
+      "2": 14.0,
+      "3": 11.0
+    },
+    "line_height_em": 1.45,
+    "paragraph_spacing_em": 0.7,
+    "first_line_indent_em": 1.25,
+    "colors": {
+      "accent": "#1d3557",
+      "heading": "#1d3557",
+      "body": "#1a1a1a",
+      "muted": "#64748b",
+      "background": "#ffffff",
+      "sidebar_bg": "#f8f9fa",
+      "table_header": "#e9ecef",
+      "table_row_alt": "#f8f9fa",
+      "accent_light": "#2a4a7c"
+    },
+    "heading_weights": {
+      "1": "bold",
+      "2": "semibold",
+      "3": "semibold"
+    },
+    "numbered_headings": true,
+    "show_toc": true,
+    "show_header_footer": true,
+    "header_rule": true,
+    "page_num_position": "bottom-center",
+    "chapter_break": true,
+    "indent_style": "indent",
+    "hyphenate": true,
+    "justify": true,
+    "image_treatment": "editorial",
+    "illustration_style": "clean"
+  },
+  "publication_brief": {
+    "subject": "Test Book",
+    "audience": "General professional audience",
+    "purpose": "Inform and guide readers through comprehensive content",
+    "tone": "professional, accessible, engaging",
+    "complexity": "elementary",
+    "learning_objectives": [],
+    "visual_language": "typographic, reading-focused",
+    "recommended_page_size": "A4",
+    "recommended_template": "book",
+    "color_theme": "navy",
+    "typography_direction": "editorial serif + elegant sans"
+  },
+  "page_plans": [
+    {
+      "id": "pp_9e65169f6948",
+      "page_number": 1,
+      "purpose": "cover",
+      "layout_family": "cover",
+      "content_block_ids": [],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {
+        "title_size": "36pt",
+        "subtitle_size": "18pt",
+        "author_size": "14pt"
+      },
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.3,
+      "notes": "Full-cover design with title, subtitle, author, brand mark"
+    },
+    {
+      "id": "pp_33a687a95064",
+      "page_number": 2,
+      "purpose": "title_page",
+      "layout_family": "title",
+      "content_block_ids": [],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {
+        "title_size": "28pt",
+        "author_size": "13pt"
+      },
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.25,
+      "notes": ""
+    },
+    {
+      "id": "pp_1b2cf960513d",
+      "page_number": 3,
+      "purpose": "toc",
+      "layout_family": "toc",
+      "content_block_ids": [],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {},
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.6,
+      "notes": ""
+    },
+    {
+      "id": "pp_9c878a9f4b0f",
+      "page_number": 4,
+      "purpose": "chapter_opener",
+      "layout_family": "chapter_opener",
+      "content_block_ids": [],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {
+        "chapter_label": "CHAPTER",
+        "chapter_number": "1",
+        "title_size": "24pt"
+      },
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.35,
+      "notes": "Chapter opener for: Chapter 1: Introduction"
+    },
+    {
+      "id": "pp_544f97d3261f",
+      "page_number": 5,
+      "purpose": "content",
+      "layout_family": "reading",
+      "content_block_ids": [
+        "cb_666a738acf_0002",
+        "cb_96f782ad98_0003",
+        "cb_4bde7eee23_0004"
+      ],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {},
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.85,
+      "notes": ""
+    },
+    {
+      "id": "pp_e8c821fe2478",
+      "page_number": 6,
+      "purpose": "chapter_opener",
+      "layout_family": "chapter_opener",
+      "content_block_ids": [],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {
+        "chapter_label": "CHAPTER",
+        "chapter_number": "2",
+        "title_size": "24pt"
+      },
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.35,
+      "notes": "Chapter opener for: Chapter 2: Advanced"
+    },
+    {
+      "id": "pp_cac51e960a33",
+      "page_number": 7,
+      "purpose": "content",
+      "layout_family": "reading",
+      "content_block_ids": [
+        "cb_3b7d54cee7_0006",
+        "cb_0052a1722d_0007",
+        "cb_81378ea7b2_0008"
+      ],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {},
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.85,
+      "notes": ""
+    },
+    {
+      "id": "pp_99dd36ac45e7",
+      "page_number": 8,
+      "purpose": "back_cover",
+      "layout_family": "cover",
+      "content_block_ids": [],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {},
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.2,
+      "notes": ""
+    }
+  ],
+  "asset_briefs": [],
+  "structure_map": {
+    "total_pages": 8,
+    "chapters": {},
+    "front_matter_pages": [
+      1,
+      2,
+      3
+    ],
+    "back_matter_pages": [
+      8
+    ]
+  },
+  "pagination_strategy": "adaptive"
+}

@@ -1,0 +1,15 @@
+{
+  "id": "prj_d618fe3a8467",
+  "name": "Test Book",
+  "description": "",
+  "manuscript_id": "ms_fd40b613ec0c",
+  "brand_profile_id": "builtin_institutional",
+  "editorial_plan_id": "ep_b337105a5b69",
+  "render_job_id": "",
+  "output_pdf_path": "",
+  "source_bundle_path": "",
+  "version": 1,
+  "status": "draft",
+  "tags": [],
+  "metadata": {}
+}

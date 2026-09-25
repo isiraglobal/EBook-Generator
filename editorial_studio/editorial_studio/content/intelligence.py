@@ -189,6 +189,9 @@ class ContentIntelligenceEngine:
 
     def _classify_heading(self, block: ContentBlock) -> ContentBlock:
         text = block.content.lower()
+        # Don't reclassify chapter headings (level 1)
+        if block.level == 1:
+            return block
         if "exercise" in text or "practice" in text:
             block.semantic_role = SemanticRole.EXERCISE
         elif "example" in text or "case study" in text:

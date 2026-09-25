@@ -1,0 +1,37 @@
+{
+  "project": {
+    "id": "prj_d618fe3a8467",
+    "name": "Test Book",
+    "version": 1,
+    "status": "draft",
+    "created_at": "2026-09-25T14:20:12.032307",
+    "updated_at": "2026-09-25T14:20:12.032311"
+  },
+  "manuscript": {
+    "id": "ms_fd40b613ec0c",
+    "title": "Test Book",
+    "author": "Test Author",
+    "word_count": 18,
+    "block_count": 8,
+    "chapters": 2
+  },
+  "editorial_plan": {
+    "id": "ep_b337105a5b69",
+    "page_count": 8,
+    "asset_brief_count": 0
+  },
+  "render_job": {
+    "id": "rj_70faa74b6cc2",
+    "status": "completed",
+    "retry_count": 0,
+    "output_pdf": "/Users/lakshitsinghvi/Documents/Repos/EBook-Generator/test_e2e.pdf"
+  },
+  "qa_report": {
+    "id": "qar_4265fb7f767d",
+    "passed": true,
+    "score": 60.0,
+    "total_issues": 13,
+    "hard_failures": 0
+  },
+  "exported_at": "2026-09-25T14:20:12.825824"
+}

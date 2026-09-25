@@ -1,0 +1,4667 @@
+{
+  "id": "ep_840e04cb922a",
+  "manuscript_id": "ms_d9c6c9e264e4",
+  "brand_profile_id": "builtin_institutional",
+  "design_tokens": {
+    "brand_name": "Institutional",
+    "page_width_mm": 210.0,
+    "page_height_mm": 297.0,
+    "margin_top_mm": 25.0,
+    "margin_bottom_mm": 25.0,
+    "margin_inner_mm": 28.0,
+    "margin_outer_mm": 22.0,
+    "columns": 1,
+    "column_gutter_mm": 5.0,
+    "body_font_family": "Source Serif 4",
+    "heading_font_family": "Source Sans 3",
+    "mono_font_family": "Source Code Pro",
+    "body_font_size_pt": 10.5,
+    "heading_font_sizes": {
+      "1": 18.0,
+      "2": 14.0,
+      "3": 11.0
+    },
+    "line_height_em": 1.45,
+    "paragraph_spacing_em": 0.7,
+    "first_line_indent_em": 1.25,
+    "colors": {
+      "accent": "#0d9488",
+      "heading": "#1d3557",
+      "body": "#1a1a1a",
+      "muted": "#64748b",
+      "background": "#ffffff",
+      "sidebar_bg": "#f8f9fa",
+      "table_header": "#e9ecef",
+      "table_row_alt": "#f8f9fa",
+      "accent_light": "#14b8a6"
+    },
+    "heading_weights": {
+      "1": "bold",
+      "2": "semibold",
+      "3": "semibold"
+    },
+    "numbered_headings": true,
+    "show_toc": true,
+    "show_header_footer": true,
+    "header_rule": true,
+    "page_num_position": "bottom-center",
+    "chapter_break": true,
+    "indent_style": "indent",
+    "hyphenate": true,
+    "justify": true,
+    "image_treatment": "editorial",
+    "illustration_style": "clean"
+  },
+  "publication_brief": {
+    "subject": "The Land Investor's Field Manual",
+    "audience": "Learners, students, professionals seeking skill development",
+    "purpose": "Teach concepts and skills through structured lessons and practice",
+    "tone": "encouraging, clear, structured",
+    "complexity": "middle_school",
+    "learning_objectives": [
+      "Practice: Exercise: Apply Market overview and size to your situation",
+      "Practice: Worksheet: Land classification systems assessment",
+      "Practice: Analysis: Evaluate Investment thesis by land type for a hypothetical parcel",
+      "Practice: Exercise: Apply Comparable sales analysis to your situation",
+      "Practice: Worksheet: Income approach for agricultural land assessment",
+      "Practice: Analysis: Evaluate Recreational land valuation for a hypothetical parcel",
+      "Practice: Exercise: Apply MLS and public listing strategies to your situation",
+      "Practice: Worksheet: Direct mail and skip tracing assessment",
+      "Practice: Analysis: Evaluate Networking and broker relationships for a hypothetical parcel",
+      "Practice: Exercise: Apply Seller motivation analysis to your situation"
+    ],
+    "visual_language": "clean, diagrammatic, workbook-friendly",
+    "recommended_page_size": "A4",
+    "recommended_template": "book",
+    "color_theme": "teal",
+    "typography_direction": "readable serif + clear sans"
+  },
+  "page_plans": [
+    {
+      "id": "pp_77e76f288aac",
+      "page_number": 1,
+      "purpose": "cover",
+      "layout_family": "cover",
+      "content_block_ids": [],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {
+        "title_size": "36pt",
+        "subtitle_size": "18pt",
+        "author_size": "14pt"
+      },
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.3,
+      "notes": "Full-cover design with title, subtitle, author, brand mark"
+    },
+    {
+      "id": "pp_7f7682e98ea5",
+      "page_number": 2,
+      "purpose": "title_page",
+      "layout_family": "title",
+      "content_block_ids": [],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {
+        "title_size": "28pt",
+        "author_size": "13pt"
+      },
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.25,
+      "notes": ""
+    },
+    {
+      "id": "pp_6f1357245349",
+      "page_number": 3,
+      "purpose": "copyright",
+      "layout_family": "title",
+      "content_block_ids": [],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {},
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.2,
+      "notes": ""
+    },
+    {
+      "id": "pp_b5e34f8e9fd3",
+      "page_number": 4,
+      "purpose": "toc",
+      "layout_family": "toc",
+      "content_block_ids": [],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {},
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.6,
+      "notes": ""
+    },
+    {
+      "id": "pp_2d29b12b8bc7",
+      "page_number": 5,
+      "purpose": "chapter_opener",
+      "layout_family": "chapter_opener",
+      "content_block_ids": [
+        "cb_f93040ce5f_0004"
+      ],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {
+        "chapter_label": "CHAPTER",
+        "chapter_number": "1",
+        "title_size": "24pt"
+      },
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.35,
+      "notes": "Chapter opener for: Understanding the U.S. Land Market and Types of Land"
+    },
+    {
+      "id": "pp_8771639e60d1",
+      "page_number": 6,
+      "purpose": "content",
+      "layout_family": "reading",
+      "content_block_ids": [
+        "cb_f1ccbe24b1_0005",
+        "cb_ade2f18763_0006",
+        "cb_70c4cf9d02_0015"
+      ],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {},
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.85,
+      "notes": ""
+    },
+    {
+      "id": "pp_9f74c200d7b3",
+      "page_number": 7,
+      "purpose": "content",
+      "layout_family": "reading",
+      "content_block_ids": [
+        "cb_25f669a960_0008"
+      ],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {},
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.85,
+      "notes": ""
+    },
+    {
+      "id": "pp_0f1ee447fb52",
+      "page_number": 8,
+      "purpose": "content",
+      "layout_family": "reading",
+      "content_block_ids": [
+        "cb_f923c77dcd_0010"
+      ],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {},
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.85,
+      "notes": ""
+    },
+    {
+      "id": "pp_1b0713a5d676",
+      "page_number": 9,
+      "purpose": "content",
+      "layout_family": "reading",
+      "content_block_ids": [
+        "cb_9586b55e63_0012"
+      ],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {},
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.85,
+      "notes": ""
+    },
+    {
+      "id": "pp_469ddbd0392b",
+      "page_number": 10,
+      "purpose": "content",
+      "layout_family": "reading",
+      "content_block_ids": [
+        "cb_532ea66ca5_0014"
+      ],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {},
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.85,
+      "notes": ""
+    },
+    {
+      "id": "pp_7d176cda1860",
+      "page_number": 11,
+      "purpose": "content",
+      "layout_family": "exercise",
+      "content_block_ids": [
+        "cb_8dbf28ee1f_0016"
+      ],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {},
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.85,
+      "notes": ""
+    },
+    {
+      "id": "pp_a6191b25ff61",
+      "page_number": 12,
+      "purpose": "content",
+      "layout_family": "exercise",
+      "content_block_ids": [
+        "cb_b8040bce4c_0017"
+      ],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {},
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.85,
+      "notes": ""
+    },
+    {
+      "id": "pp_070ddbebb374",
+      "page_number": 13,
+      "purpose": "content",
+      "layout_family": "exercise",
+      "content_block_ids": [
+        "cb_b4468eb497_0018"
+      ],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {},
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.85,
+      "notes": ""
+    },
+    {
+      "id": "pp_e0e63ccd13ca",
+      "page_number": 14,
+      "purpose": "recap",
+      "layout_family": "recap",
+      "content_block_ids": [],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {},
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.7,
+      "notes": ""
+    },
+    {
+      "id": "pp_3fa41386bb54",
+      "page_number": 15,
+      "purpose": "chapter_opener",
+      "layout_family": "chapter_opener",
+      "content_block_ids": [
+        "cb_bf61ebe60b_0019"
+      ],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {
+        "chapter_label": "CHAPTER",
+        "chapter_number": "2",
+        "title_size": "24pt"
+      },
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.35,
+      "notes": "Chapter opener for: Market, Recreational, Agricultural, and Mitigation Land Valuation Frameworks"
+    },
+    {
+      "id": "pp_ab320bb5355c",
+      "page_number": 16,
+      "purpose": "content",
+      "layout_family": "reading",
+      "content_block_ids": [
+        "cb_86ceec87d4_0020",
+        "cb_6fd6f542b3_0021",
+        "cb_2c913fe368_0031"
+      ],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {},
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.85,
+      "notes": ""
+    },
+    {
+      "id": "pp_93f055d6de0f",
+      "page_number": 17,
+      "purpose": "content",
+      "layout_family": "reading",
+      "content_block_ids": [
+        "cb_b8ed87528e_0023"
+      ],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {},
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.85,
+      "notes": ""
+    },
+    {
+      "id": "pp_edec1440dc81",
+      "page_number": 18,
+      "purpose": "content",
+      "layout_family": "reading",
+      "content_block_ids": [
+        "cb_3482b2e416_0024"
+      ],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {},
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.85,
+      "notes": ""
+    },
+    {
+      "id": "pp_05ec2bfe56e5",
+      "page_number": 19,
+      "purpose": "content",
+      "layout_family": "reading",
+      "content_block_ids": [
+        "cb_4d24ae2949_0026"
+      ],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {},
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.85,
+      "notes": ""
+    },
+    {
+      "id": "pp_33fe2958a8dc",
+      "page_number": 20,
+      "purpose": "content",
+      "layout_family": "reading",
+      "content_block_ids": [
+        "cb_985fd95437_0028"
+      ],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {},
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.85,
+      "notes": ""
+    },
+    {
+      "id": "pp_9046b063d149",
+      "page_number": 21,
+      "purpose": "content",
+      "layout_family": "reading",
+      "content_block_ids": [
+        "cb_b04f834ab3_0030"
+      ],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {},
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.85,
+      "notes": ""
+    },
+    {
+      "id": "pp_df6e3a4e196c",
+      "page_number": 22,
+      "purpose": "content",
+      "layout_family": "exercise",
+      "content_block_ids": [
+        "cb_76136f2b3b_0032"
+      ],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {},
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.85,
+      "notes": ""
+    },
+    {
+      "id": "pp_feab0cf3aaeb",
+      "page_number": 23,
+      "purpose": "content",
+      "layout_family": "exercise",
+      "content_block_ids": [
+        "cb_d1a9dcca09_0033"
+      ],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {},
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.85,
+      "notes": ""
+    },
+    {
+      "id": "pp_e63880a42faa",
+      "page_number": 24,
+      "purpose": "content",
+      "layout_family": "exercise",
+      "content_block_ids": [
+        "cb_4a69e27bed_0034"
+      ],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {},
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.85,
+      "notes": ""
+    },
+    {
+      "id": "pp_93c8b84aedfe",
+      "page_number": 25,
+      "purpose": "recap",
+      "layout_family": "recap",
+      "content_block_ids": [],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {},
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.7,
+      "notes": ""
+    },
+    {
+      "id": "pp_8572281c571c",
+      "page_number": 26,
+      "purpose": "chapter_opener",
+      "layout_family": "chapter_opener",
+      "content_block_ids": [
+        "cb_6917f1ff8a_0035"
+      ],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {
+        "chapter_label": "CHAPTER",
+        "chapter_number": "3",
+        "title_size": "24pt"
+      },
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.35,
+      "notes": "Chapter opener for: Finding On-Market and Off-Market Acquisition Opportunities"
+    },
+    {
+      "id": "pp_d9c4d35870d9",
+      "page_number": 27,
+      "purpose": "content",
+      "layout_family": "reading",
+      "content_block_ids": [
+        "cb_eb7429c969_0036",
+        "cb_8247ee0aac_0037",
+        "cb_0b15800579_0046"
+      ],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {},
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.85,
+      "notes": ""
+    },
+    {
+      "id": "pp_3298e4896afa",
+      "page_number": 28,
+      "purpose": "content",
+      "layout_family": "reading",
+      "content_block_ids": [
+        "cb_c1e7a4b6ff_0039"
+      ],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {},
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.85,
+      "notes": ""
+    },
+    {
+      "id": "pp_60feea793849",
+      "page_number": 29,
+      "purpose": "content",
+      "layout_family": "reading",
+      "content_block_ids": [
+        "cb_8e4ca5ca57_0041"
+      ],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {},
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.85,
+      "notes": ""
+    },
+    {
+      "id": "pp_757de80858f1",
+      "page_number": 30,
+      "purpose": "content",
+      "layout_family": "reading",
+      "content_block_ids": [
+        "cb_fea6891248_0043"
+      ],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {},
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.85,
+      "notes": ""
+    },
+    {
+      "id": "pp_a7d9ff8de96d",
+      "page_number": 31,
+      "purpose": "content",
+      "layout_family": "reading",
+      "content_block_ids": [
+        "cb_174a980562_0045"
+      ],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {},
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.85,
+      "notes": ""
+    },
+    {
+      "id": "pp_1f336b4a3f66",
+      "page_number": 32,
+      "purpose": "content",
+      "layout_family": "exercise",
+      "content_block_ids": [
+        "cb_b6a57a48c4_0047"
+      ],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {},
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.85,
+      "notes": ""
+    },
+    {
+      "id": "pp_52420a9638f8",
+      "page_number": 33,
+      "purpose": "content",
+      "layout_family": "exercise",
+      "content_block_ids": [
+        "cb_08814190ec_0048"
+      ],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {},
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.85,
+      "notes": ""
+    },
+    {
+      "id": "pp_5fed29bc1758",
+      "page_number": 34,
+      "purpose": "content",
+      "layout_family": "exercise",
+      "content_block_ids": [
+        "cb_73e85156e0_0049"
+      ],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {},
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.85,
+      "notes": ""
+    },
+    {
+      "id": "pp_6188596d7c0c",
+      "page_number": 35,
+      "purpose": "recap",
+      "layout_family": "recap",
+      "content_block_ids": [],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {},
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.7,
+      "notes": ""
+    },
+    {
+      "id": "pp_3a7331d384a8",
+      "page_number": 36,
+      "purpose": "chapter_opener",
+      "layout_family": "chapter_opener",
+      "content_block_ids": [
+        "cb_459d452df7_0050"
+      ],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {
+        "chapter_label": "CHAPTER",
+        "chapter_number": "4",
+        "title_size": "24pt"
+      },
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.35,
+      "notes": "Chapter opener for: Seller Research, Outreach, Negotiation, and Acquisition Structures"
+    },
+    {
+      "id": "pp_b1fdb511d5c9",
+      "page_number": 37,
+      "purpose": "content",
+      "layout_family": "reading",
+      "content_block_ids": [
+        "cb_069145ac06_0051",
+        "cb_b3a41d0065_0052",
+        "cb_4cd4e55317_0063"
+      ],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {},
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.85,
+      "notes": ""
+    },
+    {
+      "id": "pp_419002307223",
+      "page_number": 38,
+      "purpose": "content",
+      "layout_family": "reading",
+      "content_block_ids": [
+        "cb_bf96d88e52_0054"
+      ],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {},
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.85,
+      "notes": ""
+    },
+    {
+      "id": "pp_9349e5a4e923",
+      "page_number": 39,
+      "purpose": "content",
+      "layout_family": "reading",
+      "content_block_ids": [
+        "cb_0385aa8f5c_0055"
+      ],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {},
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.85,
+      "notes": ""
+    },
+    {
+      "id": "pp_6eba8ca9b765",
+      "page_number": 40,
+      "purpose": "content",
+      "layout_family": "reading",
+      "content_block_ids": [
+        "cb_2c8b59292b_0057"
+      ],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {},
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.85,
+      "notes": ""
+    },
+    {
+      "id": "pp_190d33fa6d57",
+      "page_number": 41,
+      "purpose": "content",
+      "layout_family": "reading",
+      "content_block_ids": [
+        "cb_6a1972715e_0059"
+      ],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {},
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.85,
+      "notes": ""
+    },
+    {
+      "id": "pp_a3014fe46e30",
+      "page_number": 42,
+      "purpose": "content",
+      "layout_family": "reading",
+      "content_block_ids": [
+        "cb_beb0a68a6d_0060"
+      ],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {},
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.85,
+      "notes": ""
+    },
+    {
+      "id": "pp_bbf5313ddd6e",
+      "page_number": 43,
+      "purpose": "content",
+      "layout_family": "reading",
+      "content_block_ids": [
+        "cb_12f0125c6e_0062"
+      ],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {},
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.85,
+      "notes": ""
+    },
+    {
+      "id": "pp_6f9d92a08e56",
+      "page_number": 44,
+      "purpose": "content",
+      "layout_family": "exercise",
+      "content_block_ids": [
+        "cb_fb9e4c3f35_0064"
+      ],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {},
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.85,
+      "notes": ""
+    },
+    {
+      "id": "pp_ee3b0d5ad2ad",
+      "page_number": 45,
+      "purpose": "content",
+      "layout_family": "exercise",
+      "content_block_ids": [
+        "cb_e4a1b99c86_0065"
+      ],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {},
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.85,
+      "notes": ""
+    },
+    {
+      "id": "pp_5e9d02d88d03",
+      "page_number": 46,
+      "purpose": "content",
+      "layout_family": "exercise",
+      "content_block_ids": [
+        "cb_dc27f22aae_0066"
+      ],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {},
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.85,
+      "notes": ""
+    },
+    {
+      "id": "pp_10abd1431f78",
+      "page_number": 47,
+      "purpose": "recap",
+      "layout_family": "recap",
+      "content_block_ids": [],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {},
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.7,
+      "notes": ""
+    },
+    {
+      "id": "pp_3c16cba8d25c",
+      "page_number": 48,
+      "purpose": "chapter_opener",
+      "layout_family": "chapter_opener",
+      "content_block_ids": [
+        "cb_3e511f397a_0067"
+      ],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {
+        "chapter_label": "CHAPTER",
+        "chapter_number": "5",
+        "title_size": "24pt"
+      },
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.35,
+      "notes": "Chapter opener for: Title, Ownership, Easements, Access, Zoning, and Land-Use Diligence"
+    },
+    {
+      "id": "pp_699b7b6d6365",
+      "page_number": 49,
+      "purpose": "content",
+      "layout_family": "reading",
+      "content_block_ids": [
+        "cb_c1c12b0c03_0068",
+        "cb_58defdef79_0069",
+        "cb_88bf7aae8c_0079"
+      ],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {},
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.85,
+      "notes": ""
+    },
+    {
+      "id": "pp_082e1e0eedca",
+      "page_number": 50,
+      "purpose": "content",
+      "layout_family": "reading",
+      "content_block_ids": [
+        "cb_ad897a8cd2_0071"
+      ],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {},
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.85,
+      "notes": ""
+    },
+    {
+      "id": "pp_3942d104b4ae",
+      "page_number": 51,
+      "purpose": "content",
+      "layout_family": "reading",
+      "content_block_ids": [
+        "cb_d45c729be4_0073"
+      ],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {},
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.85,
+      "notes": ""
+    },
+    {
+      "id": "pp_7741cd133fb3",
+      "page_number": 52,
+      "purpose": "content",
+      "layout_family": "reading",
+      "content_block_ids": [
+        "cb_5e9912a633_0075"
+      ],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {},
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.85,
+      "notes": ""
+    },
+    {
+      "id": "pp_15a0007d8c0f",
+      "page_number": 53,
+      "purpose": "content",
+      "layout_family": "reading",
+      "content_block_ids": [
+        "cb_121c5c5102_0076"
+      ],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {},
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.85,
+      "notes": ""
+    },
+    {
+      "id": "pp_2472c360a806",
+      "page_number": 54,
+      "purpose": "content",
+      "layout_family": "reading",
+      "content_block_ids": [
+        "cb_a421b0d356_0078"
+      ],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {},
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.85,
+      "notes": ""
+    },
+    {
+      "id": "pp_5cbf555f3b46",
+      "page_number": 55,
+      "purpose": "content",
+      "layout_family": "exercise",
+      "content_block_ids": [
+        "cb_2dc6067380_0080"
+      ],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {},
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.85,
+      "notes": ""
+    },
+    {
+      "id": "pp_471b899148c1",
+      "page_number": 56,
+      "purpose": "content",
+      "layout_family": "exercise",
+      "content_block_ids": [
+        "cb_82118c7ab3_0081"
+      ],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {},
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.85,
+      "notes": ""
+    },
+    {
+      "id": "pp_7e6dfef0b8b5",
+      "page_number": 57,
+      "purpose": "content",
+      "layout_family": "exercise",
+      "content_block_ids": [
+        "cb_f59c793a46_0082"
+      ],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {},
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.85,
+      "notes": ""
+    },
+    {
+      "id": "pp_c09d627928a1",
+      "page_number": 58,
+      "purpose": "recap",
+      "layout_family": "recap",
+      "content_block_ids": [],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {},
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.7,
+      "notes": ""
+    },
+    {
+      "id": "pp_eaddfa471e14",
+      "page_number": 59,
+      "purpose": "chapter_opener",
+      "layout_family": "chapter_opener",
+      "content_block_ids": [
+        "cb_9c92f27674_0083"
+      ],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {
+        "chapter_label": "CHAPTER",
+        "chapter_number": "6",
+        "title_size": "24pt"
+      },
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.35,
+      "notes": "Chapter opener for: Water, Soil, Flood, Environmental, and Jurisdictional Risk Assessment"
+    },
+    {
+      "id": "pp_9313240db7d6",
+      "page_number": 60,
+      "purpose": "content",
+      "layout_family": "reading",
+      "content_block_ids": [
+        "cb_ae2be291c6_0084",
+        "cb_8e06278e35_0085",
+        "cb_784fb0e1bb_0095"
+      ],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {},
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.85,
+      "notes": ""
+    },
+    {
+      "id": "pp_a6d23b1be01d",
+      "page_number": 61,
+      "purpose": "content",
+      "layout_family": "reading",
+      "content_block_ids": [
+        "cb_f5101f5d46_0087"
+      ],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {},
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.85,
+      "notes": ""
+    },
+    {
+      "id": "pp_85054ca9fe47",
+      "page_number": 62,
+      "purpose": "content",
+      "layout_family": "reading",
+      "content_block_ids": [
+        "cb_2d8b745644_0089"
+      ],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {},
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.85,
+      "notes": ""
+    },
+    {
+      "id": "pp_d17a5707a0a3",
+      "page_number": 63,
+      "purpose": "content",
+      "layout_family": "reading",
+      "content_block_ids": [
+        "cb_499e551cca_0091"
+      ],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {},
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.85,
+      "notes": ""
+    },
+    {
+      "id": "pp_154425f6b233",
+      "page_number": 64,
+      "purpose": "content",
+      "layout_family": "reading",
+      "content_block_ids": [
+        "cb_08f7757fed_0092"
+      ],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {},
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.85,
+      "notes": ""
+    },
+    {
+      "id": "pp_18bb18b32c8f",
+      "page_number": 65,
+      "purpose": "content",
+      "layout_family": "reading",
+      "content_block_ids": [
+        "cb_228639c65a_0094"
+      ],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {},
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.85,
+      "notes": ""
+    },
+    {
+      "id": "pp_7eddaab33fd6",
+      "page_number": 66,
+      "purpose": "content",
+      "layout_family": "exercise",
+      "content_block_ids": [
+        "cb_729bf238c7_0096"
+      ],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {},
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.85,
+      "notes": ""
+    },
+    {
+      "id": "pp_667f127df980",
+      "page_number": 67,
+      "purpose": "content",
+      "layout_family": "exercise",
+      "content_block_ids": [
+        "cb_5b77fa7f5e_0097"
+      ],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {},
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.85,
+      "notes": ""
+    },
+    {
+      "id": "pp_34720568b7d7",
+      "page_number": 68,
+      "purpose": "content",
+      "layout_family": "exercise",
+      "content_block_ids": [
+        "cb_95aae669e2_0098"
+      ],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {},
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.85,
+      "notes": ""
+    },
+    {
+      "id": "pp_6b42023983f9",
+      "page_number": 69,
+      "purpose": "recap",
+      "layout_family": "recap",
+      "content_block_ids": [],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {},
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.7,
+      "notes": ""
+    },
+    {
+      "id": "pp_44d79eb87ec4",
+      "page_number": 70,
+      "purpose": "chapter_opener",
+      "layout_family": "chapter_opener",
+      "content_block_ids": [
+        "cb_a47a028c35_0099"
+      ],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {
+        "chapter_label": "CHAPTER",
+        "chapter_number": "7",
+        "title_size": "24pt"
+      },
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.35,
+      "notes": "Chapter opener for: Valuation Methodology, Comps, Costs, and Financial Underwriting"
+    },
+    {
+      "id": "pp_d10b5abad065",
+      "page_number": 71,
+      "purpose": "content",
+      "layout_family": "reading",
+      "content_block_ids": [
+        "cb_cb34ec6a74_0100",
+        "cb_001beedb0c_0101",
+        "cb_5247e3daa9_0111"
+      ],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {},
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.85,
+      "notes": ""
+    },
+    {
+      "id": "pp_2ed6c64ef3e5",
+      "page_number": 72,
+      "purpose": "content",
+      "layout_family": "reading",
+      "content_block_ids": [
+        "cb_409be7dd9a_0103"
+      ],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {},
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.85,
+      "notes": ""
+    },
+    {
+      "id": "pp_b5e7065a0ab7",
+      "page_number": 73,
+      "purpose": "content",
+      "layout_family": "reading",
+      "content_block_ids": [
+        "cb_3a2d797ded_0105"
+      ],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {},
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.85,
+      "notes": ""
+    },
+    {
+      "id": "pp_aff7a4c4dd92",
+      "page_number": 74,
+      "purpose": "content",
+      "layout_family": "reading",
+      "content_block_ids": [
+        "cb_2506ac96d7_0107"
+      ],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {},
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.85,
+      "notes": ""
+    },
+    {
+      "id": "pp_179a3c96052f",
+      "page_number": 75,
+      "purpose": "content",
+      "layout_family": "reading",
+      "content_block_ids": [
+        "cb_e87c9a489f_0109"
+      ],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {},
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.85,
+      "notes": ""
+    },
+    {
+      "id": "pp_d21753c001ce",
+      "page_number": 76,
+      "purpose": "content",
+      "layout_family": "reading",
+      "content_block_ids": [
+        "cb_ff8aa7df74_0110"
+      ],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {},
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.85,
+      "notes": ""
+    },
+    {
+      "id": "pp_837138c02231",
+      "page_number": 77,
+      "purpose": "content",
+      "layout_family": "exercise",
+      "content_block_ids": [
+        "cb_3b9ad5cbf2_0112"
+      ],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {},
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.85,
+      "notes": ""
+    },
+    {
+      "id": "pp_c8ff57d47e51",
+      "page_number": 78,
+      "purpose": "content",
+      "layout_family": "exercise",
+      "content_block_ids": [
+        "cb_6a7eb50231_0113"
+      ],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {},
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.85,
+      "notes": ""
+    },
+    {
+      "id": "pp_ba9904a2f749",
+      "page_number": 79,
+      "purpose": "content",
+      "layout_family": "exercise",
+      "content_block_ids": [
+        "cb_670483dbab_0114"
+      ],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {},
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.85,
+      "notes": ""
+    },
+    {
+      "id": "pp_8b3a1c2c3bfb",
+      "page_number": 80,
+      "purpose": "recap",
+      "layout_family": "recap",
+      "content_block_ids": [],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {},
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.7,
+      "notes": ""
+    },
+    {
+      "id": "pp_cb0159d22fdc",
+      "page_number": 81,
+      "purpose": "chapter_opener",
+      "layout_family": "chapter_opener",
+      "content_block_ids": [
+        "cb_5781b8102d_0115"
+      ],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {
+        "chapter_label": "CHAPTER",
+        "chapter_number": "8",
+        "title_size": "24pt"
+      },
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.35,
+      "notes": "Chapter opener for: Transaction Structures: Owner Financing, Options, and Creative Structures"
+    },
+    {
+      "id": "pp_54a1d88e556d",
+      "page_number": 82,
+      "purpose": "content",
+      "layout_family": "reading",
+      "content_block_ids": [
+        "cb_4254c1b25f_0116",
+        "cb_005e0313e8_0117",
+        "cb_86cdd5c1e5_0126"
+      ],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {},
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.85,
+      "notes": ""
+    },
+    {
+      "id": "pp_a7b3c0b3a05e",
+      "page_number": 83,
+      "purpose": "content",
+      "layout_family": "reading",
+      "content_block_ids": [
+        "cb_b1c3569ce9_0119"
+      ],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {},
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.85,
+      "notes": ""
+    },
+    {
+      "id": "pp_c4f5d11e0e0c",
+      "page_number": 84,
+      "purpose": "content",
+      "layout_family": "reading",
+      "content_block_ids": [
+        "cb_4e314f0c77_0121"
+      ],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {},
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.85,
+      "notes": ""
+    },
+    {
+      "id": "pp_fc4c6954c0bb",
+      "page_number": 85,
+      "purpose": "content",
+      "layout_family": "reading",
+      "content_block_ids": [
+        "cb_cfd8d6141c_0123"
+      ],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {},
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.85,
+      "notes": ""
+    },
+    {
+      "id": "pp_7df8736c9c8e",
+      "page_number": 86,
+      "purpose": "content",
+      "layout_family": "reading",
+      "content_block_ids": [
+        "cb_f4a73a83e1_0125"
+      ],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {},
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.85,
+      "notes": ""
+    },
+    {
+      "id": "pp_65dd918910c0",
+      "page_number": 87,
+      "purpose": "content",
+      "layout_family": "exercise",
+      "content_block_ids": [
+        "cb_24706dc0c2_0127"
+      ],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {},
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.85,
+      "notes": ""
+    },
+    {
+      "id": "pp_d25713483abf",
+      "page_number": 88,
+      "purpose": "content",
+      "layout_family": "exercise",
+      "content_block_ids": [
+        "cb_fab82214c7_0128"
+      ],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {},
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.85,
+      "notes": ""
+    },
+    {
+      "id": "pp_bf495a7e6f99",
+      "page_number": 89,
+      "purpose": "content",
+      "layout_family": "exercise",
+      "content_block_ids": [
+        "cb_57b09eee5d_0129"
+      ],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {},
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.85,
+      "notes": ""
+    },
+    {
+      "id": "pp_048766d47fba",
+      "page_number": 90,
+      "purpose": "recap",
+      "layout_family": "recap",
+      "content_block_ids": [],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {},
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.7,
+      "notes": ""
+    },
+    {
+      "id": "pp_c284c5e8c268",
+      "page_number": 91,
+      "purpose": "chapter_opener",
+      "layout_family": "chapter_opener",
+      "content_block_ids": [
+        "cb_594d759976_0130"
+      ],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {
+        "chapter_label": "CHAPTER",
+        "chapter_number": "9",
+        "title_size": "24pt"
+      },
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.35,
+      "notes": "Chapter opener for: Land Stabilization, Improvements, and Value-Add Strategies"
+    },
+    {
+      "id": "pp_4d3248c99b85",
+      "page_number": 92,
+      "purpose": "content",
+      "layout_family": "reading",
+      "content_block_ids": [
+        "cb_6ec26589dd_0131",
+        "cb_d9bc874621_0132",
+        "cb_34d4ee2ecc_0141"
+      ],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {},
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.85,
+      "notes": ""
+    },
+    {
+      "id": "pp_cb2a396abb3e",
+      "page_number": 93,
+      "purpose": "content",
+      "layout_family": "reading",
+      "content_block_ids": [
+        "cb_c7d9f6fb83_0134"
+      ],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {},
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.85,
+      "notes": ""
+    },
+    {
+      "id": "pp_55f069a171e2",
+      "page_number": 94,
+      "purpose": "content",
+      "layout_family": "reading",
+      "content_block_ids": [
+        "cb_2d8c31a8aa_0136"
+      ],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {},
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.85,
+      "notes": ""
+    },
+    {
+      "id": "pp_a99b622df2ec",
+      "page_number": 95,
+      "purpose": "content",
+      "layout_family": "reading",
+      "content_block_ids": [
+        "cb_0f76391b59_0138"
+      ],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {},
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.85,
+      "notes": ""
+    },
+    {
+      "id": "pp_3c264761b122",
+      "page_number": 96,
+      "purpose": "content",
+      "layout_family": "reading",
+      "content_block_ids": [
+        "cb_85f3d1a5a9_0140"
+      ],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {},
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.85,
+      "notes": ""
+    },
+    {
+      "id": "pp_6ee8789f1fd0",
+      "page_number": 97,
+      "purpose": "content",
+      "layout_family": "exercise",
+      "content_block_ids": [
+        "cb_ad804b9964_0142"
+      ],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {},
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.85,
+      "notes": ""
+    },
+    {
+      "id": "pp_b028e671df00",
+      "page_number": 98,
+      "purpose": "content",
+      "layout_family": "exercise",
+      "content_block_ids": [
+        "cb_f3e43a97eb_0143"
+      ],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {},
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.85,
+      "notes": ""
+    },
+    {
+      "id": "pp_2675edbaaf84",
+      "page_number": 99,
+      "purpose": "content",
+      "layout_family": "exercise",
+      "content_block_ids": [
+        "cb_a1578466af_0144"
+      ],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {},
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.85,
+      "notes": ""
+    },
+    {
+      "id": "pp_9fe14ba9cd1c",
+      "page_number": 100,
+      "purpose": "recap",
+      "layout_family": "recap",
+      "content_block_ids": [],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {},
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.7,
+      "notes": ""
+    },
+    {
+      "id": "pp_7f902595feb8",
+      "page_number": 101,
+      "purpose": "chapter_opener",
+      "layout_family": "chapter_opener",
+      "content_block_ids": [
+        "cb_f8d95de7f6_0145"
+      ],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {
+        "chapter_label": "CHAPTER",
+        "chapter_number": "10",
+        "title_size": "24pt"
+      },
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.35,
+      "notes": "Chapter opener for: Exit Strategies: Resale, Cash Flow, and Portfolio Management"
+    },
+    {
+      "id": "pp_2296308be638",
+      "page_number": 102,
+      "purpose": "content",
+      "layout_family": "reading",
+      "content_block_ids": [
+        "cb_0e04e87096_0146",
+        "cb_a4a2b4eb0f_0147",
+        "cb_d57ac2162f_0157"
+      ],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {},
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.85,
+      "notes": ""
+    },
+    {
+      "id": "pp_00546c73a13a",
+      "page_number": 103,
+      "purpose": "content",
+      "layout_family": "reading",
+      "content_block_ids": [
+        "cb_941fe33a53_0149"
+      ],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {},
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.85,
+      "notes": ""
+    },
+    {
+      "id": "pp_e5a4604951ea",
+      "page_number": 104,
+      "purpose": "content",
+      "layout_family": "reading",
+      "content_block_ids": [
+        "cb_d71fcd70d7_0151"
+      ],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {},
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.85,
+      "notes": ""
+    },
+    {
+      "id": "pp_43918d9ecb28",
+      "page_number": 105,
+      "purpose": "content",
+      "layout_family": "reading",
+      "content_block_ids": [
+        "cb_c99a7a7dc0_0153"
+      ],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {},
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.85,
+      "notes": ""
+    },
+    {
+      "id": "pp_80c02106b297",
+      "page_number": 106,
+      "purpose": "content",
+      "layout_family": "reading",
+      "content_block_ids": [
+        "cb_a101a24440_0154"
+      ],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {},
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.85,
+      "notes": ""
+    },
+    {
+      "id": "pp_ed4073915ba5",
+      "page_number": 107,
+      "purpose": "content",
+      "layout_family": "reading",
+      "content_block_ids": [
+        "cb_a00df13def_0156"
+      ],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {},
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.85,
+      "notes": ""
+    },
+    {
+      "id": "pp_7d19e3b65e17",
+      "page_number": 108,
+      "purpose": "content",
+      "layout_family": "exercise",
+      "content_block_ids": [
+        "cb_1f0176afad_0158"
+      ],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {},
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.85,
+      "notes": ""
+    },
+    {
+      "id": "pp_49ba2bfa2ade",
+      "page_number": 109,
+      "purpose": "content",
+      "layout_family": "exercise",
+      "content_block_ids": [
+        "cb_5a65da3434_0159"
+      ],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {},
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.85,
+      "notes": ""
+    },
+    {
+      "id": "pp_b8e8ee868d12",
+      "page_number": 110,
+      "purpose": "content",
+      "layout_family": "exercise",
+      "content_block_ids": [
+        "cb_658955d6f1_0160"
+      ],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {},
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.85,
+      "notes": ""
+    },
+    {
+      "id": "pp_bf24af94250f",
+      "page_number": 111,
+      "purpose": "recap",
+      "layout_family": "recap",
+      "content_block_ids": [],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {},
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.7,
+      "notes": ""
+    },
+    {
+      "id": "pp_24b1eaa35aba",
+      "page_number": 112,
+      "purpose": "chapter_opener",
+      "layout_family": "chapter_opener",
+      "content_block_ids": [
+        "cb_3c8aef4ed5_0161"
+      ],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {
+        "chapter_label": "CHAPTER",
+        "chapter_number": "11",
+        "title_size": "24pt"
+      },
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.35,
+      "notes": "Chapter opener for: The Complete Acquisition Checklist and Deal Review Framework"
+    },
+    {
+      "id": "pp_99402b7c33de",
+      "page_number": 113,
+      "purpose": "content",
+      "layout_family": "reading",
+      "content_block_ids": [
+        "cb_f4d83569c7_0162",
+        "cb_ad154758a8_0163",
+        "cb_1a94772341_0172"
+      ],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {},
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.85,
+      "notes": ""
+    },
+    {
+      "id": "pp_90bea189576a",
+      "page_number": 114,
+      "purpose": "content",
+      "layout_family": "reading",
+      "content_block_ids": [
+        "cb_d8f599394d_0165"
+      ],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {},
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.85,
+      "notes": ""
+    },
+    {
+      "id": "pp_ef7660fedf20",
+      "page_number": 115,
+      "purpose": "content",
+      "layout_family": "reading",
+      "content_block_ids": [
+        "cb_c1dbaf7466_0167"
+      ],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {},
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.85,
+      "notes": ""
+    },
+    {
+      "id": "pp_e3246b6a9be5",
+      "page_number": 116,
+      "purpose": "content",
+      "layout_family": "reading",
+      "content_block_ids": [
+        "cb_ea4c57af7c_0169"
+      ],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {},
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.85,
+      "notes": ""
+    },
+    {
+      "id": "pp_93f5845de677",
+      "page_number": 117,
+      "purpose": "content",
+      "layout_family": "reading",
+      "content_block_ids": [
+        "cb_fda87bfa2a_0171"
+      ],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {},
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.85,
+      "notes": ""
+    },
+    {
+      "id": "pp_be66b6ee863b",
+      "page_number": 118,
+      "purpose": "content",
+      "layout_family": "exercise",
+      "content_block_ids": [
+        "cb_077574c71f_0173"
+      ],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {},
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.85,
+      "notes": ""
+    },
+    {
+      "id": "pp_f14e645b6b38",
+      "page_number": 119,
+      "purpose": "content",
+      "layout_family": "exercise",
+      "content_block_ids": [
+        "cb_2d04b1ba21_0174"
+      ],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {},
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.85,
+      "notes": ""
+    },
+    {
+      "id": "pp_63040d951686",
+      "page_number": 120,
+      "purpose": "content",
+      "layout_family": "exercise",
+      "content_block_ids": [
+        "cb_36e7ddecce_0175"
+      ],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {},
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.85,
+      "notes": ""
+    },
+    {
+      "id": "pp_da433b1adca0",
+      "page_number": 121,
+      "purpose": "recap",
+      "layout_family": "recap",
+      "content_block_ids": [],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {},
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.7,
+      "notes": ""
+    },
+    {
+      "id": "pp_2052d4cebcfb",
+      "page_number": 122,
+      "purpose": "chapter_opener",
+      "layout_family": "chapter_opener",
+      "content_block_ids": [
+        "cb_1d6b635ad3_0176"
+      ],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {
+        "chapter_label": "CHAPTER",
+        "chapter_number": "12",
+        "title_size": "24pt"
+      },
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.35,
+      "notes": "Chapter opener for: Worked Example: A Complete Hypothetical Land Transaction"
+    },
+    {
+      "id": "pp_34156284d123",
+      "page_number": 123,
+      "purpose": "content",
+      "layout_family": "reading",
+      "content_block_ids": [
+        "cb_68277a2e2e_0178",
+        "cb_e6ee8ebc07_0194"
+      ],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {},
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.85,
+      "notes": ""
+    },
+    {
+      "id": "pp_7be2314bc832",
+      "page_number": 124,
+      "purpose": "content",
+      "layout_family": "reading",
+      "content_block_ids": [
+        "cb_0e8e694874_0177"
+      ],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {},
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.85,
+      "notes": ""
+    },
+    {
+      "id": "pp_df9bad63b98b",
+      "page_number": 125,
+      "purpose": "content",
+      "layout_family": "reading",
+      "content_block_ids": [
+        "cb_f24ef0e632_0180"
+      ],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {},
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.85,
+      "notes": ""
+    },
+    {
+      "id": "pp_fe9739833643",
+      "page_number": 126,
+      "purpose": "content",
+      "layout_family": "reading",
+      "content_block_ids": [
+        "cb_298a8916bd_0182"
+      ],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {},
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.85,
+      "notes": ""
+    },
+    {
+      "id": "pp_7323f76f1446",
+      "page_number": 127,
+      "purpose": "content",
+      "layout_family": "reading",
+      "content_block_ids": [
+        "cb_7f4dabbc2a_0184"
+      ],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {},
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.85,
+      "notes": ""
+    },
+    {
+      "id": "pp_4f3314cc10fd",
+      "page_number": 128,
+      "purpose": "content",
+      "layout_family": "reading",
+      "content_block_ids": [
+        "cb_ab16c744fd_0185"
+      ],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {},
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.85,
+      "notes": ""
+    },
+    {
+      "id": "pp_091f1b2bf44c",
+      "page_number": 129,
+      "purpose": "content",
+      "layout_family": "reading",
+      "content_block_ids": [
+        "cb_d1e9fdb1bf_0187"
+      ],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {},
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.85,
+      "notes": ""
+    },
+    {
+      "id": "pp_164f2bfb8fb0",
+      "page_number": 130,
+      "purpose": "content",
+      "layout_family": "reading",
+      "content_block_ids": [
+        "cb_b0082e44ac_0188"
+      ],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {},
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.85,
+      "notes": ""
+    },
+    {
+      "id": "pp_639e08431896",
+      "page_number": 131,
+      "purpose": "content",
+      "layout_family": "exercise",
+      "content_block_ids": [
+        "cb_31d9154aac_0189"
+      ],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {},
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.85,
+      "notes": ""
+    },
+    {
+      "id": "pp_25519a14eda7",
+      "page_number": 132,
+      "purpose": "content",
+      "layout_family": "exercise",
+      "content_block_ids": [
+        "cb_1bb24d358e_0190"
+      ],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {},
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.85,
+      "notes": ""
+    },
+    {
+      "id": "pp_1a36c56af413",
+      "page_number": 133,
+      "purpose": "content",
+      "layout_family": "exercise",
+      "content_block_ids": [
+        "cb_a2f9a98e3e_0191"
+      ],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {},
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.85,
+      "notes": ""
+    },
+    {
+      "id": "pp_6074d1eea7f6",
+      "page_number": 134,
+      "purpose": "recap",
+      "layout_family": "recap",
+      "content_block_ids": [],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {},
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.7,
+      "notes": ""
+    },
+    {
+      "id": "pp_c99560c100f2",
+      "page_number": 135,
+      "purpose": "back_cover",
+      "layout_family": "cover",
+      "content_block_ids": [],
+      "page_width_mm": 210.0,
+      "page_height_mm": 297.0,
+      "safe_area": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "margins": {
+        "top_mm": 25.0,
+        "bottom_mm": 25.0,
+        "left_mm": 28.0,
+        "right_mm": 22.0
+      },
+      "grid": {},
+      "regions": {},
+      "typography": {},
+      "image_briefs": [],
+      "components": [],
+      "header_footer": {},
+      "accessibility": {},
+      "validation_criteria": {},
+      "density_target": 0.2,
+      "notes": ""
+    }
+  ],
+  "asset_briefs": [],
+  "structure_map": {
+    "total_pages": 135,
+    "chapters": {
+      "1": {
+        "pages": [
+          5
+        ],
+        "page_count": 1
+      },
+      "2": {
+        "pages": [
+          15
+        ],
+        "page_count": 1
+      },
+      "3": {
+        "pages": [
+          26
+        ],
+        "page_count": 1
+      },
+      "4": {
+        "pages": [
+          36
+        ],
+        "page_count": 1
+      },
+      "5": {
+        "pages": [
+          48
+        ],
+        "page_count": 1
+      },
+      "6": {
+        "pages": [
+          59
+        ],
+        "page_count": 1
+      },
+      "7": {
+        "pages": [
+          70
+        ],
+        "page_count": 1
+      },
+      "8": {
+        "pages": [
+          81
+        ],
+        "page_count": 1
+      },
+      "9": {
+        "pages": [
+          91
+        ],
+        "page_count": 1
+      },
+      "10": {
+        "pages": [
+          101
+        ],
+        "page_count": 1
+      },
+      "11": {
+        "pages": [
+          112
+        ],
+        "page_count": 1
+      },
+      "12": {
+        "pages": [
+          122
+        ],
+        "page_count": 1
+      }
+    },
+    "front_matter_pages": [
+      1,
+      2,
+      4
+    ],
+    "back_matter_pages": [
+      135
+    ]
+  },
+  "pagination_strategy": "adaptive"
+}

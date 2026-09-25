@@ -1,0 +1,670 @@
+{
+  "id": "ep_bf5668b08200",
+  "manuscript_id": "ms_4ce57dc5965e",
+  "brand_profile_id": "builtin_institutional",
+  "design_tokens": {
+    "brand_name": "Institutional",
+    "page_width_mm": 210.0,
+    "page_height_mm": 297.0,
+    "margin_top_mm": 25.0,
+    "margin_bottom_mm": 25.0,
+    "margin_inner_mm": 28.0,
+    "margin_outer_mm": 22.0,
+    "columns": 1,
+    "column_gutter_mm": 5.0,
+    "body_font_family": "Source Serif 4",
+    "heading_font_family": "Source Sans 3",
+    "mono_font_family": "Source Code Pro",
+    "body_font_size_pt": 10.5,
+    "heading_font_sizes": {
+      "1": 18.0,
+      "2": 14.0,
+      "3": 11.0
+    },
+    "line_height_em": 1.45,
+    "paragraph_spacing_em": 0.7,
+    "first_line_indent_em": 1.25,
+    "colors": {
+      "accent": "#0d9488",
+      "heading": "#1d3557",
+      "body": "#1a1a1a",
+      "muted": "#64748b",
+      "background": "#ffffff",
+      "sidebar_bg": "#f8f9fa",
+      "table_header": "#e9ecef",
+      "table_row_alt": "#f8f9fa",
+      "accent_light": "#14b8a6"
+    },
+    "heading_weights": {
+      "1": "bold",
+      "2": "semibold",
+      "3": "semibold"
+    },
+    "numbered_headings": true,
+    "show_toc": true,
+    "show_header_footer": true,
+    "header_rule": true,
+    "page_num_position": "bottom-center",
+    "chapter_break": true,
+    "indent_style": "indent",
+    "hyphenate": true,
+    "justify": true,
+    "image_treatment": "editorial",
+    "illustration_style": "clean"
+  },
+  "publication_brief": {
+    "subject": "The Land Investor's Field Manual",
+    "audience": "Learners, students, professionals seeking skill development",
+    "purpose": "Teach concepts and skills through structured lessons and practice",
+    "tone": "encouraging, clear, structured",
+    "complexity": "middle_school",
+    "learning_objectives": [
+      "Practice: Exercise: Apply Market overview and size to your situation",
+      "Practice: Worksheet: Land classification systems assessment",
+      "Practice: Analysis: Evaluate Investment thesis by land type for a hypothetical parcel",
+      "Practice: Exercise: Apply Comparable sales analysis to your situation",
+      "Practice: Worksheet: Income approach for agricultural land assessment",
+      "Practice: Analysis: Evaluate Recreational land valuation for a hypothetical parcel",
+      "Practice: Exercise: Apply MLS and public listing strategies to your situation",
+      "Practice: Worksheet: Direct mail and skip tracing assessment",
+      "Practice: Analysis: Evaluate Networking and broker relationships for a hypothetical parcel",
+      "Practice: Exercise: Apply Seller motivation analysis to your situation"
+    ],
+    "visual_language": "clean, diagrammatic, workbook-friendly",
+    "recommended_page_size": "A4",
+    "recommended_template": "book",
+    "color_theme": "teal",
+    "typography_direction": "readable serif + clear sans"
+  },
+  "page_plans": [
+    {
+      "id": "pp_cd3eef2cba5f",
+      "page_number": 1,
+      "purpose": "cover",
+      "layout_family": "cover",
+      "content_block_ids": [],
+      "image_briefs": []
+    },
+    {
+      "id": "pp_bbc2ebdab729",
+      "page_number": 2,
+      "purpose": "title_page",
+      "layout_family": "title",
+      "content_block_ids": [],
+      "image_briefs": []
+    },
+    {
+      "id": "pp_c8feeae49bd3",
+      "page_number": 3,
+      "purpose": "toc",
+      "layout_family": "toc",
+      "content_block_ids": [],
+      "image_briefs": []
+    },
+    {
+      "id": "pp_3cf955cb5296",
+      "page_number": 4,
+      "purpose": "chapter_opener",
+      "layout_family": "chapter_opener",
+      "content_block_ids": [],
+      "image_briefs": []
+    },
+    {
+      "id": "pp_429858e4b7de",
+      "page_number": 5,
+      "purpose": "content",
+      "layout_family": "reading",
+      "content_block_ids": [
+        "cb_ad044afcaa_0002",
+        "cb_93d6c1f237_0003"
+      ],
+      "image_briefs": []
+    },
+    {
+      "id": "pp_6f40c5780b4b",
+      "page_number": 6,
+      "purpose": "chapter_opener",
+      "layout_family": "chapter_opener",
+      "content_block_ids": [],
+      "image_briefs": []
+    },
+    {
+      "id": "pp_3517d3864897",
+      "page_number": 7,
+      "purpose": "content",
+      "layout_family": "reading",
+      "content_block_ids": [
+        "cb_68deb0a85a_0005",
+        "cb_53a5a51b41_0006",
+        "cb_d3f3b8a1c3_0008",
+        "cb_78898f291d_0010",
+        "cb_fecc806036_0012"
+      ],
+      "image_briefs": []
+    },
+    {
+      "id": "pp_16782a57c149",
+      "page_number": 8,
+      "purpose": "content",
+      "layout_family": "exercise",
+      "content_block_ids": [
+        "cb_ea85611221_0014",
+        "cb_145251733a_0015",
+        "cb_694311715c_0016",
+        "cb_51fb35a14b_0017",
+        "cb_68df1f2f96_0018"
+      ],
+      "image_briefs": []
+    },
+    {
+      "id": "pp_920a78630a31",
+      "page_number": 9,
+      "purpose": "recap",
+      "layout_family": "recap",
+      "content_block_ids": [],
+      "image_briefs": []
+    },
+    {
+      "id": "pp_85df2f478d9a",
+      "page_number": 10,
+      "purpose": "chapter_opener",
+      "layout_family": "chapter_opener",
+      "content_block_ids": [],
+      "image_briefs": []
+    },
+    {
+      "id": "pp_9fa1f4db642f",
+      "page_number": 11,
+      "purpose": "content",
+      "layout_family": "reading",
+      "content_block_ids": [
+        "cb_c38b0b5e26_0020",
+        "cb_6c429b0dc5_0021",
+        "cb_5a7a3a12eb_0023",
+        "cb_318d5f5253_0024",
+        "cb_88e044e445_0026"
+      ],
+      "image_briefs": []
+    },
+    {
+      "id": "pp_7c9b93a3e396",
+      "page_number": 12,
+      "purpose": "content",
+      "layout_family": "exercise",
+      "content_block_ids": [
+        "cb_583122567f_0028",
+        "cb_f5f25219c3_0030",
+        "cb_3b40a9da15_0031",
+        "cb_f2213e9400_0032",
+        "cb_e6ed2bc7cb_0033",
+        "cb_163fc014d3_0034"
+      ],
+      "image_briefs": []
+    },
+    {
+      "id": "pp_d5de0c64ebf9",
+      "page_number": 13,
+      "purpose": "recap",
+      "layout_family": "recap",
+      "content_block_ids": [],
+      "image_briefs": []
+    },
+    {
+      "id": "pp_a7fc432c4876",
+      "page_number": 14,
+      "purpose": "chapter_opener",
+      "layout_family": "chapter_opener",
+      "content_block_ids": [],
+      "image_briefs": []
+    },
+    {
+      "id": "pp_909beaa004cf",
+      "page_number": 15,
+      "purpose": "content",
+      "layout_family": "reading",
+      "content_block_ids": [
+        "cb_c11e8361cc_0036",
+        "cb_f65b9b9a3d_0037",
+        "cb_46afbbd40f_0039",
+        "cb_cd2175b832_0041",
+        "cb_48e256987e_0043"
+      ],
+      "image_briefs": []
+    },
+    {
+      "id": "pp_1c98cef7ed3c",
+      "page_number": 16,
+      "purpose": "content",
+      "layout_family": "exercise",
+      "content_block_ids": [
+        "cb_e50f751e50_0045",
+        "cb_447619e138_0046",
+        "cb_8c07b8dad1_0047",
+        "cb_68b155e10e_0048",
+        "cb_f4c2f940f1_0049"
+      ],
+      "image_briefs": []
+    },
+    {
+      "id": "pp_53ed93a29980",
+      "page_number": 17,
+      "purpose": "recap",
+      "layout_family": "recap",
+      "content_block_ids": [],
+      "image_briefs": []
+    },
+    {
+      "id": "pp_56c88f570c39",
+      "page_number": 18,
+      "purpose": "chapter_opener",
+      "layout_family": "chapter_opener",
+      "content_block_ids": [],
+      "image_briefs": []
+    },
+    {
+      "id": "pp_649f7ec8023a",
+      "page_number": 19,
+      "purpose": "content",
+      "layout_family": "reading",
+      "content_block_ids": [
+        "cb_9caf898ce4_0051",
+        "cb_6148f5b79f_0052",
+        "cb_9656e88c6a_0054",
+        "cb_8f29e6ac62_0055",
+        "cb_ffb068930a_0057"
+      ],
+      "image_briefs": []
+    },
+    {
+      "id": "pp_ce9889b20739",
+      "page_number": 20,
+      "purpose": "content",
+      "layout_family": "exercise",
+      "content_block_ids": [
+        "cb_6300c17e07_0059",
+        "cb_ff424950e8_0060",
+        "cb_276f2bdc1a_0062",
+        "cb_73fc3dd394_0063",
+        "cb_b0b7502afe_0064",
+        "cb_9225dd7da9_0065",
+        "cb_05179c8754_0066"
+      ],
+      "image_briefs": []
+    },
+    {
+      "id": "pp_322b06f5c83a",
+      "page_number": 21,
+      "purpose": "recap",
+      "layout_family": "recap",
+      "content_block_ids": [],
+      "image_briefs": []
+    },
+    {
+      "id": "pp_9213f94d55bb",
+      "page_number": 22,
+      "purpose": "chapter_opener",
+      "layout_family": "chapter_opener",
+      "content_block_ids": [],
+      "image_briefs": []
+    },
+    {
+      "id": "pp_055f01656217",
+      "page_number": 23,
+      "purpose": "content",
+      "layout_family": "reading",
+      "content_block_ids": [
+        "cb_ba1fffc2cb_0068",
+        "cb_136949ea5c_0069",
+        "cb_a3959d434c_0071",
+        "cb_916a2155ea_0073",
+        "cb_8f8b81eff1_0075"
+      ],
+      "image_briefs": []
+    },
+    {
+      "id": "pp_6c00c71ed12d",
+      "page_number": 24,
+      "purpose": "content",
+      "layout_family": "exercise",
+      "content_block_ids": [
+        "cb_2dfef4427d_0076",
+        "cb_0e9501ec32_0078",
+        "cb_013cab0c27_0079",
+        "cb_fb7a36e202_0080",
+        "cb_2b9c484250_0081",
+        "cb_e5fbdcc840_0082"
+      ],
+      "image_briefs": []
+    },
+    {
+      "id": "pp_d6a37146a973",
+      "page_number": 25,
+      "purpose": "recap",
+      "layout_family": "recap",
+      "content_block_ids": [],
+      "image_briefs": []
+    },
+    {
+      "id": "pp_21965ec17bbc",
+      "page_number": 26,
+      "purpose": "chapter_opener",
+      "layout_family": "chapter_opener",
+      "content_block_ids": [],
+      "image_briefs": []
+    },
+    {
+      "id": "pp_20e15dc4ed08",
+      "page_number": 27,
+      "purpose": "content",
+      "layout_family": "reading",
+      "content_block_ids": [
+        "cb_88d421e3b4_0084",
+        "cb_360908e07b_0085",
+        "cb_42d65dbb7d_0087",
+        "cb_8a113ce954_0089",
+        "cb_d570361b54_0091"
+      ],
+      "image_briefs": []
+    },
+    {
+      "id": "pp_5284abab8041",
+      "page_number": 28,
+      "purpose": "content",
+      "layout_family": "exercise",
+      "content_block_ids": [
+        "cb_8dbadd08e9_0092",
+        "cb_1f2f98544e_0094",
+        "cb_854623a73f_0095",
+        "cb_0f264377fc_0096",
+        "cb_9bef96feb3_0097",
+        "cb_7a120dbdf6_0098"
+      ],
+      "image_briefs": []
+    },
+    {
+      "id": "pp_41ed76dd69a6",
+      "page_number": 29,
+      "purpose": "recap",
+      "layout_family": "recap",
+      "content_block_ids": [],
+      "image_briefs": []
+    },
+    {
+      "id": "pp_e82ccd2ba9b1",
+      "page_number": 30,
+      "purpose": "chapter_opener",
+      "layout_family": "chapter_opener",
+      "content_block_ids": [],
+      "image_briefs": []
+    },
+    {
+      "id": "pp_f3ac83b5a594",
+      "page_number": 31,
+      "purpose": "content",
+      "layout_family": "reading",
+      "content_block_ids": [
+        "cb_167a7cbfdb_0100",
+        "cb_1063cf23be_0101",
+        "cb_aab0790b21_0103",
+        "cb_fbaee25dc6_0105",
+        "cb_69a1f67340_0107"
+      ],
+      "image_briefs": []
+    },
+    {
+      "id": "pp_6bbbff02d4ef",
+      "page_number": 32,
+      "purpose": "content",
+      "layout_family": "exercise",
+      "content_block_ids": [
+        "cb_747ebbdedf_0109",
+        "cb_e4a23094a7_0110",
+        "cb_1544d6385f_0111",
+        "cb_3c63680638_0112",
+        "cb_809481d32c_0113",
+        "cb_ccd06b5f89_0114"
+      ],
+      "image_briefs": []
+    },
+    {
+      "id": "pp_aad7b7a8f05a",
+      "page_number": 33,
+      "purpose": "recap",
+      "layout_family": "recap",
+      "content_block_ids": [],
+      "image_briefs": []
+    },
+    {
+      "id": "pp_c48f65e5edb6",
+      "page_number": 34,
+      "purpose": "chapter_opener",
+      "layout_family": "chapter_opener",
+      "content_block_ids": [],
+      "image_briefs": []
+    },
+    {
+      "id": "pp_0a77d888b792",
+      "page_number": 35,
+      "purpose": "content",
+      "layout_family": "reading",
+      "content_block_ids": [
+        "cb_298e0ed639_0116",
+        "cb_89ac8c46c8_0117",
+        "cb_4ebce7868f_0119",
+        "cb_3b7a77ecc8_0121",
+        "cb_a06b52b06e_0123"
+      ],
+      "image_briefs": []
+    },
+    {
+      "id": "pp_a735edaaa4b7",
+      "page_number": 36,
+      "purpose": "content",
+      "layout_family": "exercise",
+      "content_block_ids": [
+        "cb_7c0a650679_0125",
+        "cb_f797db45e4_0126",
+        "cb_42327cc6d2_0127",
+        "cb_f4628edd1f_0128",
+        "cb_75cd1ab70f_0129"
+      ],
+      "image_briefs": []
+    },
+    {
+      "id": "pp_93f94d57d271",
+      "page_number": 37,
+      "purpose": "recap",
+      "layout_family": "recap",
+      "content_block_ids": [],
+      "image_briefs": []
+    },
+    {
+      "id": "pp_7e4de5a4c763",
+      "page_number": 38,
+      "purpose": "chapter_opener",
+      "layout_family": "chapter_opener",
+      "content_block_ids": [],
+      "image_briefs": []
+    },
+    {
+      "id": "pp_4fd0e2491bbf",
+      "page_number": 39,
+      "purpose": "content",
+      "layout_family": "reading",
+      "content_block_ids": [
+        "cb_97b7f1b36e_0131",
+        "cb_d43f9d53c2_0132",
+        "cb_7dfeea22f3_0134",
+        "cb_6a472dafbb_0136",
+        "cb_5f64325e87_0138"
+      ],
+      "image_briefs": []
+    },
+    {
+      "id": "pp_d33c030cab74",
+      "page_number": 40,
+      "purpose": "content",
+      "layout_family": "exercise",
+      "content_block_ids": [
+        "cb_38084adb2c_0140",
+        "cb_3868426fcb_0141",
+        "cb_fb96adbae2_0142",
+        "cb_a16d5aed98_0143",
+        "cb_32a76a25be_0144"
+      ],
+      "image_briefs": []
+    },
+    {
+      "id": "pp_cb2f26ada3d7",
+      "page_number": 41,
+      "purpose": "recap",
+      "layout_family": "recap",
+      "content_block_ids": [],
+      "image_briefs": []
+    },
+    {
+      "id": "pp_62f7945966a9",
+      "page_number": 42,
+      "purpose": "chapter_opener",
+      "layout_family": "chapter_opener",
+      "content_block_ids": [],
+      "image_briefs": []
+    },
+    {
+      "id": "pp_1ad260109b7f",
+      "page_number": 43,
+      "purpose": "content",
+      "layout_family": "reading",
+      "content_block_ids": [
+        "cb_d371d1c4b1_0146",
+        "cb_274a454912_0147",
+        "cb_6fb476ac0c_0149",
+        "cb_6c79ef628d_0151",
+        "cb_d5c2910777_0153"
+      ],
+      "image_briefs": []
+    },
+    {
+      "id": "pp_f7bdfa12a875",
+      "page_number": 44,
+      "purpose": "content",
+      "layout_family": "exercise",
+      "content_block_ids": [
+        "cb_2cad8407ea_0154",
+        "cb_ee0a2245d5_0156",
+        "cb_695f83f59d_0157",
+        "cb_62bd0840d1_0158",
+        "cb_24696515dc_0159",
+        "cb_9630c4472e_0160"
+      ],
+      "image_briefs": []
+    },
+    {
+      "id": "pp_00bcf2c9aded",
+      "page_number": 45,
+      "purpose": "recap",
+      "layout_family": "recap",
+      "content_block_ids": [],
+      "image_briefs": []
+    },
+    {
+      "id": "pp_05ac4c67b288",
+      "page_number": 46,
+      "purpose": "chapter_opener",
+      "layout_family": "chapter_opener",
+      "content_block_ids": [],
+      "image_briefs": []
+    },
+    {
+      "id": "pp_dfe5fb8cab37",
+      "page_number": 47,
+      "purpose": "content",
+      "layout_family": "reading",
+      "content_block_ids": [
+        "cb_ab27ff4502_0162",
+        "cb_7b72ac957c_0163",
+        "cb_018680d5fb_0165",
+        "cb_823c3dd4df_0167",
+        "cb_d8908e3ede_0169"
+      ],
+      "image_briefs": []
+    },
+    {
+      "id": "pp_b9afcca6acb5",
+      "page_number": 48,
+      "purpose": "content",
+      "layout_family": "exercise",
+      "content_block_ids": [
+        "cb_045d5db641_0171",
+        "cb_922c599ee1_0172",
+        "cb_e3001a14ab_0173",
+        "cb_e416b473ae_0174",
+        "cb_7f2d63a5cc_0175"
+      ],
+      "image_briefs": []
+    },
+    {
+      "id": "pp_bcd5ef6f2747",
+      "page_number": 49,
+      "purpose": "recap",
+      "layout_family": "recap",
+      "content_block_ids": [],
+      "image_briefs": []
+    },
+    {
+      "id": "pp_b6f5f687070b",
+      "page_number": 50,
+      "purpose": "chapter_opener",
+      "layout_family": "chapter_opener",
+      "content_block_ids": [],
+      "image_briefs": []
+    },
+    {
+      "id": "pp_c083c10aa768",
+      "page_number": 51,
+      "purpose": "content",
+      "layout_family": "reading",
+      "content_block_ids": [
+        "cb_5f861ab049_0177",
+        "cb_08a718fc31_0178",
+        "cb_c5bfc2d2ea_0180",
+        "cb_78fedf1dce_0182",
+        "cb_b022bd097f_0184"
+      ],
+      "image_briefs": []
+    },
+    {
+      "id": "pp_9b8d22acc23f",
+      "page_number": 52,
+      "purpose": "content",
+      "layout_family": "exercise",
+      "content_block_ids": [
+        "cb_fa70b2f5d6_0185",
+        "cb_8b3e81d599_0187",
+        "cb_1eb1b55c2d_0188",
+        "cb_34d9654bd0_0189",
+        "cb_704a8e7d01_0190",
+        "cb_86a41b104b_0191",
+        "cb_4dd7dff0dd_0194"
+      ],
+      "image_briefs": []
+    },
+    {
+      "id": "pp_c51cc5b20da4",
+      "page_number": 53,
+      "purpose": "recap",
+      "layout_family": "recap",
+      "content_block_ids": [],
+      "image_briefs": []
+    },
+    {
+      "id": "pp_7fbc2435ae9c",
+      "page_number": 54,
+      "purpose": "back_cover",
+      "layout_family": "cover",
+      "content_block_ids": [],
+      "image_briefs": []
+    }
+  ],
+  "asset_briefs": []
+}

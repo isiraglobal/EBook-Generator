@@ -1,0 +1,16 @@
+{
+  "id": "rj_e4cdc64f18ab",
+  "project_id": "prj_8a26ed8ecd0d",
+  "editorial_plan_id": "ep_79df65b65afb",
+  "status": "completed",
+  "progress": 0.0,
+  "current_step": "",
+  "output_pdf_path": "/Users/lakshitsinghvi/Documents/Repos/EBook-Generator/test_e2e.pdf",
+  "page_images": [],
+  "qa_report_id": "",
+  "error_message": "",
+  "logs": [],
+  "started_at": null,
+  "completed_at": null,
+  "retry_count": 0
+}

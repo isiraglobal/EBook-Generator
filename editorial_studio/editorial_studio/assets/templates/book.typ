@@ -144,7 +144,7 @@
   #set page(numbering: "i")
   #counter(page).update(1)
   #align(center)[
-    #text(font: heading-font, size: 13pt, weight: "bold")[Содержание]
+    #text(font: heading-font, size: 13pt, weight: "bold")[Table of Contents]
   ]
   #v(0.6em)
   #outline(title: none, indent: 1.5em, depth: 2)
@@ -163,7 +163,7 @@
   let lvl = section.level
   if lvl == 1 {
     heading(level: 1)[#section.title]
-    // метка начала главы для постраничного QC (docs/SPEC_PAGE_FILL.md)
+    // Chapter start marker for per-page QC (docs/SPEC_PAGE_FILL.md)
     context [#metadata(here().position()) <bp-sec>]
   }
   else if lvl == 2 { heading(level: 2)[#section.title] }
@@ -196,36 +196,11 @@
 
   for im in top-imgs { book-fig(im) }
 
-  // Split by paragraph for Stage-3 <bp-para> marks and after:N interleaving.
-  // Inline mark appended to each para; chunk is eval'd as ONE string via join("\n\n")
-  // to preserve the original paragraph spacing (same as eval'ing the whole block).
-  let paras  = safe-content.split("\n\n").map(s => s.trim()).filter(s => s != "")
-  let total  = paras.len()
-  let with-mark(pi) = (
-    paras.at(pi)
-    + "#box(context[#metadata((sec: " + str(si)
-    + ", para: " + str(pi)
-    + ", pos: here().position())) <bp-para>])"
-  )
-  let render-chunk(from, to) = {
-    if from < to {
-      eval(range(from, to).map(with-mark).join("\n\n"), mode: "markup")
-    }
-  }
-  let n      = flow-imgs.len()
-  let cursor = 0
-  for (k, im) in flow-imgs.enumerate() {
-    let pos = im.at("position", default: "auto")
-    let cut = if pos.starts-with("after:") {
-      calc.min(total, calc.max(0, int(pos.slice(6))))
-    } else {
-      calc.min(total, calc.ceil(total * (k + 1) / (n + 1)))
-    }
-    render-chunk(cursor, cut)
-    cursor = cut
-    book-fig(im)
-  }
-  render-chunk(cursor, total)
+  // Render section content directly (simplified for Typst 0.15 compat)
+  eval(safe-content, mode: "markup")
+
+  // Render flow images sequentially (simplified - no paragraph interleaving)
+  for im in flow-imgs { book-fig(im) }
 
   for gal in section.at("galleries", default: ()) { render-gallery(gal) }
   for tbl in section.tables { render-table(tbl) }

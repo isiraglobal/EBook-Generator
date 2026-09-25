@@ -161,6 +161,7 @@ class ContentBlock:
     is_generated: bool = False
     traceability: dict[str, Any] = field(default_factory=dict)
     metadata: dict[str, Any] = field(default_factory=dict)
+    matter: str = "body"
 
     def __post_init__(self):
         if not self.id:

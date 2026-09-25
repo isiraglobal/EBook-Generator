@@ -15,6 +15,8 @@ from editorial_studio.core.models import (
     PagePlan,
     PagePurpose,
     LayoutFamily,
+    ContentType,
+    SemanticRole,
 )
 from editorial_studio.core.config import load_config
 
@@ -29,8 +31,31 @@ class TypstRenderer:
         self.default_dpi = self.config.get("rendering", {}).get("default_dpi", 300)
         self.preview_dpi = self.config.get("rendering", {}).get("preview_dpi", 144)
 
+        # Layout family to layout_library function mapping
+        # Keys must match the layout-functions dictionary in layout_library.typ
+        self.layout_function_map = {
+            LayoutFamily.COVER: "cover",
+            LayoutFamily.TITLE: "title-page",
+            LayoutFamily.TOC: "toc",
+            LayoutFamily.CHAPTER_OPENER: "chapter-opener",
+            LayoutFamily.READING: "reading",
+            LayoutFamily.IMAGE_LED: "image-led",
+            LayoutFamily.CASE_STUDY: "case-study",
+            LayoutFamily.WORKED_EXAMPLE: "worked-example",
+            LayoutFamily.CHECKLIST: "checklist",
+            LayoutFamily.PROCESS_DIAGRAM: "process-diagram",
+            LayoutFamily.COMPARISON_TABLE: "reading",
+            LayoutFamily.EXERCISE: "exercise",
+            LayoutFamily.RECAP: "recap",
+            LayoutFamily.GLOSSARY: "reading",
+            LayoutFamily.REFERENCES: "reading",
+            LayoutFamily.APPENDIX: "reading",
+            LayoutFamily.CLOSING: "reading",
+        }
+
     def render_pdf(self, manuscript: Manuscript, plan: EditorialPlan, assets: list[Asset],
-                   output_path: str, strict_layout: bool = False) -> dict[str, Any]:
+                   output_path: str, strict_layout: bool = False,
+                   watermark: dict[str, Any] | None = None) -> dict[str, Any]:
         work_dir = Path(tempfile.mkdtemp(prefix=f"editorial_render_{uuid.uuid4().hex[:8]}_"))
         output_path_abs = Path(output_path).resolve()
         try:
@@ -45,27 +70,56 @@ class TypstRenderer:
                     shutil.copy2(src, dst)
                     asset_map[asset.id] = f"assets/{src.name}"
 
+            # Handle watermark image if provided
+            watermark_data = {}
+            if watermark and watermark.get("enabled", False):
+                watermark_path = watermark.get("image_path") or watermark.get("text")
+                if watermark_path:
+                    src = Path(watermark_path)
+                    if src.exists():
+                        dst = assets_dir / src.name
+                        shutil.copy2(src, dst)
+                        watermark_data = {
+                            "enabled": True,
+                            "image_path": f"assets/{src.name}",
+                            "text": watermark.get("text", ""),
+                            "position": watermark.get("position", "center"),
+                            "scale": watermark.get("scale", 1.0),
+                            "rotation": watermark.get("rotation", 0),
+                            "opacity": watermark.get("opacity", 0.15),
+                            "color": watermark.get("color", "#000000"),
+                            "pages": watermark.get("pages", "all"),
+                            "layer": watermark.get("layer", "under"),
+                        }
+
+            # Build page-by-page data structure from editorial plan
+            page_data = self._build_page_data(manuscript, plan, asset_map)
+
             content_data = {
                 "title": manuscript.title,
                 "author": manuscript.author,
                 "language": "en",
                 "preset": self._tokens_to_preset(plan.design_tokens),
-                "sections": self._build_sections(manuscript, plan, asset_map),
+                "pages": page_data,
+                "watermark": watermark_data,
             }
 
             content_json_path = assets_dir / "content.json"
             content_json_path.write_text(json.dumps(content_data, ensure_ascii=False, indent=2))
 
-            template_name = self._select_template(plan)
-            template_path = self.templates_dir / f"{template_name}.typ"
-            if not template_path.exists():
-                template_path = self.templates_dir / "book.typ"
+            # Use the page-based template for proper per-page rendering
+            template_path = self.templates_dir / "book_pages.typ"
 
             main_typ = work_dir / "main.typ"
             shutil.copy2(template_path, main_typ)
 
             for helper in self.templates_dir.glob("helpers.typ"):
                 shutil.copy2(helper, work_dir / helper.name)
+
+            # Also copy layout_library.typ
+            layout_lib = self.templates_dir / "layout_library.typ"
+            if layout_lib.exists():
+                shutil.copy2(layout_lib, work_dir / "layout_library.typ")
 
             cmd = [
                 self.typst_path, "compile",
@@ -105,19 +159,20 @@ class TypstRenderer:
                     shutil.copy2(src, dst)
                     asset_map[asset.id] = f"assets/{src.name}"
 
+            page_data = self._build_page_data(manuscript, plan, asset_map)
+
             content_data = {
                 "title": manuscript.title,
                 "author": manuscript.author,
                 "language": "en",
                 "preset": self._tokens_to_preset(plan.design_tokens),
-                "sections": self._build_sections(manuscript, plan, asset_map),
+                "pages": page_data,
             }
 
             content_json_path = assets_dir / "content.json"
             content_json_path.write_text(json.dumps(content_data, ensure_ascii=False, indent=2))
 
-            template_name = self._select_template(plan)
-            template_path = self.templates_dir / f"{template_name}.typ"
+            template_path = self.templates_dir / "book_pages.typ"
             if not template_path.exists():
                 template_path = self.templates_dir / "book.typ"
 
@@ -126,6 +181,10 @@ class TypstRenderer:
 
             for helper in self.templates_dir.glob("helpers.typ"):
                 shutil.copy2(helper, work_dir / helper.name)
+
+            layout_lib = self.templates_dir / "layout_library.typ"
+            if layout_lib.exists():
+                shutil.copy2(layout_lib, work_dir / "layout_library.typ")
 
             preview_pattern = work_dir / "preview_{0p}.png"
             cmd = [
@@ -173,10 +232,13 @@ class TypstRenderer:
             "margin_right": f"{tokens.margin_outer_mm}mm",
             "margin_top": f"{tokens.margin_top_mm}mm",
             "margin_bottom": f"{tokens.margin_bottom_mm}mm",
+            "margin_inner": f"{tokens.margin_inner_mm}mm",
+            "margin_outer": f"{tokens.margin_outer_mm}mm",
             "accent_color": tokens.colors.get("accent", "#1d3557"),
             "heading_color": tokens.colors.get("heading", "#1a1a1a"),
             "body_color": tokens.colors.get("body", "#1a1a1a"),
             "muted_color": tokens.colors.get("muted", "#64748b"),
+            "sidebar_bg": tokens.colors.get("sidebar_bg", "#f8f9fa"),
             "h1_size": f"{tokens.heading_font_sizes.get(1, 18)}pt",
             "h2_size": f"{tokens.heading_font_sizes.get(2, 13)}pt",
             "h3_size": f"{tokens.heading_font_sizes.get(3, 11)}pt",
@@ -197,35 +259,94 @@ class TypstRenderer:
             },
         }
 
+    def _build_page_data(self, manuscript: Manuscript, plan: EditorialPlan,
+                         asset_map: dict[str, str]) -> list[dict[str, Any]]:
+        """Build page-by-page data from editorial plan."""
+        pages = []
+
+        # Create a lookup for blocks by ID
+        block_by_id = {b.id: b for b in manuscript.content_blocks}
+
+        for page_plan in plan.page_plans:
+            page = {
+                "page_number": page_plan.page_number,
+                "purpose": page_plan.purpose.value,
+                "layout_family": page_plan.layout_family.value,
+                "layout_function": self.layout_function_map.get(page_plan.layout_family, "layout-reading"),
+                "width_mm": page_plan.page_width_mm,
+                "height_mm": page_plan.page_height_mm,
+                "margins": page_plan.margins,
+                "density_target": page_plan.density_target,
+                "blocks": [],
+            }
+
+            # Add blocks assigned to this page
+            for block_id in page_plan.content_block_ids:
+                block = block_by_id.get(block_id)
+                if block:
+                    page["blocks"].append(self._serialize_block(block, asset_map))
+
+            # Add page-specific data based on purpose
+            if page_plan.purpose == PagePurpose.COVER:
+                page["cover_data"] = self._build_cover_data(manuscript, plan.design_tokens)
+            elif page_plan.purpose == PagePurpose.TITLE_PAGE:
+                page["title_data"] = self._build_title_data(manuscript, plan.design_tokens)
+            elif page_plan.purpose == PagePurpose.TOC:
+                page["toc_data"] = self._build_toc_data(manuscript, plan.design_tokens)
+            elif page_plan.purpose == PagePurpose.CHAPTER_OPENER:
+                chapter_num = page_plan.typography.get("chapter_number", "1") if page_plan.typography else "1"
+                chapter_title = page_plan.notes.replace("Chapter opener for: ", "") if page_plan.notes else f"Chapter {chapter_num}"
+                page["chapter_opener_data"] = {
+                    "chapter_number": chapter_num,
+                    "chapter_title": chapter_title,
+                    "epigraph": "",
+                    "learning_objectives": [],
+                }
+            elif page_plan.purpose == PagePurpose.GLOSSARY:
+                page["glossary_data"] = {"entries": []}
+            elif page_plan.purpose == PagePurpose.REFERENCES:
+                page["references_data"] = {"entries": []}
+            elif page_plan.purpose == PagePurpose.BACK_COVER:
+                page["back_cover_data"] = {}
+
+            pages.append(page)
+
+        return pages
+
     def _build_sections(self, manuscript: Manuscript, plan: EditorialPlan,
                         asset_map: dict[str, str]) -> list[dict[str, Any]]:
+        """Build sections data for the original book.typ template."""
         sections = []
-        current_chapter = -1
-        current_section = -1
-
-        chapter_blocks: dict[int, list[Any]] = {}
+        
+        # Create a lookup for blocks by ID
+        block_by_id = {b.id: b for b in manuscript.content_blocks}
+        
+        # Group blocks by chapter
+        chapter_blocks: dict[int, list] = {}
         for block in manuscript.content_blocks:
-            if block.chapter not in chapter_blocks:
-                chapter_blocks[block.chapter] = []
-            chapter_blocks[block.chapter].append(block)
-
+            if block.matter == "body" and block.chapter > 0:
+                if block.chapter not in chapter_blocks:
+                    chapter_blocks[block.chapter] = []
+                chapter_blocks[block.chapter].append(block)
+        
+        # Process each chapter
         for ch_num in sorted(chapter_blocks.keys()):
             blocks = chapter_blocks[ch_num]
             if not blocks:
                 continue
-
+            
             chapter_title = f"Chapter {ch_num}"
             for block in blocks:
-                if block.semantic_role.value == "chapter":
+                if block.semantic_role == "chapter":
                     chapter_title = block.content
                     break
-
+            
             section_content = []
             section_images = []
             section_tables = []
             section_code = []
             section_callouts = []
-
+            
             for block in blocks:
                 if block.content_type.value == "heading" and block.level > 1:
                     if section_content:
@@ -268,7 +389,7 @@ class TypstRenderer:
                         "text": block.content,
                         "kind": "warning" if block.content_type.value == "warning" else "info",
                     })
-
+            
             if section_content or section_images or section_tables or section_code or section_callouts:
                 sections.append(self._make_section(
                     chapter_title,
@@ -276,7 +397,7 @@ class TypstRenderer:
                     1,
                     section_images, section_tables, section_code, section_callouts
                 ))
-
+        
         return sections
 
     def _make_section(self, title: str, content: str, level: int,
@@ -292,6 +413,106 @@ class TypstRenderer:
             "tables": tables,
             "code_blocks": code_blocks,
             "callouts": callouts,
+        }
+
+    def _serialize_block(self, block, asset_map: dict[str, str]) -> dict[str, Any]:
+        """Serialize a content block to a dictionary for Typst."""
+        serialized = {
+            "id": block.id,
+            "type": block.content_type.value,
+            "role": block.semantic_role.value,
+            "chapter": block.chapter,
+            "section": block.section,
+            "level": block.level,
+            "content": block.content,
+            "metadata": block.metadata,
+        }
+
+        # Add type-specific data
+        if block.content_type == ContentType.IMAGE_INSTRUCTION:
+            asset_id = block.metadata.get("asset_id")
+            if asset_id and asset_id in asset_map:
+                serialized["image"] = {
+                    "path": asset_map[asset_id],
+                    "caption": block.metadata.get("alt_text", ""),
+                    "width": block.metadata.get("width", "85%"),
+                    "position": block.metadata.get("position", "auto"),
+                    "aspect": block.metadata.get("aspect", 0.75),
+                }
+        elif block.content_type == ContentType.TABLE:
+            serialized["table"] = {
+                "headers": block.metadata.get("headers", ["Column 1", "Column 2"]),
+                "rows": block.metadata.get("rows", [["Data 1", "Data 2"]]),
+                "caption": block.metadata.get("caption", ""),
+            }
+        elif block.content_type == ContentType.CODE:
+            serialized["code"] = {
+                "code": block.content,
+                "language": block.metadata.get("language", ""),
+                "caption": block.metadata.get("caption", ""),
+            }
+        elif block.content_type == ContentType.EXERCISE:
+            serialized["exercise"] = {
+                "title": block.metadata.get("title", "Exercise"),
+                "instructions": block.metadata.get("instructions", ""),
+                "question": block.content,
+                "hints": block.metadata.get("hints", []),
+                "response_type": block.metadata.get("response_type", "lines"),
+                "response_lines": block.metadata.get("response_lines", 5),
+            }
+        elif block.content_type == ContentType.WORKED_EXAMPLE:
+            serialized["worked_example"] = {
+                "title": block.metadata.get("title", ""),
+                "problem": block.metadata.get("problem", ""),
+                "given": block.metadata.get("given", []),
+                "steps": block.metadata.get("steps", []),
+                "answer": block.metadata.get("answer", ""),
+                "verification": block.metadata.get("verification", ""),
+            }
+        elif block.content_type == ContentType.DEFINITION:
+            serialized["definition"] = {
+                "term": block.metadata.get("term", ""),
+                "definition": block.content,
+            }
+        elif block.content_type in (ContentType.WARNING, ContentType.CALLOUT):
+            serialized["callout"] = {
+                "text": block.content,
+                "kind": "warning" if block.content_type == ContentType.WARNING else "info",
+            }
+        elif block.content_type == ContentType.QUOTATION:
+            serialized["pull_quote"] = {
+                "text": block.content,
+                "author": block.metadata.get("author", ""),
+            }
+        elif block.content_type == ContentType.FOOTNOTE:
+            serialized["footnote"] = block.content
+
+        return serialized
+
+    def _build_cover_data(self, manuscript: Manuscript, tokens: DesignTokens) -> dict[str, Any]:
+        return {
+            "title": manuscript.title,
+            "subtitle": manuscript.description or "",
+            "author": manuscript.author,
+            "publisher": tokens.brand_name if hasattr(tokens, 'brand_name') else "",
+        }
+
+    def _build_title_data(self, manuscript: Manuscript, tokens: DesignTokens) -> dict[str, Any]:
+        return {
+            "title": manuscript.title,
+            "subtitle": manuscript.description or "",
+            "author": manuscript.author,
+            "publisher": tokens.brand_name if hasattr(tokens, 'brand_name') else "",
+            "publisher_location": "",
+        }
+
+    def _build_toc_data(self, manuscript: Manuscript, tokens: DesignTokens) -> dict[str, Any]:
+        return {
+            "sections": [
+                {"title": b.content, "page": 1}  # Will be filled by Typst outline
+                for b in manuscript.content_blocks
+                if b.semantic_role == SemanticRole.CHAPTER and b.matter == "body"
+            ]
         }
 
     def _select_template(self, plan: EditorialPlan) -> str:

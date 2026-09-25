@@ -1,0 +1,143 @@
+{
+  "id": "ep_6669ca0ebeeb",
+  "manuscript_id": "ms_da09c104328f",
+  "brand_profile_id": "builtin_institutional",
+  "design_tokens": {
+    "brand_name": "Institutional",
+    "page_width_mm": 210.0,
+    "page_height_mm": 297.0,
+    "margin_top_mm": 25.0,
+    "margin_bottom_mm": 25.0,
+    "margin_inner_mm": 28.0,
+    "margin_outer_mm": 22.0,
+    "columns": 1,
+    "column_gutter_mm": 5.0,
+    "body_font_family": "Source Serif 4",
+    "heading_font_family": "Source Sans 3",
+    "mono_font_family": "Source Code Pro",
+    "body_font_size_pt": 10.5,
+    "heading_font_sizes": {
+      "1": 18.0,
+      "2": 14.0,
+      "3": 11.0
+    },
+    "line_height_em": 1.45,
+    "paragraph_spacing_em": 0.7,
+    "first_line_indent_em": 1.25,
+    "colors": {
+      "accent": "#1d3557",
+      "heading": "#1d3557",
+      "body": "#1a1a1a",
+      "muted": "#64748b",
+      "background": "#ffffff",
+      "sidebar_bg": "#f8f9fa",
+      "table_header": "#e9ecef",
+      "table_row_alt": "#f8f9fa",
+      "accent_light": "#2a4a7c"
+    },
+    "heading_weights": {
+      "1": "bold",
+      "2": "semibold",
+      "3": "semibold"
+    },
+    "numbered_headings": true,
+    "show_toc": true,
+    "show_header_footer": true,
+    "header_rule": true,
+    "page_num_position": "bottom-center",
+    "chapter_break": true,
+    "indent_style": "indent",
+    "hyphenate": true,
+    "justify": true,
+    "image_treatment": "editorial",
+    "illustration_style": "clean"
+  },
+  "publication_brief": {
+    "subject": "Test Book",
+    "audience": "General professional audience",
+    "purpose": "Inform and guide readers through comprehensive content",
+    "tone": "professional, accessible, engaging",
+    "complexity": "elementary",
+    "learning_objectives": [],
+    "visual_language": "typographic, reading-focused",
+    "recommended_page_size": "A4",
+    "recommended_template": "book",
+    "color_theme": "navy",
+    "typography_direction": "editorial serif + elegant sans"
+  },
+  "page_plans": [
+    {
+      "id": "pp_3da8e5591ee1",
+      "page_number": 1,
+      "purpose": "cover",
+      "layout_family": "cover",
+      "content_block_ids": [],
+      "image_briefs": []
+    },
+    {
+      "id": "pp_1720c74a69dd",
+      "page_number": 2,
+      "purpose": "title_page",
+      "layout_family": "title",
+      "content_block_ids": [],
+      "image_briefs": []
+    },
+    {
+      "id": "pp_55d5118ef456",
+      "page_number": 3,
+      "purpose": "toc",
+      "layout_family": "toc",
+      "content_block_ids": [],
+      "image_briefs": []
+    },
+    {
+      "id": "pp_da4295b50a67",
+      "page_number": 4,
+      "purpose": "chapter_opener",
+      "layout_family": "chapter_opener",
+      "content_block_ids": [],
+      "image_briefs": []
+    },
+    {
+      "id": "pp_917a2ef4d0fd",
+      "page_number": 5,
+      "purpose": "content",
+      "layout_family": "reading",
+      "content_block_ids": [
+        "cb_641b12dbf7_0002",
+        "cb_967865a4a0_0003",
+        "cb_d34a1f413e_0004"
+      ],
+      "image_briefs": []
+    },
+    {
+      "id": "pp_f5ae3531ae55",
+      "page_number": 6,
+      "purpose": "chapter_opener",
+      "layout_family": "chapter_opener",
+      "content_block_ids": [],
+      "image_briefs": []
+    },
+    {
+      "id": "pp_2d5be4ee40cf",
+      "page_number": 7,
+      "purpose": "content",
+      "layout_family": "reading",
+      "content_block_ids": [
+        "cb_431b7fbffa_0006",
+        "cb_b7f70ad501_0007",
+        "cb_7e5954ce85_0008"
+      ],
+      "image_briefs": []
+    },
+    {
+      "id": "pp_33def8d51ed7",
+      "page_number": 8,
+      "purpose": "back_cover",
+      "layout_family": "cover",
+      "content_block_ids": [],
+      "image_briefs": []
+    }
+  ],
+  "asset_briefs": []
+}

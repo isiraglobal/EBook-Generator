@@ -1,0 +1,119 @@
+{
+  "id": "qar_3cb14a78017b",
+  "publication_id": "ep_1419e8df1c8b",
+  "render_job_id": "rj_f63c8743e39a",
+  "total_pages": 5,
+  "passed": true,
+  "score": 80.0,
+  "summary": "5 pages inspected; 4 warning; 5 info",
+  "issues": [
+    {
+      "id": "qa_cde1a154c099",
+      "page_id": "page_1",
+      "page_number": 1,
+      "severity": "warning",
+      "category": "content",
+      "message": "Page has very little text content (31 chars)",
+      "location": {},
+      "suggested_fix": "Verify content was not truncated or omitted",
+      "auto_fixable": false,
+      "fix_applied": false
+    },
+    {
+      "id": "qa_6b17ff109dc5",
+      "page_id": "page_1",
+      "page_number": 1,
+      "severity": "info",
+      "category": "layout",
+      "message": "Page edges are very light - check margins",
+      "location": {},
+      "suggested_fix": "",
+      "auto_fixable": false,
+      "fix_applied": false
+    },
+    {
+      "id": "qa_ead146a76082",
+      "page_id": "page_2",
+      "page_number": 2,
+      "severity": "warning",
+      "category": "typography",
+      "message": "Possible widow: first line is very short",
+      "location": {},
+      "suggested_fix": "Adjust paragraph spacing or hyphenation",
+      "auto_fixable": false,
+      "fix_applied": false
+    },
+    {
+      "id": "qa_e64079d48d72",
+      "page_id": "page_2",
+      "page_number": 2,
+      "severity": "info",
+      "category": "layout",
+      "message": "Page edges are very light - check margins",
+      "location": {},
+      "suggested_fix": "",
+      "auto_fixable": false,
+      "fix_applied": false
+    },
+    {
+      "id": "qa_571b8045b5c1",
+      "page_id": "page_3",
+      "page_number": 3,
+      "severity": "info",
+      "category": "layout",
+      "message": "Page edges are very light - check margins",
+      "location": {},
+      "suggested_fix": "",
+      "auto_fixable": false,
+      "fix_applied": false
+    },
+    {
+      "id": "qa_7ca0198cd606",
+      "page_id": "page_4",
+      "page_number": 4,
+      "severity": "warning",
+      "category": "typography",
+      "message": "Possible orphan: last line is very short",
+      "location": {},
+      "suggested_fix": "Adjust paragraph spacing or hyphenation",
+      "auto_fixable": false,
+      "fix_applied": false
+    },
+    {
+      "id": "qa_340d9e7c193f",
+      "page_id": "page_4",
+      "page_number": 4,
+      "severity": "info",
+      "category": "layout",
+      "message": "Page edges are very light - check margins",
+      "location": {},
+      "suggested_fix": "",
+      "auto_fixable": false,
+      "fix_applied": false
+    },
+    {
+      "id": "qa_0e5f094b103b",
+      "page_id": "page_5",
+      "page_number": 5,
+      "severity": "warning",
+      "category": "typography",
+      "message": "Possible orphan: last line is very short",
+      "location": {},
+      "suggested_fix": "Adjust paragraph spacing or hyphenation",
+      "auto_fixable": false,
+      "fix_applied": false
+    },
+    {
+      "id": "qa_4b2c0cca7c5c",
+      "page_id": "page_5",
+      "page_number": 5,
+      "severity": "info",
+      "category": "layout",
+      "message": "Page edges are very light - check margins",
+      "location": {},
+      "suggested_fix": "",
+      "auto_fixable": false,
+      "fix_applied": false
+    }
+  ]
+}
