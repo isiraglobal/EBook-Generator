@@ -1,695 +1,421 @@
-// Book Pages Template — Page-based rendering matching original book.typ structure
-#import "helpers.typ": callout-box, render-table, render-code, render-gallery
+#import "helpers.typ": callout-box, render-code
 
 #let doc = json("assets/content.json")
-#let p = doc.at("preset", default: ())
+#let preset = doc.at("preset", default: (:))
 #let pages = doc.at("pages", default: ())
 
-// ── Preset helpers ─────────────────────────────────────────────────────────────
-#let body-font    = p.at("body_font",    default: "PT Serif")
-#let heading-font = p.at("heading_font", default: "PT Sans")
-#let mono-font    = p.at("mono_font",    default: "PT Mono")
-#let accent-color = rgb(p.at("accent_color",  default: "8b0000"))
-#let head-color   = rgb(p.at("heading_color", default: "1a1a1a"))
-#let muted-color  = rgb(p.at("muted_color",   default: "888888"))
-#let body-color   = rgb(p.at("body_color",    default: "1a1a1a"))
-#let text-size    = eval(p.at("text_size", default: "10pt"),  mode: "code")
-#let h1-size      = eval(p.at("h1_size",   default: "18pt"),  mode: "code")
-#let h2-size      = eval(p.at("h2_size",   default: "13pt"),  mode: "code")
-#let h3-size      = eval(p.at("h3_size",   default: "11pt"),  mode: "code")
-#let do-number    = p.at("numbered_headings", default: false)
-#let show-toc     = p.at("show_toc", default: true)
-#let indent-str   = p.at("indent", default: "1.5em")
-// Running header & page numbers
-#let show-hf  = p.at("show_header_footer", default: true)
-#let hdr-rule = p.at("header_rule", default: true)
-#let pn-pos   = p.at("page_num_position", default: "auto")
+#let body-font = preset.at("body_font", default: "PT Serif")
+#let heading-font = preset.at("heading_font", default: "PT Sans")
+#let mono-font = preset.at("mono_font", default: "PT Mono")
+#let accent-color = rgb(preset.at("accent_color", default: "#1d3557"))
+#let heading-color = rgb(preset.at("heading_color", default: "#1a1a1a"))
+#let body-color = rgb(preset.at("body_color", default: "#1a1a1a"))
+#let muted-color = rgb(preset.at("muted_color", default: "#64748b"))
+#let sidebar-bg = rgb(preset.at("sidebar_bg", default: "#f8f9fa"))
+#let table-header = rgb(preset.at("table_header", default: "#f1f1f1"))
+#let table-row-alt = rgb(preset.at("table_row_alt", default: "#fafafa"))
+#let text-size = eval(preset.at("text_size", default: "10.5pt"), mode: "code")
+#let h1-size = eval(preset.at("h1_size", default: "22pt"), mode: "code")
+#let h2-size = eval(preset.at("h2_size", default: "14pt"), mode: "code")
+#let h3-size = eval(preset.at("h3_size", default: "11.5pt"), mode: "code")
+#let show-running = preset.at("show_header_footer", default: true)
+#let header-rule = preset.at("header_rule", default: true)
+#let page-number-position = preset.at("page_num_position", default: "bottom-center")
 
-// ── Global Page Setup ──────────────────────────────────────────────────────────
 #set page(
-  paper: p.at("paper", default: "a5"),
-  margin: (inside: eval(p.at("margin_left", default: "2.0cm"), mode: "code"), 
-           outside: eval(p.at("margin_right", default: "3.5cm"), mode: "code"), 
-           top: eval(p.at("margin_top", default: "2.5cm"), mode: "code"), 
-           bottom: eval(p.at("margin_bottom", default: "4.0cm"), mode: "code")),
+  width: eval(preset.at("page_width", default: "210mm"), mode: "code"),
+  height: eval(preset.at("page_height", default: "297mm"), mode: "code"),
+  margin: (
+    top: eval(preset.at("margin_top", default: "25mm"), mode: "code"),
+    bottom: eval(preset.at("margin_bottom", default: "25mm"), mode: "code"),
+    inside: eval(preset.at("margin_inner", default: "25mm"), mode: "code"),
+    outside: eval(preset.at("margin_outer", default: "25mm"), mode: "code"),
+  ),
   header: context {
-    let pg = here().page()
-    if show-hf and pg > 2 [
-      set text(font: heading-font, size: 7.5pt, fill: muted-color)
-      if pn-pos == "auto" [
-        if calc.odd(pg) [#doc.title #h(1fr) #counter(page).display("1")] else [#counter(page).display("1") #h(1fr) #doc.title]
-      ] else if pn-pos == "top-left" [
-        #counter(page).display("1") #h(1fr) #doc.title
-      ] else if pn-pos == "top-center" [
-        #grid(columns: (1fr, auto, 1fr), align(left)[#doc.title], counter(page).display("1"), [])
-      ] else if pn-pos == "top-right" [
-        #doc.title #h(1fr) #counter(page).display("1")
-      ] else [
-        #doc.title #h(1fr) #doc.title
-      ]
+    if show-running and here().page() > 2 [
+      #set text(font: heading-font, size: 7.5pt, fill: muted-color)
+      #let number = counter(page).display("1")
+      #if page-number-position == "top-left" [#number #h(1fr) #doc.title]
+      else if page-number-position == "top-center" [#grid(columns: (1fr, auto, 1fr), align(left)[#doc.title], number, [])]
+      else if page-number-position == "top-right" [#doc.title #h(1fr) #number]
+      else if calc.odd(here().page()) [#doc.title #h(1fr) #number]
+      else [#number #h(1fr) #doc.title]
       #v(-3pt)
-      #if hdr-rule { line(length: 100%, stroke: 0.4pt + luma(210)) }
+      #if header-rule { line(length: 100%, stroke: 0.4pt + luma(210)) }
     ]
   },
   footer: context {
-    let pg = here().page()
-    if show-hf and pg > 2 and pn-pos.starts-with("bottom") [
-      set text(font: heading-font, size: 7.5pt, fill: muted-color)
-      align(
-        if pn-pos == "bottom-left" { left }
-        else if pn-pos == "bottom-center" { center }
-        else { right }
-      )[counter(page).display("1")]
+    if show-running and here().page() > 2 and page-number-position.starts-with("bottom") [
+      #set text(font: heading-font, size: 7.5pt, fill: muted-color)
+      #align(
+        if page-number-position == "bottom-left" { left }
+        else if page-number-position == "bottom-right" { right }
+        else { center }
+      )[#counter(page).display("1")]
     ]
   },
 )
 
-// ── Typography ────────────────────────────────────────────────────────────────
 #set text(
   font: body-font,
   size: text-size,
   fill: body-color,
-  lang: doc.language,
-  hyphenate: true,
-  costs: (hyphenation: 5%, runt: 100%, widow: 100%, orphan: 100%),
+  lang: doc.at("language", default: "en"),
+  hyphenate: preset.at("hyphenate", default: true),
 )
+
 #set par(
-  justify: true,
-  leading: eval(p.at("leading", default: "0.65em"), mode: "code"),
-  spacing: 0.75em,
-  first-line-indent: eval(indent-str, mode: "code"),
+  justify: preset.at("justify", default: true),
+  leading: eval(preset.at("leading", default: "1.4em"), mode: "code"),
+  spacing: 0.65em,
+  first-line-indent: eval(preset.at("indent", default: "0em"), mode: "code"),
 )
+
 #show raw: set text(font: mono-font, size: 0.88em)
 #show figure.caption: it => [
-  set text(font: heading-font, size: 0.8em, style: "italic", fill: muted-color)
-  set par(justify: false)
-  align(center)[it.body]
+  #set text(font: heading-font, size: 8pt, style: "italic", fill: muted-color)
+  #set par(justify: false, first-line-indent: 0em)
+  #align(center)[#it.body]
 ]
 
-// ── Heading styles ────────────────────────────────────────────────────────────
 #show heading.where(level: 1): it => [
-  pagebreak(weak: true)
-  v(1.2cm)
-  align(center)[
-    set text(font: heading-font, size: h1-size, weight: "bold", fill: head-color, tracking: -0.5pt)
-    it.body
+  #v(0.8em)
+  #align(left)[
+    #set text(font: heading-font, size: h1-size, weight: "bold", fill: heading-color)
+    #it.body
   ]
-  v(0.3cm)
-  align(center)[
-    line(length: 3cm, stroke: 1pt + accent-color)
-  ]
-  v(1cm)
+  #v(0.25em)
+  #line(length: 100%, stroke: 1pt + accent-color)
+  #v(0.7em)
 ]
+
 #show heading.where(level: 2): it => [
-  v(1.3em)
-  set text(font: heading-font, size: h2-size, weight: "semibold", fill: head-color)
-  it
-  v(0.4em)
+  #v(1em)
+  #set text(font: heading-font, size: h2-size, weight: "semibold", fill: heading-color)
+  #it
+  #v(0.3em)
 ]
+
 #show heading.where(level: 3): it => [
-  v(0.9em)
-  set text(font: heading-font, size: h3-size, weight: "semibold", style: "italic", fill: head-color)
-  it
-  v(0.25em)
+  #v(0.7em)
+  #set text(font: heading-font, size: h3-size, weight: "semibold", fill: heading-color)
+  #it
+  #v(0.2em)
 ]
 
-// ── Helper functions ───────────────────────────────────────────────────────────
 #let render-table(tbl) = {
-  v(0.7em)
-  let aligns = tbl.at("align", default: ())
-  let h-align = tbl.at("h_align", default: ())
-  table(
-    columns: tbl.headers.len(),
-    fill: (x, y) => if y == 0 { p.at("table_header", default: rgb("f1f1f1")) } else if calc.odd(y) { p.at("table_row_alt", default: rgb("fafafa")) } else { white },
-    stroke: (x, y) => if y == 0 { 0.8pt + p.at("accent_color", default: rgb("1d3557")) } else { 0.4pt + luma(220) },
-    align: if aligns.len() > 0 { aligns } else { (y, x) => if x == 0 { left } else { center } },
-    h-align: if h-align.len() > 0 { h-align } else { (y, x) => if x == 0 { left } else { center } },
-    inset: 6pt,
-    ..tbl.headers.map(h => [text(weight: "bold", size: 9pt)[h]]),
-    ..tbl.rows.flatten().map(cell => [text(size: 9pt)[cell]]),
-  )
-  v(0.7em)
-}
-
-#let render-code(cb, mono-font) = {
-  v(0.5em)
-  block(fill: luma(245), inset: 10pt, radius: 3pt, width: 100%)[
-    set text(font: mono-font, size: 9pt)
-    cb.code
-  ]
-  v(0.5em)
-}
-
-#let render-gallery(gal) = {
-  v(1em)
-  let cols = gal.at("columns", default: 3)
-  let imgs = gal.images
-  grid(
-    columns: cols,
-    gutter: 0.5em,
-    ..imgs.map(img => [
-      figure(
-        image(img.path, width: 100%),
-        caption: [#img.caption],
-      )
-    ]),
-  )
-  v(1em)
-}
-
-#let callout-colors = (
-  info:    (bg: rgb("e8f4fd"), border: rgb("2980b9"), icon: "ℹ"),
-  warning: (bg: rgb("fef9e7"), border: rgb("e67e22"), icon: "⚠"),
-  tip:     (bg: rgb("eafaf1"), border: rgb("27ae60"), icon: "✓"),
-  danger:  (bg: rgb("fdf2f2"), border: rgb("c0392b"), icon: "✗"),
-  quote:   (bg: rgb("faf6ef"), border: rgb("c8b48a"), icon: "❝"),
-)
-
-#let callout-box(body, kind) = {
-  let colors = callout-colors.at(kind, default: callout-colors.info)
-  v(0.6em)
-  block(
-    width: 100%,
-    fill: colors.bg,
-    stroke: (left: 3pt + colors.border),
-    inset: (left: 11pt, right: 9pt, top: 8pt, bottom: 8pt),
-    radius: (right: 3pt),
-  )[
-    #set text(size: 0.92em)
-    body
-  ]
-  v(0.6em)
-}
-
-// ── MAIN CONTENT: Page rendering loop ─────────────────────────────────────────
-{
-  for pg in pages {
-    let pg_num = pg.at("page_number", default: 0)
-    let purpose = pg.at("purpose", default: "content")
-    let layout_family = pg.at("layout_family", default: "reading")
-    
-    // Page setup for this specific page
-    let pg_width = pg.at("width_mm", default: 148) * 1mm
-    let pg_height = pg.at("height_mm", default: 210) * 1mm
-    let pg_margins = pg.at("margins")
-    if pg_margins == none { pg_margins = () }
-    
-    set page(
-      width: pg_width,
-      height: pg_height,
-      margin: (top: (pg_margins.at("top_mm", default: 25) * 1mm),
-               bottom: (pg_margins.at("bottom_mm", default: 25) * 1mm),
-               inside: (pg_margins.at("left_mm", default: 25) * 1mm),
-               outside: (pg_margins.at("right_mm", default: 25) * 1mm)),
+  let headers = tbl.at("headers", default: ("Item", "Detail"))
+  let rows = tbl.at("rows", default: ())
+  v(0.6em, weak: true)
+  block(breakable: true, width: 100%)[
+    #table(
+      columns: headers.len(),
+      fill: (_, row) => if row == 0 { table-header } else if calc.odd(row) { table-row-alt } else { white },
+      stroke: (_, row) => if row == 0 { 0.7pt + accent-color } else { 0.35pt + luma(220) },
+      inset: (x: 6pt, y: 4pt),
+      align: left,
+      ..headers.map(value => text(size: 8.5pt, weight: "semibold")[#value]),
+      ..rows.flatten().map(value => text(size: 8.5pt)[#value]),
     )
-    
-    // Render page based on purpose
-    if pg.purpose == "cover" {
-      let cover_data = pg.at("cover_data", default: ())
-      let cover_bg_image = cover_data.at("cover_bg_image", default: "")
-      let cover_bg_color_str = cover_data.at("cover_bg_color", default: "ffffff")
-      let cover_bg_color = rgb(cover_bg_color_str)
-      let cover_title_top_margin = cover_data.at("cover_title_top_margin", default: 3cm)
-      let cover_ornament = cover_data.at("cover_ornament", default: "")
-      let cover_ornament_width = cover_data.at("cover_ornament_width", default: 3cm)
-      let cover_title_size = cover_data.at("cover_title_size", default: 36pt)
-      let cover_title_color = rgb(cover_data.at("cover_title_color", default: "1a1a1a"))
-      let cover_title_tracking = cover_data.at("cover_title_tracking", default: 0pt)
-      let cover_subtitle_size = cover_data.at("cover_subtitle_size", default: 18pt)
-      let cover_subtitle_color = rgb(cover_data.at("cover_subtitle_color", default: "666666"))
-      let cover_accent_line = cover_data.at("cover_accent_line", default: true)
-      let cover_accent_line_width = cover_data.at("cover_accent_line_width", default: 8cm)
-      let cover_author_size = cover_data.at("cover_author_size", default: 14pt)
-      let cover_author_color = rgb(cover_data.at("cover_author_color", default: "666666"))
-      let cover_bottom_text = cover_data.at("cover_bottom_text", default: "")
-      
-      set page(margin: (top: 0pt, bottom: 0pt, left: 0pt, right: 0pt))
-      set text(font: p.heading_font)
-
-      if cover_bg_image != "" {
-        place(
-          image(cover_bg_image, width: 100%, height: 100%, fit: "cover")
-        )
-      } else {
-        set page(fill: cover_bg_color)
-      }
-
-      align(center + horizon)[
-        v(cover_title_top_margin)
-        if cover_ornament != "" {
-          image(cover_ornament, width: cover_ornament_width)
-          v(1.5em)
-        }
-        text(size: cover_title_size, weight: "bold", fill: cover_title_color, tracking: cover_title_tracking)[doc.title]
-        v(0.8em)
-        if doc.subtitle != "" {
-          text(size: cover_subtitle_size, fill: cover_subtitle_color, style: "italic")[doc.subtitle]
-          v(1.5em)
-        }
-        if cover_accent_line {
-          line(length: cover_accent_line_width, stroke: 2pt + accent-color)
-          v(1.5em)
-        }
-        if doc.author != "" {
-          text(size: cover_author_size, fill: cover_author_color, style: "italic")[doc.author]
-          v(1em)
-        }
-        if p.publisher != "" {
-          v(3cm)
-          text(size: 12pt, fill: luma(100))[p.publisher]
-          if p.publisher_logo != "" {
-            v(0.5em)
-            image(p.publisher_logo, width: 3cm)
-          }
-        }
-        v(2cm)
-        if cover_bottom_text != "" {
-          text(size: 10pt, fill: luma(120))[cover_bottom_text]
-        }
-      ]
-    } else if pg.purpose == "title_page" {
-      let title_data = pg.at("title_data", default: ())
-      let title_page_title_size = title_data.at("title_page_title_size", default: 28pt)
-      let title_page_subtitle_size = title_data.at("title_page_subtitle_size", default: 14pt)
-      let title_page_author_size = title_data.at("title_page_author_size", default: 13pt)
-      let title_page_bottom_text = title_data.at("title_page_bottom_text", default: "")
-      
-      set page(paper: p.paper, margin: (top: 4cm, bottom: 4cm, left: 3cm, right: 3cm))
-      align(center + horizon)[
-        v(3cm)
-        line(length: 8cm, stroke: 1.5pt + accent-color)
-        v(1.2em)
-        text(size: title_page_title_size, weight: "bold", fill: head-color, tracking: -0.5pt)[doc.title]
-        v(1em)
-        if doc.subtitle != "" {
-          text(size: title_page_subtitle_size, fill: muted-color, style: "italic")[doc.subtitle]
-          v(1.5em)
-        }
-        line(length: 8cm, stroke: 1.5pt + accent-color)
-        v(2.5em)
-        if doc.author != "" {
-          text(size: title_page_author_size, fill: muted-color, style: "italic")[doc.author]
-          v(1em)
-        }
-        if p.publisher != "" {
-          v(2.5em)
-          line(length: 6cm, stroke: 1pt + luma(180))
-          v(1em)
-          text(size: 14pt, fill: muted-color)[p.publisher]
-          v(0.5em)
-          text(size: 11pt, fill: luma(120))[p.publisher_location]
-        }
-        v(3cm)
-        if title_page_bottom_text != "" {
-          text(size: 10pt, fill: luma(120))[title_page_bottom_text]
-        }
-      ]
-    } else if pg.purpose == "copyright" {
-      let copyright_data = pg.at("copyright_data", default: ())
-      set page(paper: p.paper, margin: (top: 5cm, bottom: 3cm, left: 3cm, right: 3cm))
-      set text(font: p.body_font, size: 9.5pt, fill: body-color, lang: doc.language)
-
-      [
-        set par(justify: false, leading: 1.5em, spacing: 0.5em)
-
-        text(weight: "bold", size: 11pt)[Copyright]
-        v(0.8em)
-
-        copyright_data.at("copyright_notice", default: "")
-        v(0.5em)
-
-        copyright_data.at("isbn_line", default: "")
-        v(0.5em)
-
-        copyright_data.at("edition_line", default: "")
-        v(0.5em)
-
-        copyright_data.at("publisher_line", default: "")
-        v(0.5em)
-
-        copyright_data.at("credits_line", default: "")
-        v(1em)
-
-        copyright_data.at("disclaimer", default: "")
-        v(1.5em)
-
-        copyright_data.at("printed_in", default: "")
-      ]
-    } else if pg.purpose == "toc" {
-      set page(paper: p.paper, margin: (top: 3cm, bottom: 3cm, left: 3cm, right: 3cm))
-      set text(font: p.heading_font, fill: head-color)
-
-      align(center)[
-        text(size: 16pt, weight: "bold")[Table of Contents]
-        v(0.5em)
-        line(length: 6cm, stroke: 1.5pt + accent-color)
-        v(1.5em)
-      ]
-
-      set text(font: p.body_font, fill: body-color, size: 10.5pt)
-      set par(justify: true, leading: 1.4em, spacing: 0.4em)
-
-      outline(title: none, indent: 1.5em, depth: 3)
-      v(2cm)
-
-      align(center)[
-        text(size: 9pt, fill: luma(100))[counter(page).display("i")]
-      ]
-    } else if pg.purpose == "chapter_opener" {
-      let chapter_opener_data = pg.at("chapter_opener_data", default: ())
-      let chapter_number = chapter_opener_data.at("chapter_number", default: "1")
-      let chapter_title = chapter_opener_data.at("chapter_title", default: "")
-      let epigraph = chapter_opener_data.at("epigraph", default: "")
-      let epigraph_author = chapter_opener_data.at("epigraph_author", default: "")
-      let learning_objectives = chapter_opener_data.at("learning_objectives", default: ())
-      
-      set page(paper: p.paper, margin: (inside: eval(p.margin_inner, mode: "code"), outside: eval(p.margin_outer, mode: "code"), top: eval(p.margin_top, mode: "code"), bottom: eval(p.margin_bottom, mode: "code")))
-
-      v(3cm)
-      align(center)[
-        text(size: 13pt, weight: "semibold", fill: accent-color, tracking: 2pt)[CHAPTER]
-        v(0.2em)
-        text(size: 48pt, weight: "bold", fill: head-color, tracking: -1pt)[chapter_number]
-      ]
-      v(1em)
-      align(center)[
-        line(length: 8cm, stroke: 2pt + accent-color)
-      ]
-      v(1.5em)
-
-      align(center)[
-        text(size: 28pt, weight: "bold", fill: head-color, tracking: -1pt)[chapter_title]
-      ]
-      v(1.5em)
-
-      if epigraph != "" {
-        v(2em)
-        align(center + horizon)[
-          block(width: 70%)[
-            set text(size: 12pt, style: "italic", fill: muted-color)
-            set par(justify: false, leading: 1.5em)
-            epigraph
-            v(0.8em)
-            align(right)[text(size: 10pt, fill: luma(100))["— " + epigraph_author]]
-          ]
-        ]
-        v(2em)
-      }
-
-      if learning_objectives.len() > 0 {
-        v(2em)
-        block(fill: p.sidebar_bg, inset: 16pt, radius: 4pt, width: 100%)[
-          text(size: 11pt, weight: "semibold", fill: accent-color)[Learning Objectives]
-          v(0.6em)
-          for obj in learning_objectives {
-            v(0.3em)
-            text(size: 10.5pt)[• obj]
-          }
-        ]
-      }
-      v(3cm)
-    } else if pg.purpose == "glossary" {
-      let glossary_data = pg.at("glossary_data", default: (entries: ()))
-      set page(paper: p.paper, margin: (top: 3cm, bottom: 3cm, left: 3cm, right: 3cm))
-      set text(font: p.body_font, fill: body-color, size: 10.5pt)
-      set par(justify: true, leading: 1.4em, spacing: 0.4em)
-
-      align(center)[
-        text(size: 16pt, weight: "bold")[Glossary]
-        v(0.5em)
-        line(length: 6cm, stroke: 1.5pt + accent-color)
-        v(1.5em)
-      ]
-
-      for entry in glossary_data.entries {
-        v(0.5em)
-        text(weight: "bold")[entry.term]
-        v(0.2em)
-        text[entry.definition]
-      }
-    } else if pg.purpose == "references" {
-      let references_data = pg.at("references_data", default: (entries: ()))
-      set page(paper: p.paper, margin: (top: 3cm, bottom: 3cm, left: 3cm, right: 3cm))
-      set text(font: p.body_font, fill: body-color, size: 10.5pt)
-      set par(justify: true, leading: 1.4em, spacing: 0.4em)
-
-      align(center)[
-        text(size: 16pt, weight: "bold")[References]
-        v(0.5em)
-        line(length: 6cm, stroke: 1.5pt + accent-color)
-        v(1.5em)
-      ]
-
-      for ref in references_data.entries {
-        v(0.5em)
-        text[ref]
-      }
-    } else if pg.purpose == "back_cover" {
-      let cover_bg_image = pg.at("cover_bg_image", default: "")
-      let cover_bg_color_str = pg.at("cover_bg_color", default: "ffffff")
-      let cover_bg_color = rgb(cover_bg_color_str)
-      let back_cover_text = pg.at("back_cover_text", default: "")
-      
-      set page(margin: (top: 0pt, bottom: 0pt, left: 0pt, right: 0pt))
-      set text(font: p.heading_font)
-
-      if cover_bg_image != "" {
-        place(
-          image(cover_bg_image, width: 100%, height: 100%, fit: "cover")
-        )
-      } else {
-        set page(fill: cover_bg_color)
-      }
-
-      align(center + horizon)[
-        v(2cm)
-        if back_cover_text != "" {
-          text(size: 14pt, fill: luma(100))[back_cover_text]
-        }
-      ]
-    } else {
-      // Content, exercise, recap pages - render blocks
-      for blk in pg.blocks {
-        render-block(blk)
-      }
-    }
-    
-    if pg_num < pages.len() {
-      pagebreak()
-    }
-  }
-}
-
-// ── Helper functions ───────────────────────────────────────────────────────────
-#let render-table(tbl) = {
-  v(0.7em)
-  let aligns = tbl.at("align", default: ())
-  let h-align = tbl.at("h_align", default: ())
-  table(
-    columns: tbl.headers.len(),
-    fill: (x, y) => if y == 0 { p.at("table_header", default: rgb("f1f1f1")) } else if calc.odd(y) { p.at("table_row_alt", default: rgb("fafafa")) } else { white },
-    stroke: (x, y) => if y == 0 { 0.8pt + p.at("accent_color", default: rgb("1d3557")) } else { 0.4pt + luma(220) },
-    align: if aligns.len() > 0 { aligns } else { (y, x) => if x == 0 { left } else { center } },
-    h-align: if h-align.len() > 0 { h-align } else { (y, x) => if x == 0 { left } else { center } },
-    inset: 6pt,
-    ..tbl.headers.map(h => [text(weight: "bold", size: 9pt)[h]]),
-    ..tbl.rows.flatten().map(cell => [text(size: 9pt)[cell]]),
-  )
-  v(0.7em)
-}
-
-#let render-code(cb, mono-font) = {
-  v(0.5em)
-  block(fill: luma(245), inset: 10pt, radius: 3pt, width: 100%)[
-    set text(font: mono-font, size: 9pt)
-    cb.code
+    #let caption = tbl.at("caption", default: "")
+    #if caption != "" [
+      #v(0.3em)
+      #text(size: 8pt, style: "italic", fill: muted-color)[#caption]
+    ]
   ]
-  v(0.5em)
+  v(0.5em, weak: true)
 }
 
-#let render-gallery(gal) = {
-  v(1em)
-  let cols = gal.at("columns", default: 3)
-  let imgs = gal.images
-  grid(
-    columns: cols,
-    gutter: 0.5em,
-    ..imgs.map(img => [
-      figure(
-        image(img.path, width: 100%),
-        caption: [#img.caption],
-      )
-    ]),
-  )
-  v(1em)
-}
-
-#let callout-colors = (
-  info:    (bg: rgb("e8f4fd"), border: rgb("2980b9"), icon: "ℹ"),
-  warning: (bg: rgb("fef9e7"), border: rgb("e67e22"), icon: "⚠"),
-  tip:     (bg: rgb("eafaf1"), border: rgb("27ae60"), icon: "✓"),
-  danger:  (bg: rgb("fdf2f2"), border: rgb("c0392b"), icon: "✗"),
-  quote:   (bg: rgb("faf6ef"), border: rgb("c8b48a"), icon: "❝"),
-)
-
-#let callout-box(body, kind) = {
-  let colors = callout-colors.at(kind, default: callout-colors.info)
-  v(0.6em)
-  block(
-    width: 100%,
-    fill: colors.bg,
-    stroke: (left: 3pt + colors.border),
-    inset: (left: 11pt, right: 9pt, top: 8pt, bottom: 8pt),
-    radius: (right: 3pt),
-  )[
-    #set text(size: 0.92em)
-    body
-  ]
-  v(0.6em)
-}
-
-// ── Render a single block ─────────────────────────────────────────────────────
-#let render-block(blk) = {
-  let type = blk.at("type", default: "paragraph")
+#let render-list(blk) = {
   let content = blk.at("content", default: "")
-  
-  if type == "heading" {
-    let level = blk.at("level", default: 1)
-    heading(level: level)[content]
-  } else if type == "paragraph" {
-    eval(content, mode: "markup")
-  } else if type == "definition" {
-    let def = blk.at("definition", default: (:))
-    callout-box(def.at("definition", default: content), "info")
-  } else if type == "table" {
-    let tbl = blk.at("table", default: (:))
-    render-table(tbl)
-  } else if type == "code" {
-    let cb = blk.at("code", default: (:))
-    render-code(cb, mono-font)
-  } else if type == "image_instruction" {
-    let img = blk.at("image", default: (:))
-    let w = img.at("width", default: "85%")
-    if w == "full" { w = "100%" }
-    let cap = img.at("caption", default: "")
-    let caption_content = if cap != "" { cap } else { none }
-    v(0.9em, weak: true)
+  let items = blk.at("list", default: ()).at("items", default: ())
+  if items.len() == 0 { items = content.split("\n").filter(value => value.trim() != "") }
+  block(width: 100%, breakable: true)[
+    #set par(first-line-indent: 0em, spacing: 0.3em)
+    #for item in items [
+      #text[• #item]
+      #v(0.2em)
+    ]
+  ]
+  v(0.4em, weak: true)
+}
+
+#let render-image(blk) = {
+  let image-data = blk.at("image", default: (:))
+  let path = image-data.at("path", default: "")
+  let caption = image-data.at("caption", default: blk.at("content", default: ""))
+  if path != "" {
+    let width = image-data.at("width", default: "85%")
+    if width == "full" { width = "100%" }
     figure(
-      image(img.at("path", default: ""), width: eval(w, mode: "code")),
-      caption: caption_content,
+      image(path, width: eval(width, mode: "code")),
+      caption: [#caption],
       supplement: none,
     )
-    v(0.9em, weak: true)
-  } else if type == "exercise" {
-    let ex = blk.at("exercise", default: (:))
-    callout-box([
-      set text(weight: "bold", fill: accent-color)
-      ex.at("title", default: "Exercise")
-      v(0.5em)
-      if ex.at("instructions", default: "") != "" [
-        set text(size: 9pt, style: "italic", fill: muted-color)
-        ex.instructions
-        v(0.5em)
-      ]
-      content
-      v(1em)
-      if ex.at("hints", default: ()).len() > 0 [
-        block(fill: luma(255, 245, 230), inset: 12pt, radius: 3pt, width: 100%, stroke: (left: 3pt + accent-color))[
-          set text(weight: "semibold", fill: accent-color)
-          "💡 Hint"
-          v(0.3em)
-          for hint in ex.hints {
-            v(0.2em)
-            text(size: 10pt)[hint]
-          }
-        ]
-        v(0.8em)
-      ]
-      if ex.at("response_type", default: "lines") == "lines" {
-        for i in range(ex.at("response_lines", default: 5)) {
-          v(0.8em)
-          line(length: 100%, stroke: 0.5pt + luma(200))
-        }
-      }
-    ], "exercise")
-  } else if type == "worked_example" {
-    let we = blk.at("worked_example", default: (:))
-    v(1em)
-    block(fill: p.sidebar_bg, inset: 16pt, radius: 4pt, width: 100%)[
-      text(size: 13pt, weight: "bold", fill: accent-color)[Worked Example]
-      if we.at("title", default: "") != "" [
-        v(0.2em)
-        text(size: 11pt, fill: muted-color)[we.title]
-      ]
-      v(1em)
-      if we.at("problem", default: "") != "" [
-        text(weight: "semibold", fill: accent-color)[Problem]
-        v(0.4em)
-        we.problem
-        v(1em)
-      ]
-      if we.at("given", default: ()).len() > 0 [
-        text(weight: "semibold", fill: accent-color)[Given]
-        v(0.4em)
-        for item in we.given {
-          v(0.3em)
-          text(size: 10.5pt)[• item]
-        ]
-        v(1em)
-      ]
-      text(weight: "semibold", fill: accent-color)[Solution]
-      v(0.4em)
-      if we.at("steps", default: ()).len() > 0 {
-        for step in we.steps {
-          v(0.5em)
-          text(weight: "semibold", fill: accent-color)[Step step.number]
-          v(0.3em)
-          step.description
-          if step.calculation != "" {
-            v(0.4em)
-            block(fill: luma(245), inset: 10pt, radius: 3pt, width: 100%)[
-              set text(font: mono-font, size: 9.5pt)
-              step.calculation
-            ]
-          }
-          if step.explanation != "" {
-            v(0.3em)
-            text(size: 9.5pt, fill: muted-color, style: "italic")[step.explanation]
-          }
-        }
-      } else {
-        we.solution
-      }
-      v(1em)
-      if we.at("answer", default: "") != "" {
-        block(fill: accent-color + luma(5), inset: 12pt, radius: 4pt, width: 100%)[
-          text(weight: "semibold", fill: accent-color)[Answer: ]
-          text(fill: accent-color)[we.answer]
-        ]
-      }
-    ]
-    v(1em)
-  } else if type == "warning" or type == "callout" {
-    let co = blk.at("callout", default: (:))
-    callout-box(co.at("text", default: content), co.at("kind", default: "info"))
-  } else if type == "quotation" {
-    let pq = blk.at("pull_quote", default: (:))
-    v(1em)
-    align(center)[
-      block(width: 80%)[
-        set text(style: "italic", size: 1.1em, fill: body-color)
-        set par(justify: false, leading: 1.3em)
-        "“pq.text”"
-        if pq.author != "" {
-          v(0.5em)
-          align(right)[text(size: 0.9em, fill: muted-color)["— " + pq.author]]
-        }
-      ]
-    ]
-    v(1em)
-  } else if type == "footnote" {
-    footnote[content]
   } else {
-    eval(content, mode: "markup")
+    callout-box([
+      #text(weight: "semibold", fill: accent-color)[Illustration brief]
+      #linebreak()
+      #caption
+    ], "info")
   }
+  v(0.5em, weak: true)
+}
+
+#let render-exercise(blk) = {
+  let exercise = blk.at("exercise", default: (:))
+  let content = blk.at("content", default: "")
+  callout-box([
+    #set par(first-line-indent: 0em, justify: false)
+    #text(weight: "bold", fill: accent-color)[#exercise.at("title", default: "Exercise")]
+    #v(0.4em)
+    #let instructions = exercise.at("instructions", default: "")
+    #if instructions != "" [
+      #text(style: "italic", fill: muted-color)[#instructions]
+      #v(0.4em)
+    ]
+    #content
+    #let hints = exercise.at("hints", default: ())
+    #if hints.len() > 0 [
+      #v(0.5em)
+      #text(weight: "semibold")[Hints]
+      #for hint in hints [
+        #v(0.2em)
+        #text[• #hint]
+      ]
+    ]
+    #if exercise.at("response_type", default: "lines") == "lines" {
+      for _ in range(int(exercise.at("response_lines", default: 4))) {
+        v(0.55em, weak: true)
+        line(length: 100%, stroke: 0.4pt + luma(205))
+      }
+    }
+  ], "info")
+}
+
+#let render-worked-example(blk) = {
+  let example = blk.at("worked_example", default: (:))
+  let content = blk.at("content", default: "")
+  block(width: 100%, fill: sidebar-bg, stroke: (left: 3pt + accent-color), inset: 12pt, breakable: true)[
+    #set par(first-line-indent: 0em, justify: false)
+    #text(size: 12pt, weight: "bold", fill: accent-color)[Worked example]
+    #let title = example.at("title", default: "")
+    #if title != "" [
+      #v(0.2em)
+      #text(weight: "semibold")[#title]
+    ]
+    #v(0.5em)
+    #content
+    #let steps = example.at("steps", default: ())
+    #if steps.len() > 0 {
+      for step in steps [
+        #let step-number = if type(step) == dictionary { step.at("number", default: "") } else { "" }
+        #let step-description = if type(step) == dictionary { step.at("description", default: "") } else { step }
+        #let calculation = if type(step) == dictionary { step.at("calculation", default: "") } else { "" }
+        #let explanation = if type(step) == dictionary { step.at("explanation", default: "") } else { "" }
+        #v(0.45em)
+        #if step-number != "" [#text(weight: "semibold")[Step #step-number] #v(0.2em)]
+        #step-description
+        #if calculation != "" [
+          #v(0.25em)
+          #block(fill: luma(245), inset: 7pt, radius: 2pt)[#text(font: mono-font, size: 8.5pt)[#calculation]]
+        ]
+        #if explanation != "" [
+          #v(0.2em)
+          #text(size: 8.5pt, style: "italic", fill: muted-color)[#explanation]
+        ]
+      ]
+    }
+    #let answer = example.at("answer", default: "")
+    #if answer != "" [
+      #v(0.5em)
+      #text(weight: "semibold", fill: accent-color)[Result: #answer]
+    ]
+    #let verification = example.at("verification", default: "")
+    #if verification != "" [
+      #v(0.2em)
+      #text(size: 8.5pt, fill: muted-color)[#verification]
+    ]
+  ]
+  v(0.6em, weak: true)
+}
+
+#let render-block(blk) = {
+  let kind = blk.at("type", default: "paragraph")
+  let content = blk.at("content", default: "")
+  if kind == "heading" {
+    heading(level: int(blk.at("level", default: 2)))[#content]
+  } else if kind == "paragraph" or kind == "unknown" {
+    block(breakable: true)[#content]
+  } else if kind == "list" or kind == "list_item" {
+    render-list(blk)
+  } else if kind == "definition" {
+    let definition = blk.at("definition", default: (:))
+    callout-box([
+      #text(weight: "bold", fill: accent-color)[#definition.at("term", default: "Definition")]
+      #linebreak()
+      #content
+    ], "info")
+  } else if kind == "table" {
+    render-table(blk.at("table", default: (:)))
+  } else if kind == "code" {
+    render-code(blk.at("code", default: (:)), mono-font)
+  } else if kind == "image_instruction" {
+    render-image(blk)
+  } else if kind == "exercise" {
+    render-exercise(blk)
+  } else if kind == "worked_example" {
+    render-worked-example(blk)
+  } else if kind == "case_study" {
+    let study = blk.at("case_study", default: (:))
+    block(width: 100%, fill: sidebar-bg, stroke: (top: 1pt + accent-color, bottom: 1pt + accent-color), inset: 11pt, breakable: true)[
+      #set par(first-line-indent: 0em)
+      #text(weight: "bold", fill: accent-color)[Case study]
+      #let title = study.at("title", default: "")
+      #if title != "" [
+        #v(0.2em)
+        #text(weight: "semibold")[#title]
+      ]
+      #v(0.45em)
+      #content
+    ]
+    v(0.5em, weak: true)
+  } else if kind == "warning" or kind == "callout" {
+    let callout = blk.at("callout", default: (:))
+    let callout-kind = "info"
+    if kind == "warning" { callout-kind = "warning" }
+    callout-box(content, callout.at("kind", default: callout-kind))
+  } else if kind == "quotation" {
+    let quote = blk.at("pull_quote", default: (:))
+    block(width: 88%, inset: (left: 12pt, right: 8pt), stroke: (left: 2pt + accent-color), breakable: true)[
+      #set par(justify: false, first-line-indent: 0em)
+      #text(style: "italic")[“#quote.at("text", default: content)”]
+      #let author = quote.at("author", default: "")
+      #if author != "" [
+        #v(0.3em)
+        #align(right)[#text(size: 8.5pt, fill: muted-color)[— #author]]
+      ]
+    ]
+    v(0.5em, weak: true)
+  } else if kind == "reference" {
+    let reference = blk.at("reference", default: (:))
+    block(width: 100%, inset: (left: 1em), breakable: true)[
+      #set par(first-line-indent: -1em, spacing: 0.45em)
+      #reference.at("text", default: content)
+    ]
+  } else if kind == "footnote" {
+    footnote(content)
+  } else if kind == "page_break" {
+    pagebreak(weak: true)
+  } else if kind == "section_break" {
+    v(0.6em, weak: true)
+  } else {
+    block(breakable: true)[#content]
+  }
+}
+
+#let render-blocks(blocks) = {
+  for block in blocks { render-block(block) }
+}
+
+#for (page-index, page-data) in pages.enumerate() {
+  let purpose = page-data.at("purpose", default: "content")
+  let page-width = page-data.at("width_mm", default: 210) * 1mm
+  let page-height = page-data.at("height_mm", default: 297) * 1mm
+  let page-margins = page-data.at("margins", default: (:))
+  set page(
+    width: page-width,
+    height: page-height,
+    margin: (
+      top: page-margins.at("top_mm", default: 25) * 1mm,
+      bottom: page-margins.at("bottom_mm", default: 25) * 1mm,
+      inside: page-margins.at("left_mm", default: 25) * 1mm,
+      outside: page-margins.at("right_mm", default: 25) * 1mm,
+    ),
+  )
+
+  if purpose == "cover" {
+    let cover = page-data.at("cover_data", default: (:))
+    set page(margin: 0pt, fill: rgb(cover.at("background_color", default: "#f4f0e6")))
+    set par(justify: false, first-line-indent: 0em)
+    align(center + horizon)[
+      #line(length: 5cm, stroke: 2pt + accent-color)
+      #v(1cm)
+      #text(font: heading-font, size: 36pt, weight: "bold", fill: heading-color)[#doc.title]
+      #let subtitle = doc.at("subtitle", default: "")
+      #if subtitle != "" [
+        #v(0.7cm)
+        #text(font: body-font, size: 16pt, style: "italic", fill: muted-color)[#subtitle]
+      ]
+      #v(0.8cm)
+      #line(length: 5cm, stroke: 2pt + accent-color)
+      #v(1.4cm)
+      #let author = doc.at("author", default: "")
+      #if author != "" [#text(size: 13pt)[#author]]
+      #v(1.2cm)
+      #text(size: 10pt, fill: muted-color)[FIELD EDITION]
+    ]
+  } else if purpose == "title_page" {
+    set page(margin: (top: 4cm, bottom: 3cm, inside: 3cm, outside: 3cm))
+    align(center + horizon)[
+      #text(font: heading-font, size: 28pt, weight: "bold", fill: heading-color)[#doc.title]
+      #let subtitle = doc.at("subtitle", default: "")
+      #if subtitle != "" [
+        #v(0.6cm)
+        #text(size: 14pt, style: "italic", fill: muted-color)[#subtitle]
+      ]
+      #v(0.8cm)
+      #line(length: 6cm, stroke: 1pt + accent-color)
+      #v(0.7cm)
+      #let author = doc.at("author", default: "")
+      #if author != "" [#text(size: 12pt)[#author]]
+    ]
+  } else if purpose == "toc" {
+    set page(margin: (top: 3cm, bottom: 2.5cm, inside: 2.5cm, outside: 2.5cm))
+    align(center)[
+      #text(font: heading-font, size: 20pt, weight: "bold", fill: heading-color)[Contents]
+      #v(0.35cm)
+      #line(length: 5cm, stroke: 1pt + accent-color)
+    ]
+    v(0.8cm)
+    outline(title: none, indent: 1.4em, depth: 2)
+  } else if purpose == "chapter_opener" {
+    let chapter = page-data.at("chapter_opener_data", default: (:))
+    let chapter-number = chapter.at("chapter_number", default: "1")
+    let chapter-title = chapter.at("chapter_title", default: "")
+    v(2.2cm)
+    align(center)[
+      #text(font: heading-font, size: 11pt, weight: "semibold", fill: accent-color, tracking: 1.5pt)[CHAPTER]
+      #v(0.2cm)
+      #text(font: heading-font, size: 44pt, weight: "bold", fill: heading-color)[#chapter-number]
+    ]
+    v(0.6cm)
+    line(length: 100%, stroke: 2pt + accent-color)
+    v(0.7cm)
+    heading(level: 1)[#chapter-title]
+    let objectives = chapter.at("learning_objectives", default: ())
+    if objectives.len() > 0 {
+      v(0.5cm)
+      callout-box([
+        #text(weight: "bold", fill: accent-color)[Learning objectives]
+        #v(0.35em)
+        #for objective in objectives [
+          #text[• #objective]
+          #v(0.2em)
+        ]
+      ], "tip")
+    }
+  } else if purpose == "back_cover" {
+    let back-cover = page-data.at("back_cover_data", default: (:))
+    set page(margin: 0pt, fill: rgb(back-cover.at("background_color", default: "#1d3557")))
+    align(center + horizon)[
+      #text(font: heading-font, size: 18pt, weight: "bold", fill: white)[#doc.title]
+      #v(0.5cm)
+      #text(size: 10pt, fill: rgb("#d9e2ec"))[#back-cover.at("text", default: "A practical field manual for disciplined land investment decisions.")]
+    ]
+  } else {
+    render-blocks(page-data.at("blocks", default: ()))
+  }
+
+  if page-index < pages.len() - 1 { pagebreak() }
 }

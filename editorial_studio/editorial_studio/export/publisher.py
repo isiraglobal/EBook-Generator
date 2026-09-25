@@ -1,9 +1,10 @@
 from __future__ import annotations
+import enum
 import json
 import shutil
 import uuid
 import zipfile
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass, is_dataclass
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Optional
@@ -18,6 +19,22 @@ from editorial_studio.core.models import (
 )
 from editorial_studio.core.database import Database
 from editorial_studio.core.config import load_config
+
+
+def _json_default(value: Any) -> Any:
+    if isinstance(value, enum.Enum):
+        return value.value
+    if is_dataclass(value) and not isinstance(value, type):
+        return asdict(value)
+    if isinstance(value, (datetime, Path)):
+        return value.isoformat() if isinstance(value, datetime) else str(value)
+    if isinstance(value, (set, tuple)):
+        return list(value)
+    return str(value)
+
+
+def _json_dumps(value: Any, **kwargs: Any) -> str:
+    return json.dumps(value, default=_json_default, **kwargs)
 
 
 @dataclass
@@ -123,6 +140,7 @@ class PublishingEngine:
             "source_files": manuscript.source_files,
             "content_blocks": [
                 {
+                    "matter": b.matter,
                     "id": b.id,
                     "content": b.content,
                     "content_type": b.content_type.value,
@@ -149,7 +167,7 @@ class PublishingEngine:
             "structure": manuscript.structure,
             "metadata": manuscript.metadata,
         }
-        (bundle_dir / "manuscript.json").write_text(json.dumps(manuscript_data, indent=2, ensure_ascii=False))
+        (bundle_dir / "manuscript.json").write_text(_json_dumps(manuscript_data, indent=2, ensure_ascii=False))
 
         # Editorial plan
         plan_data = {
@@ -186,7 +204,7 @@ class PublishingEngine:
             "structure_map": plan.structure_map,
             "pagination_strategy": plan.pagination_strategy,
         }
-        (bundle_dir / "editorial_plan.json").write_text(json.dumps(plan_data, indent=2, ensure_ascii=False))
+        (bundle_dir / "editorial_plan.json").write_text(_json_dumps(plan_data, indent=2, ensure_ascii=False))
 
         # Render job
         job_data = {
@@ -205,7 +223,7 @@ class PublishingEngine:
             "completed_at": job.completed_at.isoformat() if job.completed_at else None,
             "retry_count": job.retry_count,
         }
-        (bundle_dir / "render_job.json").write_text(json.dumps(job_data, indent=2, ensure_ascii=False))
+        (bundle_dir / "render_job.json").write_text(_json_dumps(job_data, indent=2, ensure_ascii=False))
 
         # Assets manifest
         assets_data = [
@@ -233,7 +251,7 @@ class PublishingEngine:
             }
             for a in assets
         ]
-        (bundle_dir / "assets.json").write_text(json.dumps(assets_data, indent=2, ensure_ascii=False))
+        (bundle_dir / "assets.json").write_text(_json_dumps(assets_data, indent=2, ensure_ascii=False))
 
         # Project info
         project_data = {
@@ -251,7 +269,7 @@ class PublishingEngine:
             "tags": project.tags,
             "metadata": project.metadata,
         }
-        (bundle_dir / "project.json").write_text(json.dumps(project_data, indent=2, ensure_ascii=False))
+        (bundle_dir / "project.json").write_text(_json_dumps(project_data, indent=2, ensure_ascii=False))
 
         return bundle_dir
 
@@ -276,7 +294,7 @@ class PublishingEngine:
             ],
             "asset_briefs": plan.asset_briefs,
         }
-        manifest_path.write_text(json.dumps(manifest, indent=2, ensure_ascii=False))
+        manifest_path.write_text(_json_dumps(manifest, indent=2, ensure_ascii=False))
         return manifest_path
 
     def _save_editorial_plan(self, project_dir: Path, plan: EditorialPlan) -> Path:
@@ -300,7 +318,7 @@ class PublishingEngine:
             ],
             "asset_briefs": plan.asset_briefs,
         }
-        path.write_text(json.dumps(data, indent=2, ensure_ascii=False))
+        path.write_text(_json_dumps(data, indent=2, ensure_ascii=False))
         return path
 
     def _save_qa_report(self, project_dir: Path, qa_report: QAReport) -> Path:
@@ -329,7 +347,7 @@ class PublishingEngine:
                 for i in qa_report.issues
             ],
         }
-        path.write_text(json.dumps(data, indent=2, ensure_ascii=False))
+        path.write_text(_json_dumps(data, indent=2, ensure_ascii=False))
         return path
 
     def _save_metadata(self, project_dir: Path, project: Project, manuscript: Manuscript,
@@ -372,7 +390,7 @@ class PublishingEngine:
             },
             "exported_at": datetime.now().isoformat(),
         }
-        path.write_text(json.dumps(data, indent=2, ensure_ascii=False))
+        path.write_text(_json_dumps(data, indent=2, ensure_ascii=False))
         return path
 
     def _create_distribution_zip(

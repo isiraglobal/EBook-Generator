@@ -1,8 +1,10 @@
 from __future__ import annotations
+import enum
 import json
 import sqlite3
 import threading
 from contextlib import contextmanager
+from dataclasses import asdict, is_dataclass
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Generator, Optional
@@ -27,6 +29,22 @@ from editorial_studio.core.models import (
     VisualReference,
     JobStatus,
 )
+
+
+def _json_default(value: Any) -> Any:
+    if isinstance(value, enum.Enum):
+        return value.value
+    if is_dataclass(value) and not isinstance(value, type):
+        return asdict(value)
+    if isinstance(value, (datetime, Path)):
+        return value.isoformat() if isinstance(value, datetime) else str(value)
+    if isinstance(value, (set, tuple)):
+        return list(value)
+    return str(value)
+
+
+def _json_dumps(value: Any) -> str:
+    return json.dumps(value, default=_json_default)
 
 
 class Database:
@@ -216,8 +234,8 @@ class Database:
                     project.source_bundle_path,
                     project.version,
                     project.status,
-                    json.dumps(project.tags),
-                    json.dumps(project.metadata),
+                    _json_dumps(project.tags),
+                    _json_dumps(project.metadata),
                     project.created_at.isoformat(),
                     project.updated_at.isoformat(),
                 ),
@@ -251,8 +269,8 @@ class Database:
                     project.source_bundle_path,
                     project.version,
                     project.status,
-                    json.dumps(project.tags),
-                    json.dumps(project.metadata),
+                    _json_dumps(project.tags),
+                    _json_dumps(project.metadata),
                     project.updated_at.isoformat(),
                     project.id,
                 ),
@@ -302,10 +320,10 @@ class Database:
                     manuscript.author,
                     manuscript.description,
                     manuscript.source_format,
-                    json.dumps(manuscript.source_files),
-                    json.dumps([self._block_to_dict(b) for b in manuscript.content_blocks]),
-                    json.dumps(manuscript.structure),
-                    json.dumps(manuscript.metadata),
+                    _json_dumps(manuscript.source_files),
+                    _json_dumps([self._block_to_dict(b) for b in manuscript.content_blocks]),
+                    _json_dumps(manuscript.structure),
+                    _json_dumps(manuscript.metadata),
                     manuscript.created_at.isoformat(),
                     manuscript.updated_at.isoformat(),
                 ),
@@ -333,10 +351,10 @@ class Database:
                     manuscript.author,
                     manuscript.description,
                     manuscript.source_format,
-                    json.dumps(manuscript.source_files),
-                    json.dumps([self._block_to_dict(b) for b in manuscript.content_blocks]),
-                    json.dumps(manuscript.structure),
-                    json.dumps(manuscript.metadata),
+                    _json_dumps(manuscript.source_files),
+                    _json_dumps([self._block_to_dict(b) for b in manuscript.content_blocks]),
+                    _json_dumps(manuscript.structure),
+                    _json_dumps(manuscript.metadata),
                     manuscript.updated_at.isoformat(),
                     manuscript.id,
                 ),
@@ -345,6 +363,7 @@ class Database:
 
     def _block_to_dict(self, block: ContentBlock) -> dict:
         return {
+            "matter": block.matter,
             "id": block.id,
             "content": block.content,
             "content_type": block.content_type.value,
@@ -369,6 +388,7 @@ class Database:
 
     def _dict_to_block(self, data: dict) -> ContentBlock:
         return ContentBlock(
+            matter=data.get("matter", "body"),
             id=data["id"],
             content=data["content"],
             content_type=ContentType(data["content_type"]),
@@ -417,9 +437,44 @@ class Database:
                     profile.name,
                     profile.description,
                     profile.logo_path,
-                    json.dumps(self._tokens_to_dict(profile.design_tokens)),
-                    json.dumps(profile.cover_conventions),
-                    json.dumps(profile.section_opener_conventions),
+                    _json_dumps(self._tokens_to_dict(profile.design_tokens)),
+                    _json_dumps(profile.cover_conventions),
+                    _json_dumps(profile.section_opener_conventions),
+                    profile.running_header_template,
+                    profile.running_footer_template,
+                    profile.created_at.isoformat(),
+                    profile.updated_at.isoformat(),
+                ),
+            )
+        return profile
+
+    def upsert_brand_profile(self, profile: BrandProfile) -> BrandProfile:
+        profile.updated_at = datetime.now()
+        with self.transaction() as conn:
+            conn.execute(
+                """INSERT INTO brand_profiles
+                   (id, name, description, logo_path, design_tokens, cover_conventions,
+                    section_opener_conventions, running_header_template, running_footer_template,
+                    created_at, updated_at)
+                   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                   ON CONFLICT(id) DO UPDATE SET
+                     name=excluded.name,
+                     description=excluded.description,
+                     logo_path=excluded.logo_path,
+                     design_tokens=excluded.design_tokens,
+                     cover_conventions=excluded.cover_conventions,
+                     section_opener_conventions=excluded.section_opener_conventions,
+                     running_header_template=excluded.running_header_template,
+                     running_footer_template=excluded.running_footer_template,
+                     updated_at=excluded.updated_at""",
+                (
+                    profile.id,
+                    profile.name,
+                    profile.description,
+                    profile.logo_path,
+                    _json_dumps(self._tokens_to_dict(profile.design_tokens)),
+                    _json_dumps(profile.cover_conventions),
+                    _json_dumps(profile.section_opener_conventions),
                     profile.running_header_template,
                     profile.running_footer_template,
                     profile.created_at.isoformat(),
@@ -540,10 +595,10 @@ class Database:
                     ref.screenshot_path,
                     ref.retrieval_status,
                     ref.license_info,
-                    json.dumps(ref.provenance),
-                    json.dumps(ref.analysis),
-                    json.dumps(ref.tags),
-                    json.dumps(ref.design_principles),
+                    _json_dumps(ref.provenance),
+                    _json_dumps(ref.analysis),
+                    _json_dumps(ref.tags),
+                    _json_dumps(ref.design_principles),
                     ref.created_at.isoformat(),
                 ),
             )
@@ -600,16 +655,16 @@ class Database:
                     asset.original_source,
                     asset.generation_provider,
                     asset.prompt,
-                    json.dumps(asset.generation_metadata),
+                    _json_dumps(asset.generation_metadata),
                     asset.source_url,
                     asset.license,
-                    json.dumps(asset.provenance),
+                    _json_dumps(asset.provenance),
                     asset.width_px,
                     asset.height_px,
                     asset.dpi,
                     asset.intended_page_id,
-                    json.dumps(asset.placement),
-                    json.dumps(asset.crop_settings),
+                    _json_dumps(asset.placement),
+                    _json_dumps(asset.crop_settings),
                     asset.focal_point[0],
                     asset.focal_point[1],
                     asset.aspect_ratio,
@@ -670,11 +725,11 @@ class Database:
                     plan.id,
                     plan.manuscript_id,
                     plan.brand_profile_id,
-                    json.dumps(self._tokens_to_dict(plan.design_tokens)),
-                    json.dumps(plan.publication_brief),
-                    json.dumps([self._page_plan_to_dict(p) for p in plan.page_plans]),
-                    json.dumps(plan.asset_briefs),
-                    json.dumps(plan.structure_map),
+                    _json_dumps(self._tokens_to_dict(plan.design_tokens)),
+                    _json_dumps(plan.publication_brief),
+                    _json_dumps([self._page_plan_to_dict(p) for p in plan.page_plans]),
+                    _json_dumps(plan.asset_briefs),
+                    _json_dumps(plan.structure_map),
                     plan.pagination_strategy,
                     plan.created_at.isoformat(),
                     plan.updated_at.isoformat(),
@@ -695,13 +750,15 @@ class Database:
         plan.updated_at = datetime.now()
         with self.transaction() as conn:
             conn.execute(
-                """UPDATE editorial_plans SET publication_brief=?, page_plans=?, asset_briefs=?,
+                """UPDATE editorial_plans SET brand_profile_id=?, design_tokens=?, publication_brief=?, page_plans=?, asset_briefs=?,
                    structure_map=?, pagination_strategy=?, updated_at=? WHERE id=?""",
                 (
-                    json.dumps(plan.publication_brief),
-                    json.dumps([self._page_plan_to_dict(p) for p in plan.page_plans]),
-                    json.dumps(plan.asset_briefs),
-                    json.dumps(plan.structure_map),
+                    plan.brand_profile_id,
+                    _json_dumps(self._tokens_to_dict(plan.design_tokens)),
+                    _json_dumps(plan.publication_brief),
+                    _json_dumps([self._page_plan_to_dict(p) for p in plan.page_plans]),
+                    _json_dumps(plan.asset_briefs),
+                    _json_dumps(plan.structure_map),
                     plan.pagination_strategy,
                     plan.updated_at.isoformat(),
                     plan.id,
@@ -783,10 +840,10 @@ class Database:
                     job.progress,
                     job.current_step,
                     job.output_pdf_path,
-                    json.dumps(job.page_images),
+                    _json_dumps(job.page_images),
                     job.qa_report_id,
                     job.error_message,
-                    json.dumps(job.logs),
+                    _json_dumps(job.logs),
                     job.started_at.isoformat() if job.started_at else None,
                     job.completed_at.isoformat() if job.completed_at else None,
                     job.retry_count,
@@ -814,10 +871,10 @@ class Database:
                     job.progress,
                     job.current_step,
                     job.output_pdf_path,
-                    json.dumps(job.page_images),
+                    _json_dumps(job.page_images),
                     job.qa_report_id,
                     job.error_message,
-                    json.dumps(job.logs),
+                    _json_dumps(job.logs),
                     job.started_at.isoformat() if job.started_at else None,
                     job.completed_at.isoformat() if job.completed_at else None,
                     job.retry_count,
@@ -854,11 +911,11 @@ class Database:
                     report.publication_id,
                     report.render_job_id,
                     report.total_pages,
-                    json.dumps([self._issue_to_dict(i) for i in report.issues]),
+                    _json_dumps([self._issue_to_dict(i) for i in report.issues]),
                     report.passed,
                     report.score,
                     report.summary,
-                    json.dumps(report.page_images),
+                    _json_dumps(report.page_images),
                     report.created_at.isoformat(),
                 ),
             )

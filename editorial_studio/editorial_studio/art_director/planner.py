@@ -260,64 +260,102 @@ class EditorialArtDirector:
     ) -> list[PagePlan]:
         plans: list[PagePlan] = []
         page_num = 1
-
-        # Front matter pages (fixed pages with layout families)
-        # Cover page
         plans.append(self._make_cover_page(page_num, manuscript, design_tokens))
         page_num += 1
-
-        # Title page
         plans.append(self._make_title_page(page_num, manuscript, design_tokens))
         page_num += 1
 
-        # Copyright page
-        plans.append(self._make_copyright_page(page_num, manuscript, design_tokens))
-        page_num += 1
+        front_blocks = [block for block in manuscript.content_blocks if block.matter == "front"]
+        copyright_blocks = [
+            block
+            for block in front_blocks
+            if block.metadata.get("kind") == "copyright_and_disclaimer"
+            or "copyright" in block.content.lower()
+        ]
+        if copyright_blocks:
+            plans.append(self._make_flow_page(
+                page_num,
+                copyright_blocks,
+                design_tokens,
+                PagePurpose.COPYRIGHT,
+                LayoutFamily.TITLE,
+            ))
+            page_num += 1
 
-        # TOC (if needed)
         if design_tokens.show_toc and analysis.chapters > 1:
             plans.append(self._make_toc_page(page_num, manuscript, design_tokens))
             page_num += 1
 
-        # Content pages - group by chapter, only body matter
+        reserved_ids = {block.id for block in copyright_blocks}
+        remaining_front = [
+            block
+            for block in front_blocks
+            if block.id not in reserved_ids
+            and block.semantic_role not in {
+                SemanticRole.TITLE,
+                SemanticRole.SUBTITLE,
+                SemanticRole.AUTHOR,
+                SemanticRole.COVER,
+                SemanticRole.TOC,
+            }
+        ]
+        front_plans, page_num = self._paginate_blocks(
+            remaining_front,
+            page_num,
+            design_tokens,
+            brief,
+            PagePurpose.PREFACE,
+            LayoutFamily.READING,
+            target_words=420,
+        )
+        plans.extend(front_plans)
+
         chapter_blocks: dict[int, list[ContentBlock]] = {}
         for block in manuscript.content_blocks:
             if block.matter == "body" and block.chapter > 0:
-                if block.chapter not in chapter_blocks:
-                    chapter_blocks[block.chapter] = []
-                chapter_blocks[block.chapter].append(block)
+                chapter_blocks.setdefault(block.chapter, []).append(block)
 
-        for ch_num in sorted(chapter_blocks.keys()):
-            blocks = chapter_blocks[ch_num]
+        for chapter_num in sorted(chapter_blocks):
             chapter_plans, page_num = self._plan_chapter(
-                ch_num, blocks, page_num, design_tokens, brief, analysis
+                chapter_num,
+                chapter_blocks[chapter_num],
+                page_num,
+                design_tokens,
+                brief,
+                analysis,
             )
             plans.extend(chapter_plans)
 
-        # Back matter pages (fixed pages)
-        back_matter_blocks = [b for b in manuscript.content_blocks if b.matter == "back"]
-        if back_matter_blocks:
-            # Glossary page
-            glossary_blocks = [b for b in back_matter_blocks if b.semantic_role == SemanticRole.GLOSSARY]
-            if glossary_blocks:
-                plans.append(self._make_glossary_page(page_num, design_tokens, [b.id for b in glossary_blocks]))
-                page_num += 1
-            
-            # References page
-            ref_blocks = [b for b in back_matter_blocks if b.semantic_role == SemanticRole.REFERENCE]
-            if ref_blocks or analysis.has_citations:
-                plans.append(self._make_references_page(page_num, design_tokens, [b.id for b in ref_blocks]))
-                page_num += 1
-            
-            # About author page
-            author_blocks = [b for b in back_matter_blocks if b.semantic_role == SemanticRole.BODY and "author" in b.content.lower()]
-            if author_blocks:
-                plans.append(self._make_about_author_page(page_num, design_tokens, [b.id for b in author_blocks]))
-                page_num += 1
+        back_groups = self._group_back_matter(
+            [block for block in manuscript.content_blocks if block.matter == "back"]
+        )
+        for label, group in back_groups:
+            role = group[0].semantic_role
+            if role == SemanticRole.GLOSSARY:
+                purpose = PagePurpose.GLOSSARY
+                layout = LayoutFamily.GLOSSARY
+            elif role == SemanticRole.APPENDIX:
+                purpose = PagePurpose.APPENDIX
+                layout = LayoutFamily.APPENDIX
+            elif role in {SemanticRole.REFERENCE, SemanticRole.BIBLIOGRAPHY}:
+                purpose = PagePurpose.REFERENCES
+                layout = LayoutFamily.REFERENCES
+            else:
+                purpose = PagePurpose.SUMMARY
+                layout = LayoutFamily.CLOSING
+            group_plans, page_num = self._paginate_blocks(
+                group,
+                page_num,
+                design_tokens,
+                brief,
+                purpose,
+                layout,
+                target_words=520,
+                notes=label,
+            )
+            plans.extend(group_plans)
 
-        # Back cover
         plans.append(self._make_back_cover_page(page_num, design_tokens))
-
         return plans
 
     def _plan_chapter(
@@ -329,71 +367,113 @@ class EditorialArtDirector:
         brief: PublicationBrief,
         analysis: ContentAnalysis,
     ) -> tuple[list[PagePlan], int]:
-        plans: list[PagePlan] = []
-        page_num = start_page
-
-        # Chapter opener - include chapter heading block ID
         chapter_title = f"Chapter {chapter_num}"
-        chapter_heading_block = None
-        for block in blocks:
-            if block.semantic_role == SemanticRole.CHAPTER:
-                chapter_title = block.content
-                chapter_heading_block = block
-                break
+        chapter_heading = next(
+            (block for block in blocks if block.semantic_role == SemanticRole.CHAPTER),
+            None,
+        )
+        if chapter_heading:
+            chapter_title = chapter_heading.content
+        opener = self._make_chapter_opener(
+            start_page,
+            chapter_title,
+            chapter_num,
+            design_tokens,
+            chapter_heading.id if chapter_heading else None,
+        )
+        content_blocks = [block for block in blocks if block.id != (chapter_heading.id if chapter_heading else "")]
+        content_plans, next_page = self._paginate_blocks(
+            content_blocks,
+            start_page + 1,
+            design_tokens,
+            brief,
+            PagePurpose.CONTENT,
+            None,
+        )
+        return [opener, *content_plans], next_page
 
-        plans.append(self._make_chapter_opener(page_num, chapter_title, chapter_num, design_tokens, 
-                                               chapter_heading_block.id if chapter_heading_block else None))
-        page_num += 1
-
-        # Separate blocks by type for proper layout assignment
-        recap_type_blocks = [b for b in blocks if b.content_type in (ContentType.EXERCISE, ContentType.CASE_STUDY, ContentType.WORKED_EXAMPLE)]
-        content_blocks = [b for b in blocks if b.content_type != ContentType.HEADING or b.level > 1]
-        content_blocks = [b for b in content_blocks if b not in recap_type_blocks]
-
-        # Content flow - estimate pages needed for regular content
-        word_count = sum(len(b.content.split()) for b in content_blocks)
-
-        # Estimate words per page based on design
-        words_per_page = self._estimate_words_per_page(design_tokens, brief.visual_language)
-        estimated_pages = max(1, word_count // words_per_page + 1)
-
-        # Distribute regular content blocks across pages
-        current_page_blocks: list[ContentBlock] = []
+    def _paginate_blocks(
+        self,
+        blocks: list[ContentBlock],
+        start_page: int,
+        design_tokens: DesignTokens,
+        brief: PublicationBrief,
+        purpose: PagePurpose,
+        layout_family: LayoutFamily | None,
+        target_words: int | None = None,
+        notes: str = "",
+    ) -> tuple[list[PagePlan], int]:
+        if not blocks:
+            return [], start_page
+        budget = target_words or self._estimate_words_per_page(design_tokens, brief.visual_language)
+        plans: list[PagePlan] = []
+        current: list[ContentBlock] = []
         current_words = 0
-
-        for block in content_blocks:
-            block_words = len(block.content.split())
-            if current_words + block_words > words_per_page and current_page_blocks:
-                plans.append(self._make_content_page(
-                    page_num, current_page_blocks, design_tokens, brief
-                ))
+        page_num = start_page
+        for block in blocks:
+            block_words = max(1, len(block.content.split()))
+            if current and current_words + block_words > budget:
+                page = (
+                    self._make_flow_page(page_num, current, design_tokens, purpose, layout_family)
+                    if layout_family is not None
+                    else self._make_content_page(page_num, current, design_tokens, brief)
+                )
+                if notes:
+                    page.notes = notes
+                plans.append(page)
                 page_num += 1
-                current_page_blocks = [block]
-                current_words = block_words
-            else:
-                current_page_blocks.append(block)
-                current_words += block_words
-
-        if current_page_blocks:
-            plans.append(self._make_content_page(
-                page_num, current_page_blocks, design_tokens, brief
-            ))
+                current = []
+                current_words = 0
+            current.append(block)
+            current_words += block_words
+        if current:
+            page = (
+                self._make_flow_page(page_num, current, design_tokens, purpose, layout_family)
+                if layout_family is not None
+                else self._make_content_page(page_num, current, design_tokens, brief)
+            )
+            if notes:
+                page.notes = notes
+            plans.append(page)
             page_num += 1
-
-        # Exercise/Worked Example/Case Study pages - each gets its own page with EXERCISE layout
-        for block in recap_type_blocks:
-            plans.append(self._make_content_page(
-                page_num, [block], design_tokens, brief
-            ))
-            page_num += 1
-
-        # Chapter recap page - summary page with generated content (no block IDs needed)
-        has_recap = len(recap_type_blocks) > 0 or any(b.content_type == ContentType.EXERCISE for b in blocks)
-        if has_recap:
-            plans.append(self._make_recap_page(page_num, chapter_num, design_tokens, []))
-            page_num += 1
-
         return plans, page_num
+
+    def _group_back_matter(self, blocks: list[ContentBlock]) -> list[tuple[str, list[ContentBlock]]]:
+        groups: list[tuple[str, list[ContentBlock]]] = []
+        current: list[ContentBlock] = []
+        for block in blocks:
+            if block.content_type == ContentType.HEADING and block.level == 1 and current:
+                groups.append((current[0].content, current))
+                current = []
+            current.append(block)
+        if current:
+            groups.append((current[0].content, current))
+        return groups
+
+    def _make_flow_page(
+        self,
+        page_num: int,
+        blocks: list[ContentBlock],
+        tokens: DesignTokens,
+        purpose: PagePurpose,
+        layout_family: LayoutFamily,
+    ) -> PagePlan:
+        return PagePlan(
+            id=f"pp_{uuid.uuid4().hex[:12]}",
+            page_number=page_num,
+            purpose=purpose,
+            layout_family=layout_family,
+            content_block_ids=[block.id for block in blocks],
+            page_width_mm=tokens.page_width_mm,
+            page_height_mm=tokens.page_height_mm,
+            margins={
+                "top_mm": tokens.margin_top_mm,
+                "bottom_mm": tokens.margin_bottom_mm,
+                "left_mm": tokens.margin_inner_mm,
+                "right_mm": tokens.margin_outer_mm,
+            },
+            density_target=0.78,
+        )
 
     def _estimate_words_per_page(self, tokens: DesignTokens, visual_language: str) -> int:
         base = 350
@@ -427,14 +507,17 @@ class EditorialArtDirector:
         )
 
     def _make_title_page(self, page_num: int, manuscript: Manuscript, tokens: DesignTokens) -> PagePlan:
-        # Include front matter block IDs (title, preface, how-to-use)
-        front_blocks = [b.id for b in manuscript.content_blocks if b.matter == "front"]
+        title_block_ids = [
+            block.id
+            for block in manuscript.content_blocks
+            if block.semantic_role in {SemanticRole.TITLE, SemanticRole.SUBTITLE, SemanticRole.AUTHOR}
+        ]
         return PagePlan(
             id=f"pp_{uuid.uuid4().hex[:12]}",
             page_number=page_num,
             purpose=PagePurpose.TITLE_PAGE,
             layout_family=LayoutFamily.TITLE,
-            content_block_ids=front_blocks,
+            content_block_ids=title_block_ids,
             page_width_mm=tokens.page_width_mm,
             page_height_mm=tokens.page_height_mm,
             margins={
@@ -513,15 +596,21 @@ class EditorialArtDirector:
         has_tables = any(b.content_type == ContentType.TABLE for b in blocks)
         has_code = any(b.content_type == ContentType.CODE for b in blocks)
         has_exercises = any(b.content_type == ContentType.EXERCISE for b in blocks)
+        has_worked_examples = any(b.content_type == ContentType.WORKED_EXAMPLE for b in blocks)
+        has_case_studies = any(b.content_type == ContentType.CASE_STUDY for b in blocks)
 
-        if has_images and not has_tables and not has_code:
-            layout = LayoutFamily.IMAGE_LED
-        elif has_tables:
+        if has_tables:
             layout = LayoutFamily.COMPARISON_TABLE
         elif has_code:
             layout = LayoutFamily.READING
+        elif has_worked_examples:
+            layout = LayoutFamily.WORKED_EXAMPLE
+        elif has_case_studies:
+            layout = LayoutFamily.CASE_STUDY
         elif has_exercises:
             layout = LayoutFamily.EXERCISE
+        elif has_images:
+            layout = LayoutFamily.IMAGE_LED
         else:
             layout = LayoutFamily.READING
 
@@ -696,12 +785,22 @@ class EditorialArtDirector:
         return {
             "total_pages": len(page_plans),
             "chapters": {ch: {"pages": pages, "page_count": len(pages)} for ch, pages in chapter_pages.items()},
-            "front_matter_pages": [p.page_number for p in page_plans if p.purpose in (
-                PagePurpose.COVER, PagePurpose.TITLE_PAGE, PagePurpose.TOC
-            )],
-            "back_matter_pages": [p.page_number for p in page_plans if p.purpose in (
-                PagePurpose.REFERENCES, PagePurpose.BACK_COVER
-            )],
+            "front_matter_pages": [p.page_number for p in page_plans if p.purpose in {
+                PagePurpose.COVER,
+                PagePurpose.TITLE_PAGE,
+                PagePurpose.COPYRIGHT,
+                PagePurpose.TOC,
+                PagePurpose.FOREWORD,
+                PagePurpose.PREFACE,
+                PagePurpose.INTRODUCTION,
+            }],
+            "back_matter_pages": [p.page_number for p in page_plans if p.purpose in {
+                PagePurpose.GLOSSARY,
+                PagePurpose.REFERENCES,
+                PagePurpose.APPENDIX,
+                PagePurpose.SUMMARY,
+                PagePurpose.BACK_COVER,
+            }],
         }
 
     def validate_plan(self, plan: EditorialPlan, manuscript: Manuscript | None = None) -> list[str]:

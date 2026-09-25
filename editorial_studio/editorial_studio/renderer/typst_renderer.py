@@ -97,7 +97,9 @@ class TypstRenderer:
 
             content_data = {
                 "title": manuscript.title,
+                "subtitle": manuscript.description,
                 "author": manuscript.author,
+                "publisher": plan.design_tokens.brand_name,
                 "language": "en",
                 "preset": self._tokens_to_preset(plan.design_tokens),
                 "pages": page_data,
@@ -163,7 +165,9 @@ class TypstRenderer:
 
             content_data = {
                 "title": manuscript.title,
+                "subtitle": manuscript.description,
                 "author": manuscript.author,
+                "publisher": plan.design_tokens.brand_name,
                 "language": "en",
                 "preset": self._tokens_to_preset(plan.design_tokens),
                 "pages": page_data,
@@ -218,6 +222,14 @@ class TypstRenderer:
         finally:
             shutil.rmtree(work_dir, ignore_errors=True)
 
+    def _mapping_value(self, mapping: dict, key, default):
+        if key in mapping:
+            return mapping[key]
+        string_key = str(key)
+        if string_key in mapping:
+            return mapping[string_key]
+        return default
+
     def _tokens_to_preset(self, tokens: DesignTokens) -> dict[str, Any]:
         return {
             "body_font": tokens.body_font_family,
@@ -239,15 +251,21 @@ class TypstRenderer:
             "body_color": tokens.colors.get("body", "#1a1a1a"),
             "muted_color": tokens.colors.get("muted", "#64748b"),
             "sidebar_bg": tokens.colors.get("sidebar_bg", "#f8f9fa"),
-            "h1_size": f"{tokens.heading_font_sizes.get(1, 18)}pt",
-            "h2_size": f"{tokens.heading_font_sizes.get(2, 13)}pt",
-            "h3_size": f"{tokens.heading_font_sizes.get(3, 11)}pt",
-            "h1_weight": tokens.heading_weights.get(1, "bold"),
-            "h2_weight": tokens.heading_weights.get(2, "semibold"),
-            "h3_weight": tokens.heading_weights.get(3, "semibold"),
+            "table_header": tokens.colors.get("table_header", "#f1f1f1"),
+            "table_row_alt": tokens.colors.get("table_row_alt", "#fafafa"),
+            "page_width": f"{tokens.page_width_mm}mm",
+            "page_height": f"{tokens.page_height_mm}mm",
+            "h1_size": f"{self._mapping_value(tokens.heading_font_sizes, 1, 22)}pt",
+            "h2_size": f"{self._mapping_value(tokens.heading_font_sizes, 2, 14)}pt",
+            "h3_size": f"{self._mapping_value(tokens.heading_font_sizes, 3, 11.5)}pt",
+            "h1_weight": self._mapping_value(tokens.heading_weights, 1, "bold"),
+            "h2_weight": self._mapping_value(tokens.heading_weights, 2, "semibold"),
+            "h3_weight": self._mapping_value(tokens.heading_weights, 3, "semibold"),
             "numbered_headings": tokens.numbered_headings,
             "show_toc": tokens.show_toc,
             "show_header_footer": tokens.show_header_footer,
+            "header_rule": tokens.header_rule,
+            "page_num_position": tokens.page_num_position,
             "indent": f"{tokens.first_line_indent_em}em",
             "chapter_break": tokens.chapter_break,
             "page_contract": {
@@ -280,10 +298,11 @@ class TypstRenderer:
                 "blocks": [],
             }
 
-            # Add blocks assigned to this page
+            page_blocks: list = []
             for block_id in page_plan.content_block_ids:
                 block = block_by_id.get(block_id)
                 if block:
+                    page_blocks.append(block)
                     page["blocks"].append(self._serialize_block(block, asset_map))
 
             # Add page-specific data based on purpose
@@ -295,19 +314,36 @@ class TypstRenderer:
                 page["toc_data"] = self._build_toc_data(manuscript, plan.design_tokens)
             elif page_plan.purpose == PagePurpose.CHAPTER_OPENER:
                 chapter_num = page_plan.typography.get("chapter_number", "1") if page_plan.typography else "1"
-                chapter_title = page_plan.notes.replace("Chapter opener for: ", "") if page_plan.notes else f"Chapter {chapter_num}"
+                chapter_title = page_plan.notes.removeprefix("Chapter opener for: ") if page_plan.notes else f"Chapter {chapter_num}"
+                chapter_number = int(chapter_num) if str(chapter_num).isdigit() else 0
+                objectives = [
+                    block.content
+                    for block in manuscript.content_blocks
+                    if block.matter == "body"
+                    and block.chapter == chapter_number
+                    and block.content_type == ContentType.CALLOUT
+                ][:3]
                 page["chapter_opener_data"] = {
                     "chapter_number": chapter_num,
                     "chapter_title": chapter_title,
                     "epigraph": "",
-                    "learning_objectives": [],
+                    "learning_objectives": objectives,
                 }
             elif page_plan.purpose == PagePurpose.GLOSSARY:
-                page["glossary_data"] = {"entries": []}
+                page["glossary_data"] = {
+                    "entries": [
+                        {"term": block.metadata.get("term", ""), "definition": block.content}
+                        for block in page_blocks
+                        if block.content_type == ContentType.DEFINITION
+                    ]
+                }
             elif page_plan.purpose == PagePurpose.REFERENCES:
-                page["references_data"] = {"entries": []}
+                page["references_data"] = {"entries": [block.content for block in page_blocks]}
             elif page_plan.purpose == PagePurpose.BACK_COVER:
-                page["back_cover_data"] = {}
+                page["back_cover_data"] = {
+                    "background_color": plan.design_tokens.colors.get("accent", "#1d3557"),
+                    "text": "A practical field manual for disciplined land investment decisions.",
+                }
 
             pages.append(page)
 
@@ -419,6 +455,7 @@ class TypstRenderer:
         """Serialize a content block to a dictionary for Typst."""
         serialized = {
             "id": block.id,
+            "matter": block.matter,
             "type": block.content_type.value,
             "role": block.semantic_role.value,
             "chapter": block.chapter,
@@ -428,8 +465,11 @@ class TypstRenderer:
             "metadata": block.metadata,
         }
 
-        # Add type-specific data
-        if block.content_type == ContentType.IMAGE_INSTRUCTION:
+        if block.content_type in (ContentType.LIST, ContentType.LIST_ITEM):
+            serialized["list"] = {
+                "items": block.metadata.get("items", [block.content]),
+            }
+        elif block.content_type == ContentType.IMAGE_INSTRUCTION:
             asset_id = block.metadata.get("asset_id")
             if asset_id and asset_id in asset_map:
                 serialized["image"] = {
@@ -469,6 +509,16 @@ class TypstRenderer:
                 "answer": block.metadata.get("answer", ""),
                 "verification": block.metadata.get("verification", ""),
             }
+        elif block.content_type == ContentType.CASE_STUDY:
+            serialized["case_study"] = {
+                "title": block.metadata.get("title", ""),
+                "context": block.metadata.get("context", ""),
+            }
+        elif block.content_type == ContentType.REFERENCE:
+            serialized["reference"] = {
+                "text": block.content,
+                "url": block.metadata.get("url", ""),
+            }
         elif block.content_type == ContentType.DEFINITION:
             serialized["definition"] = {
                 "term": block.metadata.get("term", ""),
@@ -494,7 +544,8 @@ class TypstRenderer:
             "title": manuscript.title,
             "subtitle": manuscript.description or "",
             "author": manuscript.author,
-            "publisher": tokens.brand_name if hasattr(tokens, 'brand_name') else "",
+            "publisher": tokens.brand_name,
+            "background_color": tokens.colors.get("background", "#f4f0e6"),
         }
 
     def _build_title_data(self, manuscript: Manuscript, tokens: DesignTokens) -> dict[str, Any]:

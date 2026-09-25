@@ -29,6 +29,20 @@ class ManuscriptIngester:
         self.warnings: list[str] = []
         self.errors: list[str] = []
 
+    _back_matter_keywords = (
+        "glossary",
+        "references",
+        "bibliography",
+        "index",
+        "about the author",
+        "appendix",
+        "colophon",
+    )
+
+    def _is_back_matter_heading(self, text: str) -> bool:
+        lowered = text.lower()
+        return any(keyword in lowered for keyword in self._back_matter_keywords)
+
     def ingest_file(self, file_path: str | Path, title: str = "", author: str = "") -> IngestionResult:
         path = Path(file_path)
         if not path.exists():
@@ -199,8 +213,7 @@ class ManuscriptIngester:
                 heading_text = heading_match.group(2).strip()
                 
                 # Detect back matter sections
-                back_matter_keywords = ["glossary", "references", "bibliography", "index", "about the author", "appendix", "colophon"]
-                if level == 1 and any(kw in heading_text.lower() for kw in back_matter_keywords):
+                if level == 1 and self._is_back_matter_heading(heading_text):
                     matter = "back"
                     current_chapter = 0
                     current_section = 0
@@ -384,51 +397,112 @@ class ManuscriptIngester:
             )
 
         blocks: list[ContentBlock] = []
+        document = data if isinstance(data, dict) else {}
 
-        # Handle different JSON structures
         if isinstance(data, list):
             items = data
-        elif isinstance(data, dict) and "blocks" in data:
-            items = data["blocks"]
-        elif isinstance(data, dict) and "content" in data:
-            items = data["content"]
+        elif "content_blocks" in document:
+            items = document["content_blocks"]
+        elif "blocks" in document:
+            items = document["blocks"]
+        elif "content" in document:
+            items = document["content"]
         else:
             items = [data]
 
         chapter = 0
         section = 0
+        subsection = 0
+        matter = "front"
         for item in items:
             if isinstance(item, str):
-                blocks.append(self._make_block(item, ContentType.PARAGRAPH, SemanticRole.BODY, chapter, section, 0))
-            elif isinstance(item, dict):
-                ctype = item.get("type", "paragraph")
-                role = item.get("role", "body")
-                try:
-                    ct = ContentType(ctype)
-                except ValueError:
-                    ct = ContentType.PARAGRAPH
-                try:
-                    sr = SemanticRole(role)
-                except ValueError:
-                    sr = SemanticRole.BODY
-
-                if ct == ContentType.HEADING and sr == SemanticRole.CHAPTER:
-                    chapter += 1
-                    section = 0
-
                 blocks.append(self._make_block(
-                    item.get("content", ""), ct, sr,
-                    chapter, section, 0,
-                    level=item.get("level", 0),
-                    metadata=item.get("metadata", {})
+                    item,
+                    ContentType.PARAGRAPH,
+                    SemanticRole.BODY,
+                    chapter,
+                    section,
+                    subsection,
+                    matter=matter,
                 ))
+                continue
+            if not isinstance(item, dict):
+                continue
+
+            ctype = item.get("content_type", item.get("type", "paragraph"))
+            role = item.get("semantic_role", item.get("role", "body"))
+            try:
+                ct = ContentType(ctype)
+            except ValueError:
+                ct = ContentType.PARAGRAPH
+            try:
+                sr = SemanticRole(role)
+            except ValueError:
+                sr = SemanticRole.BODY
+
+            item_chapter = int(item.get("chapter", 0) or 0)
+            item_section = int(item.get("section", 0) or 0)
+            item_subsection = int(item.get("subsection", 0) or 0)
+            if ct == ContentType.HEADING and sr == SemanticRole.CHAPTER:
+                if item_chapter == 0:
+                    chapter += 1
+                    item_chapter = chapter
+                else:
+                    chapter = item_chapter
+                section = 0
+                subsection = 0
+            elif item_chapter:
+                chapter = item_chapter
+            if item_section:
+                section = item_section
+            if item_subsection:
+                subsection = item_subsection
+
+            if sr in {SemanticRole.GLOSSARY, SemanticRole.REFERENCE, SemanticRole.INDEX, SemanticRole.APPENDIX}:
+                item_matter = "back"
+            elif item_chapter:
+                item_matter = "body"
+            else:
+                item_matter = str(item.get("matter", matter))
+            if item_matter not in {"front", "body", "back"}:
+                item_matter = "body" if item_chapter else "front"
+            matter = item_matter
+
+            block = self._make_block(
+                str(item.get("content", "")),
+                ct,
+                sr,
+                item_chapter,
+                item_section,
+                item_subsection,
+                level=int(item.get("level", 0) or 0),
+                metadata=item.get("metadata", {}),
+                matter=item_matter,
+            )
+            block.id = str(item.get("id") or block.id)
+            block.order = int(item.get("order", block.order) or 0)
+            block.source_ref = str(item.get("source_ref", block.source_ref))
+            block.source_file = str(item.get("source_file", block.source_file))
+            block.source_line = int(item.get("source_line", block.source_line) or 0)
+            block.citations = item.get("citations", block.citations)
+            block.hyperlinks = item.get("hyperlinks", block.hyperlinks)
+            block.references = item.get("references", block.references)
+            block.editorial_constraints = item.get("editorial_constraints", block.editorial_constraints)
+            block.user_instructions = str(item.get("user_instructions", block.user_instructions))
+            block.is_generated = bool(item.get("is_generated", block.is_generated))
+            block.traceability = item.get("traceability", block.traceability)
+            blocks.append(block)
 
         manuscript = Manuscript(
-            id=f"ms_{uuid.uuid4().hex[:12]}",
-            title=title,
-            author=author,
+            id=str(document.get("id") or f"ms_{uuid.uuid4().hex[:12]}"),
+            title=str(document.get("title") or title),
+            author=str(document.get("author") or author),
+            description=str(document.get("description", "")),
             source_format="json",
+            source_files=document.get("source_files", []),
             content_blocks=blocks,
+            structure=document.get("structure", {}),
+            metadata=document.get("metadata", {}),
         )
 
         return IngestionResult(
@@ -464,48 +538,75 @@ class ManuscriptIngester:
 
         chapter = 0
         section = 0
+        subsection = 0
+        matter = "front"
 
         for element in soup.find_all(["h1", "h2", "h3", "h4", "h5", "h6", "p", "blockquote", "pre", "code", "ul", "ol", "table", "img"]):
             if element.name in ("h1", "h2", "h3", "h4", "h5", "h6"):
                 level = int(element.name[1])
                 text = element.get_text(strip=True)
                 if level == 1:
-                    chapter += 1
-                    section = 0
-                    role = SemanticRole.CHAPTER
+                    if self._is_back_matter_heading(text):
+                        matter = "back"
+                        chapter = 0
+                        section = 0
+                        subsection = 0
+                        lowered = text.lower()
+                        role = SemanticRole.APPENDIX if "appendix" in lowered else SemanticRole.BODY
+                    else:
+                        if matter == "front":
+                            matter = "body"
+                        chapter += 1
+                        section = 0
+                        subsection = 0
+                        role = SemanticRole.CHAPTER
                 elif level == 2:
                     section += 1
+                    subsection = 0
                     role = SemanticRole.SECTION
                 else:
+                    subsection += 1
                     role = SemanticRole.SUBSECTION
-                blocks.append(self._make_block(text, ContentType.HEADING, role, chapter, section, 0, level=level))
+                blocks.append(self._make_block(
+                    text, ContentType.HEADING, role, chapter, section, subsection, level=level, matter=matter
+                ))
             elif element.name == "p":
                 text = element.get_text(strip=True)
                 if text:
-                    blocks.append(self._make_block(text, ContentType.PARAGRAPH, SemanticRole.BODY, chapter, section, 0))
+                    blocks.append(self._make_block(
+                        text, ContentType.PARAGRAPH, SemanticRole.BODY, chapter, section, subsection, matter=matter
+                    ))
             elif element.name == "blockquote":
                 text = element.get_text(strip=True)
                 if text:
-                    blocks.append(self._make_block(text, ContentType.QUOTATION, SemanticRole.PULL_QUOTE, chapter, section, 0))
+                    blocks.append(self._make_block(
+                        text, ContentType.QUOTATION, SemanticRole.PULL_QUOTE, chapter, section, subsection, matter=matter
+                    ))
             elif element.name in ("pre", "code"):
                 text = element.get_text()
                 if text.strip():
-                    blocks.append(self._make_block(text, ContentType.CODE, SemanticRole.CODE, chapter, section, 0))
+                    blocks.append(self._make_block(
+                        text, ContentType.CODE, SemanticRole.CODE, chapter, section, subsection, matter=matter
+                    ))
             elif element.name in ("ul", "ol"):
                 for li in element.find_all("li", recursive=False):
                     text = li.get_text(strip=True)
                     if text:
-                        blocks.append(self._make_block(text, ContentType.LIST_ITEM, SemanticRole.BODY, chapter, section, 0))
+                        blocks.append(self._make_block(
+                            text, ContentType.LIST_ITEM, SemanticRole.BODY, chapter, section, subsection, matter=matter
+                        ))
             elif element.name == "table":
                 text = element.get_text(strip=True)
                 if text:
-                    blocks.append(self._make_block(text, ContentType.TABLE, SemanticRole.TABLE, chapter, section, 0))
+                    blocks.append(self._make_block(
+                        text, ContentType.TABLE, SemanticRole.TABLE, chapter, section, subsection, matter=matter
+                    ))
             elif element.name == "img":
                 alt = element.get("alt", "")
                 src = element.get("src", "")
                 blocks.append(self._make_block(
                     f"Image: {alt} ({src})", ContentType.IMAGE_INSTRUCTION, SemanticRole.FIGURE,
-                    chapter, section, 0, metadata={"alt_text": alt, "src": src}
+                    chapter, section, subsection, metadata={"alt_text": alt, "src": src}, matter=matter
                 ))
 
         manuscript = Manuscript(
@@ -541,6 +642,8 @@ class ManuscriptIngester:
         doc = Document(path)
         chapter = 0
         section = 0
+        subsection = 0
+        matter = "front"
 
         for para in doc.paragraphs:
             text = para.text.strip()
@@ -553,15 +656,29 @@ class ManuscriptIngester:
                 level_match = re.search(r"(\d+)", style)
                 level = int(level_match.group(1)) if level_match else 1
                 if level == 1:
-                    chapter += 1
-                    section = 0
-                    role = SemanticRole.CHAPTER
+                    if self._is_back_matter_heading(text):
+                        matter = "back"
+                        chapter = 0
+                        section = 0
+                        subsection = 0
+                        role = SemanticRole.APPENDIX if "appendix" in text.lower() else SemanticRole.BODY
+                    else:
+                        if matter == "front":
+                            matter = "body"
+                        chapter += 1
+                        section = 0
+                        subsection = 0
+                        role = SemanticRole.CHAPTER
                 elif level == 2:
                     section += 1
+                    subsection = 0
                     role = SemanticRole.SECTION
                 else:
+                    subsection += 1
                     role = SemanticRole.SUBSECTION
-                blocks.append(self._make_block(text, ContentType.HEADING, role, chapter, section, 0, level=level))
+                blocks.append(self._make_block(
+                    text, ContentType.HEADING, role, chapter, section, subsection, level=level, matter=matter
+                ))
             elif "list" in style or para.style.name.startswith("List"):
                 blocks.append(self._make_block(text, ContentType.LIST_ITEM, SemanticRole.BODY, chapter, section, 0))
             elif "code" in style:
@@ -578,7 +695,9 @@ class ManuscriptIngester:
                 row_text = [cell.text.strip() for cell in row.cells]
                 table_text.append(" | ".join(row_text))
             if table_text:
-                blocks.append(self._make_block("\n".join(table_text), ContentType.TABLE, SemanticRole.TABLE, chapter, section, 0))
+                blocks.append(self._make_block(
+                    "\n".join(table_text), ContentType.TABLE, SemanticRole.TABLE, chapter, section, subsection, matter=matter
+                ))
 
         manuscript = Manuscript(
             id=f"ms_{uuid.uuid4().hex[:12]}",
