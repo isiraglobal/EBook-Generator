@@ -100,8 +100,10 @@ def _overlaps(words: list[dict]) -> list[tuple[dict, dict]]:
             dy = min(a["y1"], b["y1"]) - max(a["y0"], b["y0"])
             if dx <= 0.6 or dy <= 0.6:
                 continue
-            shorter = min(a["y1"] - a["y0"], b["y1"] - b["y0"])
-            if dy > _OVERLAP_FRACTION * shorter:
+            shorter_h = min(a["x1"] - a["x0"], b["x1"] - b["x0"])
+            shorter_v = min(a["y1"] - a["y0"], b["y1"] - b["y0"])
+            if (dx > _OVERLAP_FRACTION * shorter_h
+                    and dy > _OVERLAP_FRACTION * shorter_v):
                 out.append((a, b))
     return out
 
@@ -142,6 +144,9 @@ def main() -> int:
                     help="plan JSON from build_manual.py --dump-plan; used to "
                          "classify pages whose emptiness is deliberate")
     ap.add_argument("--full", action="store_true", help="print every text line")
+    ap.add_argument("--no-ink", action="store_true",
+                    help="measure fill from text boxes only, ignoring rules "
+                         "and figures")
     args = ap.parse_args()
 
     purposes: dict[int, str] = {}
@@ -150,6 +155,22 @@ def main() -> int:
         purposes = {p["page"]: p["purpose"] for p in planned}
 
     pages = _parse_pages(args.pdf)
+
+    # Ink fill per page, from qa_pdf's rasteriser, when Pillow and NumPy are
+    # available. `--no-ink` skips it and falls back to the text-box measure,
+    # which cannot see a rule.
+    ink_fill: dict[int, float] | None = None
+    if not args.no_ink:
+        try:
+            import qa_pdf
+            ink_fill = {
+                i + 1: row["vertical_fill"]
+                for i, row in enumerate(qa_pdf.scan(args.pdf)["page_stats"])
+            }
+        except Exception as exc:  # noqa: BLE001 - a fallback, not a failure
+            print(f"ink fill unavailable ({type(exc).__name__}: {exc}); "
+                  f"falling back to text-box fill, which cannot see rules",
+                  file=sys.stderr)
     total = len(pages)
     wanted = _parse_range(args.pages, total)
     report = {"pdf": args.pdf, "total_pages": total, "pages": []}
@@ -191,17 +212,22 @@ def main() -> int:
                 f"y[{top:.0f},{bottom:.0f}] on {w:.0f}x{h:.0f}pt"
             )
 
-        fill = (body_bottom - body_top) / (BODY_BOTTOM - BODY_TOP) if body_lines else 0.0
+        # Fill is measured from the raster, not from the text boxes. A workbook
+        # spread is a prompt and eighteen ruled writing lines; those lines have
+        # no glyphs, so a word-box measurement scored every one of them at the
+        # height of its prompt alone. The exemption that used to paper over it
+        # keyed off the page's purpose, which came from the plan -- and the plan
+        # does not know that the contents page runs to two sheets, so the
+        # exemption landed on the wrong page and flagged a full page of writing
+        # space. qa_pdf's ink measurement needs no exemption.
+        fill = ink_fill.get(pno, 0.0) if ink_fill is not None else (
+            (body_bottom - body_top) / (BODY_BOTTOM - BODY_TOP) if body_lines else 0.0
+        )
         purpose = purposes.get(pno, "")
-        # A worksheet page is mostly ruled answer space, which has no glyphs;
-        # measuring only its text would flag every one as underfilled.
-        worksheet = purpose == "exercise"
         if not lines:
             issues.append("page has no extractable text")
-        elif fill < 0.30 and not worksheet:
+        elif ink_fill is None and fill < 0.30:
             issues.append(f"underfilled text block: {fill:.0%} of the text block height")
-        elif worksheet and len(lines) > 1 and body_bottom < 200:
-            issues.append("worksheet page has no ruled answer space below the prompt")
 
         entry = {
             "page": pno,

@@ -1,5 +1,0 @@
-[console_scripts]
-editorial-studio = editorial_studio.__main__:main
-editorial-studio-api = editorial_studio.__main__:run_api
-editorial-studio-mcp = editorial_studio.__main__:run_mcp
-editorial-studio-web = editorial_studio.__main__:run_web

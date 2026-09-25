@@ -309,7 +309,7 @@
 // passed straight under the giant figure, and the two printed on top of one
 // another: on three chapter openers the first line of the title crossed the
 // numeral's strokes, which reads as a collision rather than as a watermark.
-#let STACKED_NUMERAL_BAND = 28mm
+#let STACKED_NUMERAL_BAND = 34mm
 
 #let layout-opener-stacked(pg, doc, th) = {
   set page(margin: (top: 28mm, bottom: 24mm, left: 30mm, right: 30mm), fill: th.paper)
@@ -385,7 +385,7 @@
           ],
         ),
         block(width: 100%, breakable: false)[
-          #opener-numeral(num, th, size: scale.giant-sm, color: th.brass, leading: 1.02 * scale.giant-sm)
+          #opener-numeral(num, th, size: scale.giant-sm, color: th.brass, leading: 1.32 * scale.giant-sm)
           #v(0.4em)
           #opener-title(str(co.at("chapter_title", default: "")), th)
           #v(0.9em)
@@ -515,12 +515,16 @@
             ]
           ]
         ],
-        opener-numeral(num, th, size: scale.giant-sm, color: th.terracotta, leading: 1.02 * scale.giant-sm),
+        opener-numeral(num, th, size: scale.giant-sm, color: th.terracotta, leading: 1.32 * scale.giant-sm),
       )
     ] else [
       #opener-numeral(num, th, size: scale.giant-sm, color: th.terracotta,
-        leading: 1.02 * scale.giant-sm)
-      #v(0.2em)
+        leading: 1.32 * scale.giant-sm)
+      // Explicit clearance, not leading: par(leading:) spaces baselines, and a
+      // single-line paragraph's box does not grow the way the numeral's glyph
+      // box does. The chapter title's first line was crossing the numeral's
+      // descender by nine points.
+      #v(1.1em)
       #block(width: 100%, breakable: false)[
         #set par(justify: false, first-line-indent: 0em, leading: scale.display * 1.08)
         #dsp(title, th, size: scale.display, color: th.paper)
@@ -724,11 +728,10 @@
 //  genuinely wide and the renderer says so.
 // ============================================================================
 #let layout-full-width-feature(pg, doc, th) = {
+  // The sheet size is the plan's to set, at the break in book_pages.typ, so the
+  // family only chooses the margins that suit a wide measure.
   if str(pg.at("orientation", default: "portrait")) == "landscape" {
     set page(
-      width: 297mm,
-      height: 210mm,
-      flipped: true,
       margin: (top: 24mm, bottom: 20mm, left: 26mm, right: 24mm),
       fill: th.paper,
     )
@@ -1164,10 +1167,12 @@
 //  so the type stays legible.
 // ============================================================================
 #let layout-data-table-page(pg, doc, th) = {
+  // The sheet size is the plan's to set, at the break in book_pages.typ: a page
+  // takes its size from the settings in force where it starts, and a family that
+  // set one in its own body was overridden by the outer scope anyway -- and
+  // `flipped: true` with a landscape width and height asked for a portrait
+  // sheet, since flipped means the dimensions are given portrait-first.
   set page(
-    width: 297mm,
-    height: 210mm,
-    flipped: true,
     margin: (top: 24mm, bottom: 20mm, left: 26mm, right: 24mm),
     fill: th.paper,
   )

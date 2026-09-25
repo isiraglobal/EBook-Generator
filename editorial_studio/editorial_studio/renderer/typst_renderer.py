@@ -185,7 +185,10 @@ FIGURE_FAMILIES = ("diagram-page", "full-width-feature")
 # A drawn figure wider than 2:1 is a landscape page's worth of information.
 # Typst's A4 measure renders a 960x300 process strip at roughly 6pt labels in
 # portrait, which is below the size the labels were drawn to be read at.
-LANDSCAPE_FIGURE_FAMILIES = ("full-width-feature",)
+# Families that compose for a landscape sheet. A wide table and a full-bleed
+# feature both want the extra 87mm of measure; a page that is portrait will not
+# hold either of them at a readable size.
+LANDSCAPE_FIGURE_FAMILIES = ("full-width-feature", "data-table-page")
 
 # Chapters that open on ink. Three of twelve is a rhythm; all twelve would be a
 # gimmick, and none would be a decision. Position-based, so it is deterministic.
@@ -856,7 +859,12 @@ class TypstRenderer:
         # A page that opens on one of these is that thing, full stop.
         if kind == "exercise":
             return ["workbook-exercise"]
-        if kind == "worked_example":
+        if kind == "worked_example" or counts.get("worked_example"):
+            # A worked example is a page's climax whatever its position, the way
+            # an exercise is. As a mere nomination it lost to the rotation and
+            # was set as a plain card, so the numbered procedure lost its
+            # heading, its inputs and its result panel. The family flows the
+            # page's other blocks underneath.
             return ["worked-example-page"]
         if kind == "table":
             return ["data-table-page"]
@@ -1107,6 +1115,15 @@ class TypstRenderer:
                 last += cost
             pages[-1] = (last_blocks, last_family)
 
+        # The two rearrangement passes above move blocks between pages, so a
+        # page's lead block is not necessarily the one its family was chosen
+        # for: a worked example shifted onto a paragraph-led page kept the
+        # reading family and lost its calculation region. The family is
+        # re-decided here, from each page's final contents, and the rotation
+        # index is the page's position so the sequence stays deterministic.
+        for i, (group, _) in enumerate(pages):
+            pages[i] = (group, self._page_layout_for(group, i, capacity))
+
         # Never leave a heading alone at the top of a page: give it the block
         # that follows it, borrowing the previous page's tail if needed.
         for i, (group, family) in enumerate(pages):
@@ -1348,6 +1365,13 @@ class TypstRenderer:
                 if layout == "diagram-page":
                     page["figure_index"] = self._count_so_far(pages, "diagram-page") + 1
                 page["family_label"] = FAMILY_LABELS.get(layout, "")
+                if layout in LANDSCAPE_FIGURE_FAMILIES:
+                    # Published with the orientation, because a page takes its
+                    # size from the settings in force where it starts and the
+                    # plan is what decides the sheet.
+                    page["orientation"] = "landscape"
+                    page["width_mm"] = 297.0
+                    page["height_mm"] = 210.0
                 # A visual family with nothing to show needs a figure drawn for
                 # it. The manuscript supplies no artwork, and the family's whole
                 # geometry is a promise that something is there.
@@ -1728,7 +1752,20 @@ class TypstRenderer:
             serialized["content"] = prompt
         elif block.content_type == ContentType.WORKED_EXAMPLE:
             ex = self._worked_example(block)
-            serialized["worked_example"] = ex
+            if not ex["steps"]:
+                # A source tags its section summaries as worked examples: "This
+                # chapter explores ...", "<Section> is a fundamental component
+                # of ...". There is no calculation in them, so a worked-example
+                # page could only draw a numeral and a label and then stand
+                # empty. Without steps it is prose, and it is set as prose.
+                text = str(block.content or "").strip()
+                if text.lower().startswith("worked example:"):
+                    text = re.sub(r"^worked\s+example\s*:\s*", "", text,
+                                  flags=re.IGNORECASE)
+                serialized["type"] = "paragraph"
+                serialized["content"] = text
+            else:
+                serialized["worked_example"] = ex
         elif block.content_type == ContentType.CASE_STUDY:
             serialized["case_study"] = {
                 "title": block.metadata.get("title", ""),

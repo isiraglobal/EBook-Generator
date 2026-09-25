@@ -46,6 +46,9 @@ FORBIDDEN_WORDS = [
     r"\bundefined\b",
 ]
 
+# A4 in points, used only as a fallback when a page reports no mediabox. A run
+# can mix portrait and landscape sheets, so neither is the default for the book
+# as a whole.
 PAGE_W_PT, PAGE_H_PT = 595.2756, 841.8898
 
 
@@ -139,6 +142,9 @@ def scan(pdf_path: str, png_dir: str | None = None, dpi: int = 96) -> dict:
     n_pages = len(reader.pages)
     issues: list[dict] = []
     page_stats: list[dict] = []
+    # A run can hold portrait and landscape sheets together, so each page's own
+    # size is recorded rather than assumed.
+    dims: dict[int, tuple[float, float]] = {}
 
     # ── Text-layer checks ───────────────────────────────────────────────────
     for i, page in enumerate(reader.pages):
@@ -170,6 +176,11 @@ def scan(pdf_path: str, png_dir: str | None = None, dpi: int = 96) -> dict:
                 fonts.add(str(obj.get("/BaseFont", "?")))
         except Exception:  # noqa: BLE001
             pass
+        try:
+            box = page.mediabox
+            dims[i + 1] = (round(float(box.width), 1), round(float(box.height), 1))
+        except Exception:  # noqa: BLE001
+            dims[i + 1] = (round(PAGE_W_PT, 1), round(PAGE_H_PT, 1))
         bad = [f for f in fonts if "Source" in f or "Courier" in f]
         if bad:
             issues.append({
@@ -200,6 +211,8 @@ def scan(pdf_path: str, png_dir: str | None = None, dpi: int = 96) -> dict:
         fill = ((inked[-1] - inked[0]) / max(1, h * 0.82)) if inked.size else 0.0
         page_stats.append({
             "page": i,
+            "width_pt": dims[i][0],
+            "height_pt": dims[i][1],
             "ink_ratio": round(body_ink, 4),
             "vertical_fill": round(float(fill), 3),
             "column_runs": _overlap_regions(arr < STRICT_CUTOFF),
@@ -238,7 +251,12 @@ def scan(pdf_path: str, png_dir: str | None = None, dpi: int = 96) -> dict:
         "pdf": str(pdf),
         "total_pages": n_pages,
         "raster_pages": len(pages_px),
-        "page_size_pt": [round(PAGE_W_PT, 1), round(PAGE_H_PT, 1)],
+        # A book can hold portrait and landscape sheets in one run -- a wide
+        # table page composes for the extra 87mm of measure -- so the size is
+        # reported as a set, not as one pair. Reporting A4 portrait for a
+        # landscape page was simply wrong.
+        "page_sizes_pt": sorted({(round(s["width_pt"], 1), round(s["height_pt"], 1))
+                                 for s in page_stats}),
         "critical": critical,
         "warnings": warnings,
         "page_stats": page_stats,

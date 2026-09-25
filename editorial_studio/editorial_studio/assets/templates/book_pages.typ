@@ -174,6 +174,21 @@
 // bottom started a second, empty sheet -- which is where the blank page after
 // every chapter's recap was coming from.
 #for pg in pages {
+  // Page geometry is set here, at the break, rather than only inside the
+  // family. A page takes its size from the settings in force where it starts,
+  // and the break that starts it belongs to the previous page's scope -- so a
+  // family that set a landscape size in its own body still produced a portrait
+  // sheet. The family remains free to set margins, fill and running chrome;
+  // only the sheet size is the plan's to decide.
+  set page(
+    // Millimetres, not points: the plan publishes a sheet size in mm and the
+    // `dim` helper reads its value as points, which asked for a 210pt page.
+    // No `flipped`: the plan publishes the sheet already in its own order, and
+    // flipped means "the dimensions I am about to give you are portrait-first",
+    // so flipping a 297x210 pair asked for a portrait sheet.
+    width: pg.at("width_mm", default: 210) * 1mm,
+    height: pg.at("height_mm", default: 297) * 1mm,
+  )
   resolve-layout(pg.at("layout_function", default: "reading"))(pg, doc, th)
   if pg != pages.last() { pagebreak(weak: true) }
 }

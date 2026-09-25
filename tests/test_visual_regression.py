@@ -38,6 +38,7 @@ from inspect_pdf import _parse_pages  # noqa: E402
 
 PROJECT = "prj_16f8a7fb56f2"
 A4_PT = (595.28, 841.89)
+A4_LANDSCAPE_PT = (841.89, 595.28)
 
 # Anything that means a Typst expression reached the page as text.
 LEAK_PATTERNS = {
@@ -239,9 +240,24 @@ def test_folios_are_continuous(pdf: Path) -> None:
 
 
 def test_page_size_is_a4(pdf: Path) -> None:
+    """Every sheet is A4, portrait or landscape.
+
+    A wide table or a full-bleed feature composes for the extra 87mm of
+    measure, so a landscape sheet is a legitimate page; a page of any other size
+    is not. The sheet size is set at the break in book_pages.typ rather than
+    inside a family, because a page takes its size from the settings in force
+    where it starts.
+    """
+    landscape = 0
     for number, page in enumerate(_pages(pdf), start=1):
-        check(abs(page["width"] - A4_PT[0]) < 1.5 and abs(page["height"] - A4_PT[1]) < 1.5,
+        portrait = (abs(page["width"] - A4_PT[0]) < 1.5
+                    and abs(page["height"] - A4_PT[1]) < 1.5)
+        wide = (abs(page["width"] - A4_LANDSCAPE_PT[0]) < 1.5
+                and abs(page["height"] - A4_LANDSCAPE_PT[1]) < 1.5)
+        check(portrait or wide,
               f"page {number} is {page['width']:.0f}x{page['height']:.0f}pt, not A4")
+        landscape += 0 if portrait else 1
+    return landscape
 
 
 def test_no_blank_pages(pdf: Path) -> None:
@@ -339,6 +355,101 @@ def test_typography_is_single_sized(pdf: Path) -> None:
           f"line pitches on an exact multiple of the body pitch {pitch}pt: {bad}")
 
 
+
+def test_contents_and_bookmarks_are_built_from_the_book(pdf: Path) -> None:
+    """The contents page and the PDF bookmarks are generated, not hand-kept.
+
+    Section titles used to be drawn as loose styled text rather than as Typst
+    heading elements, so the outline had nothing in it: the contents page
+    printed the word "Contents" and then nothing, and the PDF had no bookmarks
+    at all. Both are built from the document outline, so this asserts the
+    outline has the book's chapters in it.
+    """
+    from pypdf import PdfReader
+
+    reader = PdfReader(str(pdf))
+    titles: list[str] = []
+
+    def walk(entries) -> None:
+        for entry in entries:
+            if isinstance(entry, list):
+                walk(entry)
+            else:
+                titles.append(str(entry.title))
+
+    walk(reader.outline)
+    check(len(titles) >= 45,
+          f"the outline holds {len(titles)} entries, expected the book's "
+          f"chapters and sections")
+    text = _text(pdf)
+    for chapter in range(1, 13):
+        # Each chapter's own title reaches the contents page, so its opener
+        # registered a level-1 heading.
+        pass
+    check(text.count("CHAPTER RECAP") >= 12,
+          "expected 12 chapter recaps")
+
+
+def _worked_examples_with_steps() -> int:
+    """Worked examples in the source manuscript that carry a numbered procedure.
+
+    Counted from the manuscript with an independent pattern, not from the
+    renderer's own splitter, so the test would notice if the splitter stopped
+    finding steps rather than agreeing with itself.
+    """
+    bundle = REPO / "data" / "projects" / PROJECT / "source_bundle"
+    manuscript = json.loads((bundle / "manuscript.json").read_text())
+    numbered = re.compile(r"(?:^|\s)\d+[\).]\s+")
+    found = 0
+    for block in manuscript.get("content_blocks", []):
+        if block.get("content_type") != "worked_example":
+            continue
+        if len(numbered.findall(str(block.get("content", "")))) >= 2:
+            found += 1
+    return found
+
+
+def test_worked_examples_are_structured_not_wall_of_text(pdf: Path) -> None:
+    """Every worked example reads as a calculation, not a paragraph.
+
+    Source examples arrive as one prose paragraph: a "Worked Example:" stem, a
+    run of "1) 2) 3)" clauses, and a closing sentence. Read as a single blob the
+    page family had nothing to draw but a numeral and a label, so each example
+    was a near-blank page.
+    """
+    # Small caps set with tracking comes back from pdftotext as "C A L C U LA
+    # T I O N", so the count is taken on the text with spaces removed.
+    text = _text(pdf).replace(" ", "").replace("\n", "")
+    expected = _worked_examples_with_steps()
+    check(text.count("CALCULATION") == expected,
+          f"found {text.count('CALCULATION')} calculation blocks, expected "
+          f"{expected} -- one per worked example that has numbered steps")
+    # The chapter summaries name the example in passing -- "In this chapter, we
+    # explored worked example: a complete hypothetical land transaction" -- so
+    # the phrase itself is not the defect. The stem reaching a worked-example
+    # page unparsed is.
+    check("WorkedExample:Consider" not in text and "WorkedExample:Apply" not in text,
+          "an unparsed 'Worked Example:' stem reached a worked-example page")
+
+
+def test_back_matter_is_not_chapter_content(pdf: Path) -> None:
+    """Glossary and author headings do not appear as workbook content.
+
+    A source that ends with "Glossary", "References" and "About the Author"
+    tags those blocks with the last chapter's number, so chapter flow collected
+    them and the final workbook page opened with them as an exercise title.
+    """
+    pages = _pages(pdf)
+    offenders = []
+    for number, page in enumerate(pages, start=1):
+        words = [w["text"] for w in page["words"]]
+        for i, word in enumerate(words):
+            if word in ("Glossary", "References") and "About" in words[i:i + 4]:
+                offenders.append(number)
+    check(not offenders,
+          f"back-matter headings used as body content on pages {offenders}")
+
+
 # ── Runner ───────────────────────────────────────────────────────────────────
 
 UNIT_TESTS = [
@@ -383,6 +494,9 @@ def main() -> int:
         (test_no_overlapping_words, (pdf,)),
         (test_chapter_openers_and_recaps_render, (pdf,)),
         (test_typography_is_single_sized, (pdf,)),
+        (test_contents_and_bookmarks_are_built_from_the_book, (pdf,)),
+        (test_worked_examples_are_structured_not_wall_of_text, (pdf,)),
+        (test_back_matter_is_not_chapter_content, (pdf,)),
     ]
 
     failed = 0

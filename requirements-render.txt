@@ -1,0 +1,10 @@
+# The render path: planner, Typst renderer, QA and tests.
+#
+# The full editorial_studio distribution (FastAPI service, MCP server, web UI,
+# ingestion and AI pipelines) is in editorial_studio/pyproject.toml and is not
+# needed to typeset a book. These four are what a manuscript-to-PDF build
+# actually imports.
+Pillow>=10.1.0
+numpy>=1.26.2
+pypdf>=4.0.0
+PyYAML>=6.0.1

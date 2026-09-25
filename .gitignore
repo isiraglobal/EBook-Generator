@@ -1,0 +1,43 @@
+# Build output. A PDF is a build artifact: it is produced by
+# `python3 scripts/build_manual.py`, not kept in the repository. Every PDF in
+# the history of this tree was a snapshot of somebody's local run, and they went
+# stale within a commit of each other.
+*.pdf
+
+# Rasterised QA output and page previews.
+*.png
+!editorial_studio/editorial_studio/assets/**/*.png
+data/temp/
+# `output/` is ignored but its placeholder is tracked, so a fresh clone has the
+# directory the default build writes into.
+output/*
+!output/.gitkeep
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.venv/
+venv/
+
+# Tooling caches
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Local scratch
+.DS_Store
+*.log
+.idea/
+.vscode/
+
+# Local working snapshots. A backup of the tree is not part of the project;
+# git is the history.
+.backup/
+data/editorial_studio.db
+data/editorial_studio.db-*
