@@ -144,30 +144,34 @@ BLOCK_LEADING: dict[str, float] = {
 }
 
 FAMILY_GEOMETRY: dict[str, tuple[float, float]] = {
-    "reading": (1.00, 0.94),
-    "reading-two-col": (0.49, 0.90),
-    "image-led": (1.00, 0.70),
-    # 132mm measure inside a 40mm/46mm margin page, and the top margin alone
-    # costs five lines.
-    "minimal-editorial": (0.85, 0.78),
-    # 108mm main column of a 156mm measure.
-    "asymmetric-grid": (0.70, 0.90),
-    # 56mm main column: the tightest main measure in the book.
-    "text-visual-split": (0.62, 0.80),
-    # A full inset frame with a header band, corner brackets and a figure.
-    "framed-feature": (0.87, 0.66),
-    "full-width-feature": (1.00, 0.82),
-    # 1.34 leading on the scenario plus a tinted takeaway panel below it.
-    "case-study-editorial": (1.00, 0.70),
-    "worked-example-page": (1.00, 0.82),
-    "workbook-exercise": (1.00, 0.94),
-    "checklist-page": (0.88, 0.86),
-    "pull-quote-page": (1.00, 0.30),
-    "diagram-page": (1.00, 0.58),
-    # Landscape: a 247mm measure, but the title, rule and caption overhead is
-    # proportionally smaller.
-    "data-table-page": (1.00, 0.62),
-    "recap-plan-page": (1.00, 0.90),
+    # The width factor is the share of the 147mm measure the family's text
+    # column really occupies, because wrapping the same block into a narrower
+    # column costs roughly 1/width lines. On the grid that share is not a
+    # measurement taken off a rendered page -- it is a column count over twelve,
+    # which is why the numbers below are exact fractions rather than the
+    # three-decimal estimates the design_system families needed.
+    #
+    # The headroom factor is the share of the type area the family's own
+    # furniture spends: title block, panel insets, rule, caption, input strip.
+    # The running head and the folio live in the 27mm and 54mm margins, so on
+    # this grid they cost a body page nothing, and a plain reading page is
+    # (1.00, 1.00).
+    "reading": (1.00, 1.00),                          # 12 of 12 columns
+    "reading-two-col": (0.50, 1.00),                  # still the legacy two-column body
+    "image-led": (0.75, 0.62),                        # diagram: 9 columns plus a capped plate
+    "minimal-editorial": (0.75, 0.94),                # marginalia: 9 columns plus a margin note
+    "asymmetric-grid": (0.58, 0.86),                  # figure split: 7 columns of text, 5 of plate
+    "text-visual-split": (0.62, 0.80),                # legacy: a 56mm main column
+    "framed-feature": (0.87, 0.66),                   # legacy: an inset frame with corner brackets
+    "full-width-feature": (1.00, 0.82),               # legacy: a full-measure feature
+    "case-study-editorial": (0.83, 0.74),             # 10 columns: situation panel, verdict rule
+    "worked-example-page": (0.83, 0.66),              # 10 columns: inputs strip, result panel
+    "workbook-exercise": (0.83, 0.58),                # 10 columns: ruled answer area dominates
+    "checklist-page": (0.75, 0.88),                   # 9 columns: two columns of items
+    "pull-quote-page": (0.67, 0.32),                  # 8 columns of quotation
+    "diagram-page": (0.75, 0.60),                     # 9 columns: plate capped to the type height
+    "data-table-page": (1.00, 0.62),                  # landscape: a 297mm measure
+    "recap-plan-page": (0.83, 0.82),                  # 10 columns: summary, points, practice
     "reference-page": (1.00, 0.90),
 }
 
@@ -447,7 +451,8 @@ class TypstRenderer:
             # family that lives in its own file is still part of the book, so
             # it has to travel to the render work directory like the rest.
             for companion in ("layout_library.typ", "design_system.typ",
-                              "page_families.typ"):
+                              "page_families.typ", "content.typ", "grid.typ",
+                              "chrome.typ", "families.typ"):
                 src = self.templates_dir / companion
                 if src.exists():
                     shutil.copy2(src, work_dir / companion)
@@ -527,7 +532,8 @@ class TypstRenderer:
             # family that lives in its own file is still part of the book, so
             # it has to travel to the render work directory like the rest.
             for companion in ("layout_library.typ", "design_system.typ",
-                              "page_families.typ"):
+                              "page_families.typ", "content.typ", "grid.typ",
+                              "chrome.typ", "families.typ"):
                 src = self.templates_dir / companion
                 if src.exists():
                     shutil.copy2(src, work_dir / companion)

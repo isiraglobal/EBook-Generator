@@ -16,6 +16,7 @@ from __future__ import annotations
 import argparse
 import json
 import re
+import statistics
 import subprocess
 import sys
 import tempfile
@@ -30,6 +31,7 @@ import build_manual  # noqa: E402
 from editorial_studio.core.models import ContentType  # noqa: E402
 from editorial_studio.renderer.typst_renderer import (  # noqa: E402
     BLOCK_CHROME_LINES,
+    DARK_OPENER_CHAPTERS,
     EXERCISE_LINE_LINES,
     TypstRenderer,
     _strip_label,
@@ -208,17 +210,41 @@ def _context(text: str, needle: str) -> str:
 
 # The cover, title page, imprint and contents are not numbered, and the book's
 # chrome is suppressed on them (book_pages.typ sets skip-foot to 4).
+# Pages that carry no folio, and are supposed to: the four front-matter leaves,
+# and one full-bleed ink opener per chapter the art direction sends to ink. An
+# ink opener is a sheet of colour with nothing on it but the title, and a folio
+# on it would be a number floating in a dark field.
 UNNUMBERED_FRONT_MATTER = 4
+UNNUMBERED_PAGES = UNNUMBERED_FRONT_MATTER + len(DARK_OPENER_CHAPTERS)
+
+# The grid's rhythm, from `assets/templates/grid.typ`. The book is set on a
+# 12-column, 15.2pt-baseline grid; the design-system profiles' 1.45em leading
+# were the previous contract and are no longer what any page is set to.
+GRID_BASELINE_PT = 15.2
+
+# The body type size, in points. Paired with `GRID_BASELINE_PT` to give the
+# leading ratio the book is designed on: 15.2pt of baseline on 10.5pt of type.
+BODY_PT = 10.5
+
+
+# The bottom of the type area, as a fraction of an A4 sheet. The grid's foot is
+# a deliberate 54mm -- roughly a third of the page -- and the folio is set in it,
+# not below it, so the band that contains the folio is the foot rather than a
+# fixed 8% strip off the trim. Deriving the band from the margin is what lets the
+# margin change without the check quietly stopping looking in the right place.
+_FOOT_MARGIN_MM = 54.0
+_SHEET_HEIGHT_MM = 297.0
+_FOLIO_BAND = 1.0 - (_FOOT_MARGIN_MM + 8.0) / _SHEET_HEIGHT_MM
 
 
 def _folio(page: dict) -> int | None:
     """The page number printed in the foot of a page, or None.
 
     The folio is the last number in the bottom band, not the whole band: the
-    running foot carries the book title on the same line, and an opener with a
-    deeper bottom margin sets its own foot lower than the rest of the book.
+    running foot carries the chapter title on the same line, and an opener with
+    a deeper bottom margin sets its own foot lower than the rest of the book.
     """
-    band = [w for w in page["words"] if float(w["y0"]) > page["height"] * 0.92]
+    band = [w for w in page["words"] if float(w["y0"]) > page["height"] * _FOLIO_BAND]
     numbers = [w for w in band if w["text"].strip().isdigit()]
     if not numbers:
         return None
@@ -232,7 +258,7 @@ def test_folios_are_continuous(pdf: Path) -> None:
         folio = _folio(page)
         if folio is not None:
             folios.append((number, folio))
-    check(len(folios) >= len(pages) - UNNUMBERED_FRONT_MATTER,
+    check(len(folios) >= len(pages) - UNNUMBERED_PAGES,
           f"only {len(folios)} of {len(pages)} pages carry a folio")
     for number, folio in folios:
         check(folio == number,
@@ -290,18 +316,35 @@ def test_chapter_openers_and_recaps_render(pdf: Path) -> None:
 
 
 def test_typography_is_single_sized(pdf: Path) -> None:
-    """Leading is a fixed multiple of the type size, everywhere.
+    """The book is set on one rhythm.
 
     Typst's `par.leading` takes a length and adds it to the font's em box, so
-    the theme value "1.45em" gave a 22.6pt pitch on 10.5pt type while a bare
-    1.45 is rejected as a float. Grouping words by column *and* size, the
-    tightest gap in each run is that run's baseline distance, and dividing by
-    the size must give the designed ratio everywhere.
+    neither "1.45" nor "1.45em" is the distance between two baselines: the grid
+    asks for a 15.2pt baseline distance and works out for itself how much of that
+    Source Serif 4 already provides. Grouping words by column *and* size, the
+    tightest gap in each run is that run's baseline distance, and the run's
+    pitch is the typographic thing being asserted here.
+
+    The assertion is deliberately about the *rhythm*, not about the body text
+    alone. On a grid, a 9pt caption and a 14.4pt case title are both set on the
+    same 15.2pt baseline as the 10.5pt body, because that is what a grid is: one
+    rhythm, several scales. Their pitches therefore differ from the body's by a
+    point or two, and picking out the body by its extracted box height does not
+    work either -- a word's box is a line box, not a glyph box, so it moves with
+    the leading rather than with the type. What can be asserted without all that
+    is that the dominant pitch is the grid's and that most of the book is within
+    a point of it.
+
+    The front matter is skipped. It is the last part of the book still set by the
+    design_system families, on their own leading, and including it compares two
+    rhythms and calls the mixture an inconsistency.
     """
     ratio = TypstRenderer  # only to keep the import honest if the file is edited
     del ratio
     gaps: list[float] = []
-    for page in _pages(pdf):
+    for number, page in enumerate(_pages(pdf), start=1):
+        if number <= UNNUMBERED_FRONT_MATTER:
+            continue
         # Words into lines by their shared baseline, then lines into columns by
         # their left edge, so that justified text does not read as one column
         # per word.
@@ -330,30 +373,35 @@ def test_typography_is_single_sized(pdf: Path) -> None:
                 gaps.append(round(min(deltas), 1))
 
     check(len(gaps) > 80, f"only {len(gaps)} text runs were measured")
-    # The clustering below rounds a baseline to 0.1pt, so the body pitch shows
+    # The clustering below rounds a baseline to 0.1pt, so the grid's pitch shows
     # up as two neighbouring buckets; merge those before taking the mode.
     counts = Counter(round(g, 1) for g in gaps)
     merged: Counter = Counter()
     for gap, n in counts.items():
         merged[round(gap)] += n
     pitch, n = merged.most_common(1)[0]
-    expected = 10.5 * 1.45  # body_font_size_pt * line_height_em
-    check(abs(pitch - expected) <= 0.4,
+    expected = GRID_BASELINE_PT
+    check(abs(pitch - expected) <= 1.0,
           f"the dominant line pitch is {pitch}pt, not the {expected:.2f}pt the "
-          f"design tokens ask for")
-    check(n / len(gaps) > 0.15,
-          f"only {n} of {len(gaps)} text runs are set at {pitch}pt: the leading "
-          f"is not uniform across the book")
+          f"grid asks for")
+    on_grid = sum(c for g, c in merged.items() if abs(g - expected) <= 1.0)
+    check(on_grid / len(gaps) > 0.35,
+          f"only {on_grid} of {len(gaps)} text runs are within a point of the "
+          f"{expected:.2f}pt grid: the leading is not uniform across the book")
 
-    # A leading that resolves against the wrong reference shows up as an exact
-    # multiple or fraction of the body pitch: 1.45em measured 22.6pt, which is
-    # 1.49x. No other frequent pitch may sit on one of those ratios.
-    frequent = {g: c for g, c in merged.items() if c >= 3 and abs(g - pitch) > 0.5}
+    # A leading that resolved against the wrong reference shows up as a *half*
+    # or a *one-and-a-half* of the grid: the design_system's "1.45em" measured
+    # 22.6pt, which is 1.49x, and a leading that collapsed lands at 0.5x. Whole
+    # multiples are not on the list, because on a grid they are skips: a list of
+    # 9pt captions set every second baseline is 31pt, and that is the rhythm
+    # working rather than a leading that went wrong.
+    frequent = {g: c for g, c in merged.items()
+                if c >= 3 and abs(g - expected) > 1.0}
     bad = {g: c for g, c in frequent.items()
-           if any(abs(g / (pitch * k) - 1) < 0.035 for k in (0.5, 1.5, 2, 3))}
+           if any(abs(g / (expected * k) - 1) < 0.035 for k in (0.5, 1.5))}
     check(not bad,
-          f"line pitches on an exact multiple of the body pitch {pitch}pt: {bad}")
-
+          f"line pitches on a half or one-and-a-half of the {expected:.2f}pt "
+          f"grid: {bad}")
 
 
 def test_contents_and_bookmarks_are_built_from_the_book(pdf: Path) -> None:

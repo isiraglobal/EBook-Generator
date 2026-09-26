@@ -141,7 +141,7 @@ def parcel_map_svg(
                        f'stroke="{BRASS}" stroke-width="1.1"/>')
             out.append(f'<circle cx="{x:.1f}" cy="{y - 22}" r="3.2" fill="{BRASS}"/>')
             out.append(
-                f'<text x="{x:.1f}" y="{y + 4}" text-anchor="middle" font-family="PT Sans, Helvetica, Arial, sans-serif" '
+                f'<text x="{x:.1f}" y="{y + 4}" text-anchor="middle" font-family="Source Sans 3, Helvetica, Arial, sans-serif" '
                 f'font-size="15" fill="{SLATE}">{_esc(label)}</text>'
             )
 
@@ -169,7 +169,7 @@ def step_diagram_svg(steps: list[str], path: str | Path, width: int = 960, heigh
         out.append(f'<rect x="{x:.1f}" y="{top}" width="{box_w:.1f}" height="{box_h}" '
                    f'fill="none" stroke="{RULE}" stroke-width="1.2" rx="4"/>')
         out.append(f'<rect x="{x:.1f}" y="{top}" width="{box_w:.1f}" height="4" fill="{BRASS}"/>')
-        out.append(f'<text x="{x + 14:.1f}" y="{top + 30}" font-family="PT Sans, Helvetica, Arial, sans-serif" '
+        out.append(f'<text x="{x + 14:.1f}" y="{top + 30}" font-family="Source Sans 3, Helvetica, Arial, sans-serif" '
                    f'font-size="14" font-weight="bold" fill="{TERRACOTTA}" letter-spacing="1.5">{i + 1:02d}</text>')
         words = _truncate(step, 64).split()
         line, lines = "", []
@@ -183,7 +183,7 @@ def step_diagram_svg(steps: list[str], path: str | Path, width: int = 960, heigh
             lines.append(line)
         for j, line in enumerate(lines[:4]):
             out.append(f'<text x="{x + 14:.1f}" y="{top + 58 + j * 21}" '
-                       f'font-family="PT Sans, Helvetica, Arial, sans-serif" font-size="15" '
+                       f'font-family="Source Sans 3, Helvetica, Arial, sans-serif" font-size="15" '
                        f'fill="{INK}">{_esc(line)}</text>')
         if i < n - 1:
             ax = x + box_w + gap / 2
@@ -241,21 +241,21 @@ def risk_matrix_svg(
     for i in range(cols):
         x = pad_l + (i + 0.5) * cw
         out.append(f'<text x="{x:.1f}" y="{pad_t + rows * ch + 26:.1f}" text-anchor="middle" '
-                   f'font-family="PT Sans, Helvetica, Arial, sans-serif" font-size="13" '
+                   f'font-family="Source Sans 3, Helvetica, Arial, sans-serif" font-size="13" '
                    f'fill="{SLATE}">{_esc(_truncate(axes[1], 14))} {i + 1}</text>')
     for i in range(rows):
         y = pad_t + (rows - 1 - i + 0.5) * ch
         out.append(f'<text x="{pad_l - 14:.1f}" y="{y + 5:.1f}" text-anchor="end" '
-                   f'font-family="PT Sans, Helvetica, Arial, sans-serif" font-size="13" '
+                   f'font-family="Source Sans 3, Helvetica, Arial, sans-serif" font-size="13" '
                    f'fill="{SLATE}">{i + 1}</text>')
 
     out.append(f'<text x="{pad_l - 96}" y="{pad_t + rows * ch / 2:.1f}" text-anchor="middle" '
                f'transform="rotate(-90 {pad_l - 96} {pad_t + rows * ch / 2:.1f})" '
-               f'font-family="PT Sans, Helvetica, Arial, sans-serif" font-size="13" '
+               f'font-family="Source Sans 3, Helvetica, Arial, sans-serif" font-size="13" '
                f'font-weight="bold" fill="{INK}" letter-spacing="1.2">'
                f'{_esc(_truncate(axes[0], 28).upper())}</text>')
     out.append(f'<text x="{pad_l + cols * cw / 2:.1f}" y="{height - 22}" text-anchor="middle" '
-               f'font-family="PT Sans, Helvetica, Arial, sans-serif" font-size="13" '
+               f'font-family="Source Sans 3, Helvetica, Arial, sans-serif" font-size="13" '
                f'font-weight="bold" fill="{INK}" letter-spacing="1.2">'
                f'{_esc(_truncate(axes[1], 28).upper())}</text>')
 
@@ -267,7 +267,7 @@ def risk_matrix_svg(
         out.append(f'<circle cx="{x:.1f}" cy="{y:.1f}" r="15" fill="{PAPER}" '
                    f'stroke="{TERRACOTTA}" stroke-width="2"/>')
         out.append(f'<text x="{x:.1f}" y="{y + 5:.1f}" text-anchor="middle" '
-                   f'font-family="PT Mono, monospace" font-size="13" font-weight="bold" '
+                   f'font-family="Source Code Pro, monospace" font-size="13" font-weight="bold" '
                    f'fill="{INK}">{i + 1:02d}</text>')
     out.append("</svg>")
     Path(path).write_text("\n".join(out), encoding="utf-8")
@@ -320,7 +320,7 @@ def decision_tree_svg(
     lines.append(line)
     for i, ln in enumerate(lines[:3]):
         out.append(f'<text x="{width / 2:.1f}" y="{top + 34 + i * 20:.1f}" text-anchor="middle" '
-                   f'font-family="PT Serif, Georgia, serif" font-size="17" fill="{INK}">'
+                   f'font-family="Source Serif 4, Georgia, serif" font-size="17" fill="{INK}">'
                    f'{_esc(ln)}</text>')
 
     stem_bottom = top + gate_h
@@ -341,7 +341,7 @@ def decision_tree_svg(
                    f'stroke-width="1.2" rx="4"/>')
         out.append(f'<rect x="{px:.1f}" y="{mid_y:.1f}" width="{panel_w:.1f}" height="4" fill="{tone}"/>')
         out.append(f'<text x="{px + 18:.1f}" y="{mid_y + 34:.1f}" '
-                   f'font-family="PT Sans, Helvetica, Arial, sans-serif" font-size="13" '
+                   f'font-family="Source Sans 3, Helvetica, Arial, sans-serif" font-size="13" '
                    f'font-weight="bold" fill="{tone}" letter-spacing="1.6">'
                    f'{_esc(_truncate(lbl, 30).upper())}</text>')
         body = _truncate(outcome_text[i], 130)
@@ -355,7 +355,7 @@ def decision_tree_svg(
         blines.append(cur)
         for j, ln in enumerate(blines[:5]):
             out.append(f'<text x="{px + 18:.1f}" y="{mid_y + 62 + j * 21:.1f}" '
-                       f'font-family="PT Serif, Georgia, serif" font-size="15" fill="{INK}">'
+                       f'font-family="Source Serif 4, Georgia, serif" font-size="15" fill="{INK}">'
                        f'{_esc(ln)}</text>')
     out.append("</svg>")
     Path(path).write_text("\n".join(out), encoding="utf-8")

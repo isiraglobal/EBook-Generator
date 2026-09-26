@@ -120,7 +120,13 @@
 // rule therefore passes the body through instead of re-styling it; what it
 // still owns is the outline entry, which is what makes the contents page and
 // the PDF bookmarks work at all.
-#show heading.where(level: 1): it => it.body
+// The heading's *content* is passed through inside a zero-spacing block rather
+// than the heading element itself. A page family supplies the heading's size,
+// weight and rule inside the element's body, so keeping the element would let
+// Typst's own numbering and spacing back in; dropping the element to bare
+// content would throw the styling away with it. The bookmark and the contents
+// entry are properties of the element, so they survive either way.
+#show heading.where(level: 1): it => block(above: 0pt, below: 0pt, breakable: false)[#it.body]
 
 #show heading.where(level: 2): it => block(
   width: 100%,
@@ -129,7 +135,7 @@
   above: 1.25em,
 )[
   #set par(justify: false, first-line-indent: 0em, leading: 1.15em)
-  #text(font: th.heading-font, size: th.h2-size, weight: "bold", fill: th.ink)[#it.element.body]
+  #text(font: th.heading-font, size: th.h2-size, weight: "bold", fill: th.ink)[#it.body]
   #v(0.35em)
   #line(length: 1.3cm, stroke: 0.9pt + th.brass)
 ]

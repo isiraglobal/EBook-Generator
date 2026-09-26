@@ -70,6 +70,18 @@ INK_CUTOFF = 235
 # measure and would otherwise look like two columns colliding.
 STRICT_CUTOFF = 200
 
+# The editorial families, matched as substrings of a PDF BaseFont name. These are
+# the fonts the book is set in, all SIL Open Font License 1.1 and all bundled in
+# `assets/fonts`; a page that embeds anything else has silently fallen back, which
+# is the failure this check exists to catch. Substring matching is deliberate:
+# Typst writes subset names such as `/EOKSDN+SourceSerif4-Bold-Identity-H`, so the
+# family name is the only stable part of the identifier.
+EDITORIAL_FONTS = (
+    "SourceSerif4",
+    "SourceSans3",
+    "SourceCodePro",
+)
+
 
 def _load_pages(pdf: Path) -> list[np.ndarray]:
     """Rasterise every page to a grayscale coverage map."""
@@ -181,7 +193,7 @@ def scan(pdf_path: str, png_dir: str | None = None, dpi: int = 96) -> dict:
             dims[i + 1] = (round(float(box.width), 1), round(float(box.height), 1))
         except Exception:  # noqa: BLE001
             dims[i + 1] = (round(PAGE_W_PT, 1), round(PAGE_H_PT, 1))
-        bad = [f for f in fonts if "Source" in f or "Courier" in f]
+        bad = [f for f in fonts if not any(k in f for k in EDITORIAL_FONTS)]
         if bad:
             issues.append({
                 "page": i + 1, "severity": "warning", "code": "font_fallback",

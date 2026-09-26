@@ -10,6 +10,7 @@
 // ============================================================================
 
 #import "helpers.typ": *
+#import "families.typ": *
 
 // ── Cover ───────────────────────────────────────────────────────────────────
 // The gilt frame is built as a full-height bordered block in normal flow
@@ -133,8 +134,54 @@
 }
 
 // ── Table of contents ───────────────────────────────────────────────────────
+// The contents page, built from the document's own headings.
+//
+// It is built from `query` rather than from `outline` for one concrete reason:
+// an outline entry is rendered through the heading's own show rule, so a chapter
+// title that the grid sets at 30pt on the page came out at 30pt in the contents
+// as well and ran off the sheet. A contents entry is a reference line, so the
+// entry is composed here at its own size and nothing else can change it.
+#let toc-line(title, number, th, size: 10.5pt) = block(width: 100%, breakable: false)[
+  #set par(justify: false, first-line-indent: 0em, leading: size * 1.34)
+  #grid(
+    columns: (1fr, auto),
+    column-gutter: 6pt,
+    align: (left, right),
+    text(size: size, fill: th.ink)[#title],
+    text(font: th.heading-font, size: size * 0.9, fill: th.slate)[#number],
+  )
+  #v(0.9em)
+  #line(length: 100%, stroke: 0.3pt + th.rule)
+  #v(0.9em)
+]
+
+// Two columns, so the page number cannot wrap under a long section title. Run
+// inline it sits at the end of the title's text; when the title filled the
+// column the number dropped to the next line at the left margin, on top of the
+// next entry.
+#let toc-section-line(title, number, th) = block(width: 100%, breakable: false)[
+  #set par(justify: false, first-line-indent: 0em, leading: 1.3em)
+  #grid(
+    columns: (1fr, auto),
+    column-gutter: 4pt,
+    align: (left, right),
+    text(size: 8.6pt, fill: th.slate)[#title],
+    text(font: th.heading-font, size: 8.2pt, fill: th.brass)[#number],
+  )
+  #v(0.5em)
+]
+
 #let layout-toc(pg, doc, th) = {
-  [
+  // The queries and the entries that depend on them are inside one `context`:
+  // a page number is only known once the page is laid out, and Typst resolves
+  // the whole block together.
+  context {
+    // Every heading in the document, not the ones before this page: the
+    // contents is printed before the chapters it lists, so `.before(here())`
+    // finds nothing at all and the page comes out empty.
+    let chapters = query(heading.where(level: 1))
+    let sections = query(heading.where(level: 2))
+    [
     #block(width: 100%)[
       #set par(justify: false, first-line-indent: 0em)
       #caps(th.kicker, th, color: th.terracotta, size: 8pt)
@@ -144,17 +191,31 @@
       #hair-rule(th, thickness: 1.4pt, color: th.brass)
       #v(1.1em)
     ]
-    #outline(title: none, depth: 1, target: heading.where(level: 1))
+    #for h in chapters [
+      #toc-line(h.body, counter(page).display("1", at: h.location()), th)
+    ]
     #block(width: 100%, breakable: false)[
       #set par(justify: false, first-line-indent: 0em)
-      #v(1.3em)
+      #v(1.1em)
       #hair-rule(th, thickness: 0.4pt)
       #v(0.9em)
       #caps("Sections", th, color: th.slate, size: 7.5pt)
       #v(0.3em)
     ]
-    #outline(title: none, depth: 1, target: heading.where(level: 2))
-  ]
+    #let half = calc.ceil(sections.len() / 2)
+    #grid(
+      columns: (1fr, 1fr),
+      column-gutter: 9mm,
+      align: (left, left),
+      ..sections.slice(0, half).map(h => toc-section-line(
+        h.body, counter(page).display("1", at: h.location()), th,
+      )),
+      ..sections.slice(half, sections.len()).map(h => toc-section-line(
+        h.body, counter(page).display("1", at: h.location()), th,
+      )),
+    )
+    ]
+  }
 }
 
 // ── Chapter opener ──────────────────────────────────────────────────────────
@@ -491,8 +552,56 @@
   "pull-quote-page",
 )
 
+// ── The grid families ───────────────────────────────────────────────────────
+// The page compositions in families.typ, registered on the grid. They are
+// reachable under two vocabularies: their own names, and the renderer's
+// existing family keys. The second mapping is deliberate -- the planner, the
+// capacity model, the landscape rules and the QA thresholds are all written
+// against those keys, and re-pointing a key is a much smaller and much more
+// reviewable change than re-deriving the whole planner.
+//
+// Where a key has no honest grid equivalent it keeps its legacy composition, and
+// that is recorded rather than papered over: `framed-feature` and
+// `text-visual-split` are still the design_system families.
+#let grid-families = (
+  "chapter-opener-ink": grid-family(chapter-opener-ink),
+  "chapter-opener-marginal": grid-family(chapter-opener-marginal),
+  "chapter-body": grid-family(chapter-body),
+  "body-marginalia": grid-family(body-marginalia),
+  "body-figure": grid-family(body-figure),
+  "feature-quote": grid-family(feature-quote),
+  "case-study-grid": grid-family(case-study),
+  "worked-example-grid": grid-family(worked-example),
+  "workbook-grid": grid-family(workbook),
+  "checklist-grid": grid-family(checklist-page),
+  "diagram-grid": grid-family(diagram-page),
+  "data-table-grid": grid-family(data-table),
+  "recap-grid": grid-family(recap),
+  "reference-grid": grid-family(reference),
+
+  // The renderer's vocabulary, re-pointed at the grid.
+  "reading": grid-family(chapter-body),
+  "minimal-editorial": grid-family(body-marginalia),
+  "asymmetric-grid": grid-family(body-figure),
+  "image-led": grid-family(diagram-page),
+  "case-study-editorial": grid-family(case-study),
+  "worked-example-page": grid-family(worked-example),
+  "workbook-exercise": grid-family(workbook),
+  "checklist-page": grid-family(checklist-page),
+  "pull-quote-page": grid-family(feature-quote),
+  "diagram-page": grid-family(diagram-page),
+  "data-table-page": grid-family(data-table),
+  "recap-plan-page": grid-family(recap),
+  "reference-page": grid-family(reference),
+  "opener-split": grid-family(chapter-opener-marginal),
+  "opener-stacked": grid-family(chapter-opener-marginal),
+  "opener-vertical": grid-family(chapter-opener-marginal),
+  "opener-centered": grid-family(chapter-opener-marginal),
+  "dark-feature-opener": grid-family(chapter-opener-ink),
+)
+
 #let resolve-layout(name) = {
   let key = str(name)
   if key.starts-with("layout-") { key = key.slice(7) }
-  layout-functions.at(key, default: layout-reading)
+  grid-families.at(key, default: layout-functions.at(key, default: layout-reading))
 }

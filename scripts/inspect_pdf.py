@@ -89,6 +89,15 @@ def _overlaps(words: list[dict]) -> list[tuple[dict, dict]]:
     """Pairs of words whose boxes are printed on top of one another.
 
     Sorted by vertical position so only nearby lines are compared.
+
+    Two words can only collide if they share a line. A word's extracted box is a
+    whole line box, not a glyph box, so a 30pt display heading reports a box
+    forty points tall while an 8pt kicker above it reports eleven -- and the two
+    boxes overlap by five points although the ink inside them is six points
+    apart. On the chapter openers the kicker and the title were reported as
+    overlapping on every chapter. So a pair whose baselines differ by more than
+    half the smaller box is skipped: it cannot be one of the collisions this is
+    looking for, and the same-line check below is untouched.
     """
     out = []
     ordered = sorted(words, key=lambda w: w["y0"])
@@ -102,6 +111,8 @@ def _overlaps(words: list[dict]) -> list[tuple[dict, dict]]:
                 continue
             shorter_h = min(a["x1"] - a["x0"], b["x1"] - b["x0"])
             shorter_v = min(a["y1"] - a["y0"], b["y1"] - b["y0"])
+            if abs(a["y0"] - b["y0"]) > 0.5 * shorter_v:
+                continue  # different lines: see the docstring
             if (dx > _OVERLAP_FRACTION * shorter_h
                     and dy > _OVERLAP_FRACTION * shorter_v):
                 out.append((a, b))
