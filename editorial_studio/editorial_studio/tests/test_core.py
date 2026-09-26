@@ -161,8 +161,8 @@ Final paragraph.
 class TestDesignTokens:
     def test_default_tokens(self):
         tokens = DesignTokens()
-        assert tokens.body_font_family == "PT Serif"
-        assert tokens.heading_font_family == "PT Sans"
+        assert tokens.body_font_family == "Source Serif 4"
+        assert tokens.heading_font_family == "Source Sans 3"
         assert tokens.body_font_size_pt == 10.5
         assert tokens.colors["accent"] == "#1d3557"
 
@@ -170,9 +170,9 @@ class TestDesignTokens:
         profiles = list_builtin_profiles()
         assert len(profiles) == 6
 
-        landnow = get_builtin_profile("landnow")
-        assert landnow is not None
-        assert landnow.design_tokens.colors["accent_brass"] == "#c4a35a"
+        institutional = get_builtin_profile("institutional_editorial")
+        assert institutional is not None
+        assert institutional.design_tokens.colors["accent_brass"] == "#c4a35a"
 
         educational = get_builtin_profile("educational")
         assert educational is not None
@@ -378,7 +378,7 @@ Common issues and fixes.
         plan = art_director.create_publication_plan(manuscript, brand, "Create a comprehensive user guide")
 
         assert len(plan.page_plans) >= 5  # Cover + title + toc + 2 chapters + content
-        assert plan.design_tokens.body_font_family == "PT Serif"
+        assert plan.design_tokens.body_font_family == "Source Serif 4"
 
         # Validate
         issues = art_director.validate_plan(plan)

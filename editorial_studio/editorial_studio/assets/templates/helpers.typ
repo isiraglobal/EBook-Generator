@@ -57,9 +57,15 @@
     ink-on-dark: pick("ink_on_dark", default-palette.ink_on_dark),
     dark-note: pick("dark_note", default-palette.dark_note),
 
-    body-font: preset.at("body_font", default: "PT Serif"),
-    heading-font: preset.at("heading_font", default: "PT Sans"),
-    mono-font: preset.at("mono_font", default: "PT Mono"),
+    // The design_system theme's faces, aligned with `grid.typ`. These were
+    // "PT Serif"/"PT Sans"/"PT Mono", which put two typefaces in one book: every
+    // page reached through `on-grid` was set in Source, and every page reached
+    // through this theme -- the front matter and the imprint -- was set in PT.
+    // The PT family stays in each stack as the fallback for a machine without
+    // the bundled files, so a fallback build still succeeds.
+    body-font: preset.at("body_font", default: ("Source Serif 4", "PT Serif", "Charter", "Georgia")),
+    heading-font: preset.at("heading_font", default: ("Source Sans 3", "PT Sans", "Helvetica", "Arial")),
+    mono-font: preset.at("mono_font", default: ("Source Code Pro", "PT Mono", "Menlo", "Courier New")),
 
     text-size: size,
     h1-size: dim(preset.at("h1_size", default: "22pt"), 22pt),

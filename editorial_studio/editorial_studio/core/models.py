@@ -207,9 +207,9 @@ class DesignTokens:
     margin_outer_mm: float = 25.0
     columns: int = 1
     column_gutter_mm: float = 5.0
-    body_font_family: str = "PT Serif"
-    heading_font_family: str = "PT Sans"
-    mono_font_family: str = "PT Mono"
+    body_font_family: str = "Source Serif 4"
+    heading_font_family: str = "Source Sans 3"
+    mono_font_family: str = "Source Code Pro"
     body_font_size_pt: float = 10.5
     heading_font_sizes: dict[int, float] = field(default_factory=lambda: {1: 18.0, 2: 13.0, 3: 11.0})
     line_height_em: float = 1.4

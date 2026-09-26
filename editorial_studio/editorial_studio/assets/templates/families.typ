@@ -322,13 +322,17 @@
 //  quote that is centred and boxed is a poster, and this is a book.
 #let feature-quote(pg, doc, T) = {
   let q = quote-of(pg)
-  block(width: 100%, breakable: false)[
+  // A framed feature is the page's set-off moment, not its whole content. The
+  // rest of the page used to be discarded here, so a framed-feature page whose
+  // blocks were a heading and a case study printed neither.
+  let rest = blocks-of(pg).filter(b => not is-type(b, ("quotation", "pull_quote", "feature_quote")))
+  block(width: 100%, breakable: true)[
     #v(bl(2))
     #grid(
       columns: (span(0, 8), T.margin-column),
       column-gutter: T.gutter,
       align: (left, top),
-      block(width: span(0, 8), breakable: false)[
+      block(width: span(0, 8), breakable: true)[
         #set par(justify: true, first-line-indent: 0em, leading: T.lead * 1.1)
         #text(font: T.body-font, size: T.lead-size * 1.5, style: "italic", fill: T.ink)[
           #q.at("text", default: "")
@@ -348,6 +352,10 @@
         ]
       ],
     )
+    #if rest.len() > 0 [
+      #v(T.space-block)
+      #flow-blocks(rest, T)
+    ]
   ]
 }
 
@@ -366,44 +374,80 @@
     .filter(b => is-type(b, ("case_study")))
     .map(b => b.at("case_study", default: (:)))
   let body = blocks.filter(b => not is-type(b, ("case_study")))
+  // A short case reads as one argument on one page, and a numbered margin gives
+  // it its place in the run. A long one -- a full underwriting, a diligence
+  // narrative -- has to be allowed to run overleaf instead of being clipped by a
+  // frame sized for the short case, so the numbered plate is dropped and the
+  // measure goes full width once the case stops fitting a single sheet.
+  let long_case = cs.len() > 0 and (
+    str(cs.first().at("context", default: "")).len() > 1400
+    or body.len() > 6
+  )
   let case = if cs.len() > 0 { cs.first() } else { (:) }
   let num = str(pg.at("case_index", default: ""))
-  block(width: 100%, breakable: false)[
+  let cols = if long_case { (span(0, 12),) } else { (span(0, 10), T.margin-column) }
+  let main-cell = block(width: 100%, breakable: true)[
+    #if head != "" [#section-heading(head, T) #v(-T.space-after-head)]
+    #label-text("Case study" + (if num != "" { " " + num } else { "" }), fill: T.terracotta)
+    #v(T.space-tight)
+    #minor-heading(str(case.at("title", default: "")), T)
+    #v(T.space-tight)
+    #panel([
+      #label-text("Situation", fill: T.slate, size: T.micro-size)
+      #v(0.2em)
+      #str(case.at("context", default: ""))
+    ], T)
+    #v(T.space-tight)
+    #if str(case.at("analysis", default: "")) != "" [
+      #label-text("Analysis", fill: T.slate, size: T.micro-size)
+      #v(0.15em)
+      #str(case.at("analysis", default: ""))
+      #v(T.space-tight)
+    ]
+    #if str(case.at("decision", default: "")) != "" [
+      #label-text("Decision", fill: T.slate, size: T.micro-size)
+      #v(0.15em)
+      #str(case.at("decision", default: ""))
+      #v(T.space-tight)
+    ]
+    #v(T.space-block)
+    #if body.len() > 0 [#flow-blocks(body, T)]
+    #v(T.space-block)
+    #divider(T, level: "minor")
+    #v(T.space-tight)
+    #label-text("What to carry forward", fill: T.terracotta, size: T.micro-size)
+    #v(0.2em)
+    #text(size: T.small-size, fill: T.ink)[#str(case.at("lesson", default: ""))]
+    // Every case in this book is constructed for teaching. The page says so, so
+    // a reader cannot mistake an illustrative scenario for a documented deal.
+    #if str(case.at("basis", default: "")) != "" [
+      #v(T.space-tight)
+      #text(size: T.micro-size, fill: T.slate, style: "italic")[
+        #str(case.at("basis", default: ""))
+      ]
+    ]
+  ]
+  let plate-cell = block(width: T.margin-column, breakable: false)[
+    #v(bl(1.5))
+    #text(
+      font: T.heading-font,
+      size: T.giant-sm-size,
+      weight: "bold",
+      fill: T.brass-tint,
+      tracking: -1.5pt,
+    )[#num]
+  ]
+  // The numbered plate is a one-column grid: a long case spends the whole
+  // twelve-column measure on its argument instead of holding a margin back for a
+  // numeral it will not reach the bottom of.
+  let cells = (main-cell,) + if long_case { () } else { (plate-cell,) }
+  block(width: 100%, breakable: true)[
     #set par(justify: true, first-line-indent: 0em, leading: T.lead, spacing: T.par-space)
     #grid(
-      columns: (span(0, 10), T.margin-column),
+      columns: cols,
       column-gutter: T.gutter,
       align: (left, top),
-      block(width: span(0, 10), breakable: false)[
-        #if head != "" [#section-heading(head, T) #v(-T.space-after-head)]
-        #label-text("Case study" + (if num != "" { " " + num } else { "" }), fill: T.terracotta)
-        #v(T.space-tight)
-        #minor-heading(str(case.at("title", default: "")), T)
-        #v(T.space-tight)
-        #panel([
-          #label-text("Situation", fill: T.slate, size: T.micro-size)
-          #v(0.2em)
-          #str(case.at("context", default: ""))
-        ], T)
-        #v(T.space-block)
-        #if body.len() > 0 [#flow-blocks(body, T)]
-        #v(T.space-block)
-        #divider(T, level: "minor")
-        #v(T.space-tight)
-        #label-text("What to carry forward", fill: T.terracotta, size: T.micro-size)
-        #v(0.2em)
-        #text(size: T.small-size, fill: T.ink)[#str(case.at("lesson", default: ""))]
-      ],
-      block(width: T.margin-column, breakable: false)[
-        #v(bl(1.5))
-        #text(
-          font: T.heading-font,
-          size: T.giant-sm-size,
-          weight: "bold",
-          fill: T.brass-tint,
-          tracking: -1.5pt,
-        )[#num]
-      ],
+      ..cells,
     )
   ]
 }
@@ -420,11 +464,18 @@
 #let worked-example(pg, doc, T) = {
   let blocks = blocks-of(pg)
   let head = lead-heading(blocks)
-  let ex = blocks
-    .filter(b => is-type(b, ("worked_example")))
+  // The page's own calculation is the first worked example. Any further one that
+  // shares the page used to be filtered out of `others` along with the first and
+  // never printed, so a second example on the same page was silently lost; they
+  // go to the body flow below the calculation instead.
+  let ex_blocks = blocks.filter(b => is-type(b, ("worked_example")))
+  let ex = ex_blocks
     .map(b => b.at("worked_example", default: (:)))
     .first(default: (:))
-  let others = without-head(blocks.filter(b => not is-type(b, ("worked_example"))), head)
+  let spill = if ex_blocks.len() > 1 { ex_blocks.slice(1) } else { () }
+  let others = without-head(
+    blocks.filter(b => not is-type(b, ("worked_example"))) + spill, head
+  )
   let num = str(pg.at("example_index", default: ""))
   let problem = str(ex.at("problem", default: ""))
   let given = ex.at("given", default: ())

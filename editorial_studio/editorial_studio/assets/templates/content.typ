@@ -285,6 +285,102 @@
   #text(font: T.body-font, size: T.lead, style: "italic", fill: T.ink)[#text-of(b)]
 ]
 
+#let case-study-inset(b, T) = {
+  // A case study that does not open its page is set here, in the measure, as a
+  // set-off argument. It used to be dropped entirely -- the body flow listed
+  // `case_study` among the kinds it rendered as `none` -- so a case that shared a
+  // page with a heading or a paragraph simply did not appear in the book.
+  let c = b.at("case_study", default: (:))
+  let title = str(c.at("title", default: ""))
+  let situation = str(c.at("situation", default: c.at("context", default: "")))
+  let analysis = str(c.at("analysis", default: ""))
+  let decision = str(c.at("decision", default: ""))
+  let lesson = str(c.at("lesson", default: ""))
+  let basis = str(c.at("basis", default: ""))
+  if situation.trim() == "" and analysis.trim() == "" and title.trim() == "" { return }
+  block(width: 100%, breakable: true)[
+    #set par(justify: true, first-line-indent: 0em, leading: T.lead * 1.15, spacing: T.par-space)
+    #divider(T, level: "minor")
+    #v(T.space-tight)
+    #label-text("Case study", fill: T.terracotta, size: T.micro-size)
+    #if title.trim() != "" [
+      #v(0.15em)
+      #text(font: T.heading-font, size: T.lead, weight: "semibold", fill: T.ink)[#title]
+    ]
+    #v(T.space-tight)
+    #if situation.trim() != "" [
+      #label-text("Situation", fill: T.slate, size: T.micro-size)
+      #v(0.15em)
+      #text(size: T.small-size, fill: T.ink)[#situation]
+      #v(T.space-tight)
+    ]
+    #if analysis.trim() != "" [
+      #label-text("Analysis", fill: T.slate, size: T.micro-size)
+      #v(0.15em)
+      #text(size: T.small-size, fill: T.ink)[#analysis]
+      #v(T.space-tight)
+    ]
+    #if decision.trim() != "" [
+      #label-text("Decision", fill: T.slate, size: T.micro-size)
+      #v(0.15em)
+      #text(size: T.small-size, fill: T.ink)[#decision]
+      #v(T.space-tight)
+    ]
+    #if lesson.trim() != "" [
+      #label-text("What to carry forward", fill: T.terracotta, size: T.micro-size)
+      #v(0.15em)
+      #text(size: T.small-size, fill: T.ink)[#lesson]
+      #v(T.space-tight)
+    ]
+    // The book states on the page that these are constructed scenarios, so an
+    // illustrative example cannot be read as a documented transaction.
+    #if basis.trim() != "" [
+      #text(size: T.micro-size, fill: T.slate, style: "italic")[#basis]
+    ]
+    #v(T.space-block)
+  ]
+}
+
+#let worked-example-inset(b, T) = {
+  // A second worked example sharing a page renders here, in the measure, as a
+  // numbered procedure. Like `case_study`, it used to be listed among the kinds
+  // the body flow rendered as `none`, so it only ever appeared if it happened to
+  // open a page.
+  let e = b.at("worked_example", default: (:))
+  let steps = e.at("steps", default: ())
+  let title = str(e.at("title", default: ""))
+  let answer = str(e.at("answer", default: e.at("result", default: "")))
+  let basis = str(e.at("basis", default: ""))
+  if steps.len() == 0 and answer.trim() == "" { return }
+  block(width: 100%, breakable: true)[
+    #set par(justify: true, first-line-indent: 0em, leading: T.lead * 1.15, spacing: T.par-space)
+    #divider(T, level: "minor")
+    #v(T.space-tight)
+    #label-text("Worked example", fill: T.terracotta, size: T.micro-size)
+    #if title.trim() != "" [
+      #v(0.15em)
+      #text(font: T.heading-font, size: T.lead, weight: "semibold", fill: T.ink)[#title]
+    ]
+    #v(T.space-tight)
+    #for (i, s) in steps.enumerate() [
+      #text(font: T.mono-font, size: T.small-size, weight: "bold", fill: T.brass)[#str(i + 1)]
+      #h(0.5em)
+      #text(size: T.small-size, fill: T.ink)[#str(s)]
+      #v(0.2em)
+    ]
+    #if answer.trim() != "" [
+      #label-text("Result", fill: T.slate, size: T.micro-size)
+      #v(0.15em)
+      #text(size: T.small-size, fill: T.ink)[#answer]
+      #v(T.space-tight)
+    ]
+    #if basis.trim() != "" [
+      #text(size: T.micro-size, fill: T.slate, style: "italic")[#basis]
+    ]
+    #v(T.space-block)
+  ]
+}
+
 #let callout-block(b, T) = {
   let c = b.at("callout", default: (:))
   // Not named `text`: a local binding of that name shadows Typst's `text()`
@@ -352,7 +448,11 @@
       footnote-block(b, T)
     } else if kind == "reference" {
       reference-block(b, T)
-    } else if kind in ("table", "exercise", "worked_example", "case_study", "process_diagram", "image_instruction") {
+    } else if kind == "case_study" {
+      case-study-inset(b, T)
+    } else if kind == "worked_example" {
+      worked-example-inset(b, T)
+    } else if kind in ("table", "exercise", "process_diagram", "image_instruction") {
       none
     } else if kind in ("page_break", "section_break") {
       none

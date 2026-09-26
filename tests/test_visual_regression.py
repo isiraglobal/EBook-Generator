@@ -110,7 +110,7 @@ def test_partition_never_exceeds_capacity() -> None:
     renderer = TypstRenderer()
     capacity = renderer._page_capacity_lines(plan.design_tokens)
 
-    pages = renderer._build_page_data(manuscript, plan, {}, None)
+    pages = renderer._build_page_data(manuscript, plan, {}, None)[0]
     body = [p for p in pages if p["purpose"] in ("content", "exercise")]
     # Twelve chapters of opener, three flowed pages and a recap.
     check(len(body) >= 24, f"expected a full book of body pages, got {len(body)}")
@@ -138,7 +138,7 @@ def test_summary_moves_to_the_recap() -> None:
         json.loads((bundle / "manuscript.json").read_text()))
     plan = build_manual.load_plan(
         json.loads((bundle / "editorial_plan.json").read_text()), manuscript)
-    pages = TypstRenderer()._build_page_data(manuscript, plan, {}, None)
+    pages = TypstRenderer()._build_page_data(manuscript, plan, {}, None)[0]
     recaps = [p for p in pages if p["purpose"] == "recap"]
     check(recaps, "the book has no recap pages")
     with_summary = [p for p in recaps if p.get("recap_data", {}).get("summary")]
@@ -156,7 +156,7 @@ def test_exercise_titles_are_not_repeated() -> None:
         json.loads((bundle / "manuscript.json").read_text()))
     plan = build_manual.load_plan(
         json.loads((bundle / "editorial_plan.json").read_text()), manuscript)
-    pages = TypstRenderer()._build_page_data(manuscript, plan, {}, None)
+    pages = TypstRenderer()._build_page_data(manuscript, plan, {}, None)[0]
     seen = 0
     for page in pages:
         for blk in page.get("blocks", []):
@@ -178,7 +178,7 @@ def test_answer_space_fits_the_page() -> None:
         json.loads((bundle / "manuscript.json").read_text()))
     plan = build_manual.load_plan(
         json.loads((bundle / "editorial_plan.json").read_text()), manuscript)
-    pages = TypstRenderer()._build_page_data(manuscript, plan, {}, None)
+    pages = TypstRenderer()._build_page_data(manuscript, plan, {}, None)[0]
     renderer = TypstRenderer()
     capacity = renderer._page_capacity_lines(plan.design_tokens)
     spreads = [p for p in pages if p["purpose"] == "exercise"]
@@ -240,15 +240,19 @@ _FOLIO_BAND = 1.0 - (_FOOT_MARGIN_MM + 8.0) / _SHEET_HEIGHT_MM
 def _folio(page: dict) -> int | None:
     """The page number printed in the foot of a page, or None.
 
-    The folio is the last number in the bottom band, not the whole band: the
-    running foot carries the chapter title on the same line, and an opener with
-    a deeper bottom margin sets its own foot lower than the rest of the book.
+    The folio is the lowest number on the page, not the last one in extraction
+    order and not the only one in the bottom band: the running foot carries the
+    chapter title on the same line, an opener with a deeper bottom margin sets
+    its own foot lower than the rest of the book, and a table-of-contents page
+    whose last entry lands in the band contributes a page number of its own.
+    Position decides, so the contents entry is never mistaken for the folio.
     """
     band = [w for w in page["words"] if float(w["y0"]) > page["height"] * _FOLIO_BAND]
     numbers = [w for w in band if w["text"].strip().isdigit()]
     if not numbers:
         return None
-    return int(numbers[-1]["text"].strip())
+    lowest = max(numbers, key=lambda w: float(w["y0"]))
+    return int(lowest["text"].strip())
 
 
 def test_folios_are_continuous(pdf: Path) -> None:

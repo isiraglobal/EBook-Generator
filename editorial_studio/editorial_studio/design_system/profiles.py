@@ -37,13 +37,19 @@ class BuiltinBrandProfile:
     section_opener_conventions: dict[str, Any] = field(default_factory=dict)
 
 
-def create_landnow_profile() -> BuiltinBrandProfile:
+def create_institutional_editorial_profile() -> BuiltinBrandProfile:
+    """A navy-and-brass serif direction for formal, report-like publications.
+
+    The palette and the type pairing are the preset; the subject is not. A
+    report on any topic can be set this way, and none of the numbers below
+    name what it is about.
+    """
     return BuiltinBrandProfile(
-        id="builtin_landnow",
-        name="LandNow Institutional",
-        description="Premium institutional editorial direction for land investment publications",
+        id="builtin_institutional_editorial",
+        name="Institutional Editorial",
+        description="Premium institutional editorial direction for formal reports and manuals",
         design_tokens=DesignTokens(
-            brand_name="LandNow",
+            brand_name="Institutional",
             page_width_mm=210.0,
             page_height_mm=297.0,
             margin_top_mm=25.0,
@@ -52,9 +58,9 @@ def create_landnow_profile() -> BuiltinBrandProfile:
             margin_outer_mm=22.0,
             columns=1,
             column_gutter_mm=5.0,
-            body_font_family="PT Serif",
-            heading_font_family="PT Sans",
-            mono_font_family="PT Mono",
+            body_font_family="Source Serif 4",
+            heading_font_family="Source Sans 3",
+            mono_font_family="Source Code Pro",
             body_font_size_pt=10.5,
             heading_font_sizes={1: 22.0, 2: 15.0, 3: 12.0},
             line_height_em=1.5,
@@ -120,9 +126,9 @@ def create_institutional_financial_profile() -> BuiltinBrandProfile:
             margin_outer_mm=22.0,
             columns=1,
             column_gutter_mm=5.0,
-            body_font_family="PT Serif",
-            heading_font_family="PT Sans",
-            mono_font_family="PT Mono",
+            body_font_family="Source Serif 4",
+            heading_font_family="Source Sans 3",
+            mono_font_family="Source Code Pro",
             body_font_size_pt=10.5,
             heading_font_sizes={1: 18.0, 2: 14.0, 3: 11.0},
             line_height_em=1.45,
@@ -167,9 +173,9 @@ def create_educational_course_profile() -> BuiltinBrandProfile:
             margin_outer_mm=25.0,
             columns=1,
             column_gutter_mm=6.0,
-            body_font_family="PT Serif",
-            heading_font_family="PT Sans",
-            mono_font_family="PT Mono",
+            body_font_family="Source Serif 4",
+            heading_font_family="Source Sans 3",
+            mono_font_family="Source Code Pro",
             body_font_size_pt=11.0,
             heading_font_sizes={1: 20.0, 2: 15.0, 3: 12.0},
             line_height_em=1.55,
@@ -216,9 +222,9 @@ def create_scientific_technical_profile() -> BuiltinBrandProfile:
             margin_outer_mm=25.0,
             columns=1,
             column_gutter_mm=5.0,
-            body_font_family="PT Serif",
-            heading_font_family="PT Sans",
-            mono_font_family="PT Mono",
+            body_font_family="Source Serif 4",
+            heading_font_family="Source Sans 3",
+            mono_font_family="Source Code Pro",
             body_font_size_pt=10.0,
             heading_font_sizes={1: 20.0, 2: 14.0, 3: 11.0},
             line_height_em=1.5,
@@ -265,9 +271,9 @@ def create_nature_travel_profile() -> BuiltinBrandProfile:
             margin_outer_mm=25.0,
             columns=1,
             column_gutter_mm=6.0,
-            body_font_family="PT Serif",
-            heading_font_family="PT Sans",
-            mono_font_family="PT Mono",
+            body_font_family="Source Serif 4",
+            heading_font_family="Source Sans 3",
+            mono_font_family="Source Code Pro",
             body_font_size_pt=11.0,
             heading_font_sizes={1: 24.0, 2: 16.0, 3: 12.0},
             line_height_em=1.6,
@@ -312,9 +318,9 @@ def create_minimalist_manual_profile() -> BuiltinBrandProfile:
             margin_outer_mm=30.0,
             columns=1,
             column_gutter_mm=8.0,
-            body_font_family="PT Sans",
-            heading_font_family="PT Sans",
-            mono_font_family="PT Mono",
+            body_font_family="Source Serif 4",
+            heading_font_family="Source Sans 3",
+            mono_font_family="Source Code Pro",
             body_font_size_pt=10.0,
             heading_font_sizes={1: 18.0, 2: 13.0, 3: 11.0},
             line_height_em=1.6,
@@ -347,7 +353,7 @@ def create_minimalist_manual_profile() -> BuiltinBrandProfile:
 
 
 BUILTIN_PROFILES = {
-    "landnow": create_landnow_profile(),
+    "institutional_editorial": create_institutional_editorial_profile(),
     "institutional": create_institutional_financial_profile(),
     "educational": create_educational_course_profile(),
     "scientific": create_scientific_technical_profile(),

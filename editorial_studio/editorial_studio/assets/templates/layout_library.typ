@@ -583,6 +583,16 @@
   "reading": grid-family(chapter-body),
   "minimal-editorial": grid-family(body-marginalia),
   "asymmetric-grid": grid-family(body-figure),
+  // These three were the last body families still resolving to `layout-functions`,
+  // which is the pre-grid composition set. Reaching them meant a body page was
+  // typeset by the design_system theme -- PT Serif/PT Sans body, and, for
+  // `full-width-feature`, a 297mm landscape sheet -- while its neighbours were set
+  // on the grid in Source. Seven case-study pages came out that way: a short
+  // paragraph in the wrong typeface on a rotated sheet in a portrait book. Each
+  // key now names the grid family that already composes the same geometry.
+  "full-width-feature": grid-family(body-figure),
+  "framed-feature": grid-family(feature-quote),
+  "text-visual-split": grid-family(body-marginalia),
   "image-led": grid-family(diagram-page),
   "case-study-editorial": grid-family(case-study),
   "worked-example-page": grid-family(worked-example),

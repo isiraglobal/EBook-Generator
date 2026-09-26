@@ -1,7 +1,11 @@
 """Deterministic, on-brand SVG illustrations for editorial figures.
 
-The generator produces real artwork (parcel/topographic motifs derived from the
-content it illustrates) instead of leaving empty placeholder boxes in the PDF.
+The generator produces real artwork -- layered, labelled figures derived from
+the content they illustrate -- instead of leaving empty placeholder boxes in
+the PDF. The geometry is a set of bands and nodes rather than a depiction of any
+thing in particular, so one figure routine serves a monograph, a risk register,
+a syllabus and a parts catalogue without the artwork claiming to be about a
+subject it knows nothing of.
 Everything is seeded, so the same input always yields the same figure and the
 layout stays visually stable between builds.
 """
@@ -54,14 +58,19 @@ def _truncate(s: str, n: int) -> str:
     return s[: n - 1].rstrip() + "…"
 
 
-def parcel_map_svg(
+def layered_figure_svg(
     title: str,
     labels: list[str],
     path: str | Path,
     width: int = 960,
     height: int = 520,
 ) -> str:
-    """Topographic parcel motif: contour bands, a survey boundary, callouts."""
+    """A layered figure: stacked bands, a bounding frame, labelled callouts.
+
+    Deliberately abstract. A figure that draws a specific subject would have to
+    know the subject, and this module does not. What it does is give a page a
+    real, on-brand, seeded figure built from the labels it was handed.
+    """
     seed = _seed(title + "|".join(labels))
     rnd = _rng(seed)
     Path(path).parent.mkdir(parents=True, exist_ok=True)
@@ -333,8 +342,8 @@ def decision_tree_svg(
         px = 60 if i == 0 else width - 60 - panel_w
         out.append(f'<line x1="{width / 2:.1f}" y1="{mid_y - 12}" x2="{px + panel_w / 2:.1f}" '
                    f'y2="{mid_y - 12}" stroke="{INK}" stroke-width="1.6"/>')
-        out.append(f'<line x1="{px + panel_w / 2:.1f}" y1="{mid_y - 12}" '
-                   f'y2="{px + panel_w / 2:.1f}" y2="{mid_y:.1f}" stroke="{INK}" stroke-width="1.6"/>')
+        out.append(f'<line x1="{px + panel_w / 2:.1f}" y1="{mid_y - 12:.1f}" '
+                   f'x2="{px + panel_w / 2:.1f}" y2="{mid_y:.1f}" stroke="{INK}" stroke-width="1.6"/>')
         tone = BRASS if i == 0 else TERRACOTTA
         out.append(f'<rect x="{px:.1f}" y="{mid_y:.1f}" width="{panel_w:.1f}" '
                    f'height="{height - mid_y - 60:.1f}" fill="none" stroke="{RULE}" '

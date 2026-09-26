@@ -1,5 +1,6 @@
 from __future__ import annotations
 import uuid
+from pathlib import Path
 from typing import Any, Optional
 
 from fastmcp import FastMCP
@@ -123,6 +124,129 @@ class GetQAReportParams(BaseModel):
 
 class ExportPublicationParams(BaseModel):
     project_id: str = Field(description="Project ID")
+
+
+class AssemblePublicationParams(BaseModel):
+    brief: dict = Field(
+        description=(
+            "What is being published. title, subtitle, author, audience, "
+            "purpose, tone, format, target_words, domain_terms (the "
+            "publication's own vocabulary for what it is about), sources "
+            "(every source actually supplied), and optional front_matter / "
+            "back_matter block lists."
+        )
+    )
+    outline: list = Field(
+        description=(
+            "The chapters, in order. Each chapter: title, optional provenance, "
+            "and sections. Each section: title and blocks. Each block: content, "
+            "content_type, semantic_role, provenance (user_provided | "
+            "researched | agent_inferred | user_instruction), metadata, and "
+            "source_ids for anything it cites."
+        )
+    )
+    project_name: str = Field(default="", description="Name for the created project")
+
+
+class GetContentAccountParams(BaseModel):
+    project_id: str = Field(description="Project ID")
+
+
+@mcp.tool()
+def assemble_publication(params: AssemblePublicationParams) -> dict:
+    """Assemble agent-written content into a validated publication project.
+
+    Use this once you have researched, planned and written the publication. The
+    engine assembles the outline you supply and validates it, but it does not
+    write for you and it does not know your subject.
+
+    It will refuse the assembly, rather than produce a plausible-looking
+    publication, if a block cites a source you did not supply, if provenance is
+    unrecognised, if a chapter has headings but no prose, or if the manuscript
+    falls far short of the requested length. Every block records where it came
+    from: what the user supplied, what research produced, or what you inferred.
+    """
+    from editorial_studio.content.assembly import (
+        ManuscriptAssembler,
+        PublicationBrief,
+    )
+
+    if not str(params.brief.get("title", "")).strip():
+        return {"ok": False, "errors": ["the brief must have a title"]}
+
+    publication = PublicationBrief(
+        title=str(params.brief.get("title", "")),
+        subtitle=str(params.brief.get("subtitle", "")),
+        author=str(params.brief.get("author", "")),
+        audience=str(params.brief.get("audience", "")),
+        purpose=str(params.brief.get("purpose", "")),
+        tone=str(params.brief.get("tone", "")),
+        format=str(params.brief.get("format", "book")),
+        target_words=int(params.brief.get("target_words", 0) or 0),
+        domain_terms=dict(params.brief.get("domain_terms", {}) or {}),
+    )
+
+    result = ManuscriptAssembler().assemble(
+        publication,
+        params.outline or [],
+        sources=params.brief.get("sources", []) or [],
+        front_matter=params.brief.get("front_matter", []) or [],
+        back_matter=params.brief.get("back_matter", []) or [],
+    )
+
+    if result.errors:
+        return {
+            "ok": False,
+            "errors": result.errors,
+            "warnings": result.warnings,
+            "provenance": result.provenance_counts,
+        }
+
+    project = Project(
+        id=f"prj_{uuid.uuid4().hex[:12]}",
+        name=params.project_name or publication.title,
+    )
+    db.create_project(project)
+    db.create_manuscript(result.manuscript)
+    project.manuscript_id = result.manuscript.id
+    db.update_project(project)
+
+    return {
+        "ok": True,
+        "project_id": project.id,
+        "manuscript_id": result.manuscript.id,
+        **result.to_dict(),
+    }
+
+
+@mcp.tool()
+def get_content_account(params: GetContentAccountParams) -> dict:
+    """Account for every content block: what was typeset, and what was not.
+
+    Call this after rendering. It is the check that a publication contains what
+    it was asked to contain, and it is the only check that catches a block
+    silently discarded by a layout rule -- the kind of loss that leaves a PDF
+    that looks finished.
+    """
+    project = db.get_project(params.project_id)
+    if not project:
+        return {"ok": False, "error": "project not found"}
+    if not project.editorial_plan_id:
+        return {"ok": False, "error": "no editorial plan; run generate_editorial_plan first"}
+
+    plan = db.get_editorial_plan(project.editorial_plan_id)
+    manuscript = db.get_manuscript(project.manuscript_id)
+    if not manuscript:
+        return {"ok": False, "error": "manuscript not found"}
+
+    output_dir = Path(config["storage"]["projects_root"]) / project.id / "output"
+    output_dir.mkdir(parents=True, exist_ok=True)
+    result = renderer.render_pdf(
+        manuscript, plan, [], str(output_dir / "account_check.pdf"))
+    report = result.get("content_account")
+    if not report:
+        return {"ok": False, "error": result.get("error", "render produced no account")}
+    return {"ok": bool(report["complete"]), "project_id": project.id, **report}
 
 
 # MCP Tools

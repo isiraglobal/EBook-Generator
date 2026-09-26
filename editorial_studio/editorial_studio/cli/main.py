@@ -149,7 +149,10 @@ def configure_design(
     builtin = get_builtin_profile(brand)
     if not builtin:
         console.print(f"[red]Unknown brand profile: {brand}[/red]")
-        console.print("Available: landnow, institutional, educational, scientific, nature, minimalist")
+        console.print(
+            "Available: institutional_editorial, institutional, educational, "
+            "scientific, nature, minimalist"
+        )
         raise typer.Exit(1)
 
     bp = BrandProfile(
@@ -369,10 +372,40 @@ def render(
 
     console.print(f"[green]PDF rendered:[/green] {job.output_pdf_path}")
 
+    # Content accounting: every block the manuscript carried, and what became
+    # of it. Reported before the visual QA because a dropped block is invisible
+    # on the page -- the page looks fine precisely because the content is gone.
+    account = result.get("content_account") or {}
+    if account:
+        counts = account.get("counts", {})
+        colour = "green" if account.get("complete") else "red"
+        console.print(
+            f"\n[bold]Content account:[/bold] "
+            f"[{colour}]{account.get('summary', '')}[/{colour}]"
+        )
+        for entry in account.get("unaccounted", [])[:20]:
+            console.print(
+                f"  [red]dropped[/red] {entry['block_id']} "
+                f"({entry['content_type']}/{entry['semantic_role']}, "
+                f"chapter {entry.get('chapter', 0)}): {entry.get('preview', '')}"
+            )
+        if len(account.get("unaccounted", [])) > 20:
+            console.print(
+                f"  [red]...and "
+                f"{len(account['unaccounted']) - 20} more[/red]"
+            )
+
     # Run QA
     with Progress(SpinnerColumn(), TextColumn("[progress.description]{task.description}")) as progress:
         task = progress.add_task("Running quality checks...", total=None)
         qa_report = qa_engine.inspect_publication(job, result["output_path"], plan.id)
+
+    # Content integrity is part of the report, not a side channel.
+    drop_issues = qa_engine.check_content_accounting(manuscript, result)
+    if drop_issues:
+        qa_report.issues.extend(drop_issues)
+        qa_report.score = min(qa_report.score, 100.0 - 10.0 * len(drop_issues))
+        qa_report.passed = qa_report.passed and not drop_issues
 
     job.qa_report_id = qa_report.id
     db.update_render_job(job)
@@ -528,6 +561,157 @@ def export(
     console.print(f"  Editorial plan: {package.editorial_plan_path}")
     console.print(f"  QA report: {package.qa_report_path}")
     console.print(f"  Metadata: {package.metadata_path}")
+
+
+@app.command()
+def assemble(
+    brief: Path = typer.Argument(..., help="Publication brief JSON"),
+    outline: Path = typer.Argument(..., help="Outline JSON written by your agent"),
+    project_name: str = typer.Option("", "--project-name", help="Name for the created project"),
+):
+    """Turn an agent-written brief and outline into a validated project.
+
+    This is the entry point for an agent that has already done the thinking.
+    The brief says what is being published and in whose vocabulary; the outline
+    carries the chapters, sections and blocks. The engine assembles them,
+    records where each block came from, refuses citations to sources that were
+    never supplied, and creates a project ready for `plan` and `render`.
+
+    Nothing here interprets the subject. The engine has no opinion about what
+    the publication is about, and will not fill a gap the outline leaves.
+    """
+    from editorial_studio.content.assembly import (
+        ManuscriptAssembler,
+        PublicationBrief,
+    )
+
+    try:
+        brief_raw = json.loads(brief.read_text())
+    except (OSError, json.JSONDecodeError) as exc:
+        console.print(f"[red]Cannot read brief:[/red] {exc}")
+        raise typer.Exit(1)
+    try:
+        outline_raw = json.loads(outline.read_text())
+    except (OSError, json.JSONDecodeError) as exc:
+        console.print(f"[red]Cannot read outline:[/red] {exc}")
+        raise typer.Exit(1)
+
+    chapters = outline_raw.get("outline", outline_raw) if isinstance(outline_raw, dict) else outline_raw
+    if not isinstance(chapters, list):
+        console.print("[red]Outline must be a list of chapters, or an object with an 'outline' list[/red]")
+        raise typer.Exit(1)
+
+    publication = PublicationBrief(
+        title=str(brief_raw.get("title", "")),
+        subtitle=str(brief_raw.get("subtitle", "")),
+        author=str(brief_raw.get("author", "")),
+        audience=str(brief_raw.get("audience", "")),
+        purpose=str(brief_raw.get("purpose", "")),
+        tone=str(brief_raw.get("tone", "")),
+        format=str(brief_raw.get("format", "book")),
+        target_words=int(brief_raw.get("target_words", 0) or 0),
+        domain_terms=dict(brief_raw.get("domain_terms", {}) or {}),
+    )
+    if not publication.title:
+        console.print("[red]The brief must have a title[/red]")
+        raise typer.Exit(1)
+
+    result = ManuscriptAssembler().assemble(
+        publication,
+        chapters,
+        sources=brief_raw.get("sources", []) or [],
+        front_matter=brief_raw.get("front_matter", []) or [],
+        back_matter=brief_raw.get("back_matter", []) or [],
+    )
+
+    if result.errors:
+        console.print(f"[red]Assembly failed with {len(result.errors)} problem(s):[/red]")
+        for error in result.errors[:40]:
+            console.print(f"  [red]-[/red] {error}")
+        if len(result.errors) > 40:
+            console.print(f"  [red]...and {len(result.errors) - 40} more[/red]")
+        raise typer.Exit(1)
+
+    project = Project(
+        id=f"prj_{uuid.uuid4().hex[:12]}",
+        name=project_name or publication.title,
+    )
+    db.create_project(project)
+    db.create_manuscript(result.manuscript)
+    project.manuscript_id = result.manuscript.id
+    db.update_project(project)
+
+    console.print(f"[green]Assembled:[/green] {project.id}")
+    console.print(f"  Title: {result.manuscript.title}")
+    console.print(f"  Blocks: {len(result.manuscript.content_blocks)}")
+    console.print(f"  Words: {result.manuscript.total_word_count()}")
+    console.print(f"  Sources registered: {len(result.sources)}")
+    console.print("\n[bold]Provenance[/bold] (what each block is):")
+    for kind, count in sorted(result.provenance_counts.items()):
+        console.print(f"  {kind:>18}: {count}")
+    for warning in result.warnings:
+        console.print(f"  [yellow]warning:[/yellow] {warning}")
+    console.print(
+        f"\nNext: [cyan]plan {project.id}[/cyan] then [cyan]render {project.id}[/cyan]"
+    )
+
+
+@app.command()
+def account(
+    project_id: str = typer.Argument(..., help="Project ID"),
+):
+    """Report what became of every content block in a project.
+
+    Renders without keeping the PDF's image output, then prints the account: how
+    many blocks were typeset, how many were used as section titles, and -- the
+    part that matters -- any that reached no page at all. A block that reached
+    no page is a defect, and this is how you find out.
+    """
+    project = db.get_project(project_id)
+    if not project:
+        console.print(f"[red]Project {project_id} not found[/red]")
+        raise typer.Exit(1)
+    if not project.editorial_plan_id:
+        console.print("[red]No editorial plan generated[/red]")
+        raise typer.Exit(1)
+
+    plan = db.get_editorial_plan(project.editorial_plan_id)
+    manuscript = db.get_manuscript(project.manuscript_id)
+    if not manuscript:
+        console.print("[red]Manuscript not found[/red]")
+        raise typer.Exit(1)
+
+    output_dir = Path(config["storage"]["projects_root"]) / project.id / "output"
+    output_dir.mkdir(parents=True, exist_ok=True)
+    result = renderer.render_pdf(
+        manuscript, plan, [], str(output_dir / "account_check.pdf"))
+
+    report = result.get("content_account")
+    if not report:
+        console.print(f"[red]No content account. Render error:[/red] {result.get('error', '')}")
+        raise typer.Exit(1)
+
+    colour = "green" if report["complete"] else "red"
+    console.print(f"[bold]Content account for[/bold] {project.name} "
+                  f"[{colour}]{report['summary']}[/{colour}]")
+    counts = report["counts"]
+    table = Table(show_header=True, header_style="bold")
+    table.add_column("Disposition", style="cyan")
+    table.add_column("Count", justify="right")
+    table.add_row("rendered", str(counts["rendered"]))
+    table.add_row("consumed as a section title", str(counts["consumed"]))
+    table.add_row("unaccounted", str(counts["unaccounted"]))
+    console.print(table)
+
+    if report["unaccounted"]:
+        console.print("[red]The following blocks reached no page:[/red]")
+        for entry in report["unaccounted"][:40]:
+            console.print(
+                f"  [red]{entry['block_id']}[/red] "
+                f"{entry['content_type']}/{entry['semantic_role']} "
+                f"chapter {entry.get('chapter', 0)}: {entry.get('preview', '')}"
+            )
+        raise typer.Exit(1)
 
 
 @app.command()

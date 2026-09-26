@@ -89,9 +89,9 @@ def load_plan(raw: dict, manuscript: Manuscript) -> EditorialPlan:
         margin_outer_mm=tokens_raw.get("margin_outer_mm", 25.0),
         columns=tokens_raw.get("columns", 1),
         column_gutter_mm=tokens_raw.get("column_gutter_mm", 5.0),
-        body_font_family=tokens_raw.get("body_font_family", "PT Serif"),
-        heading_font_family=tokens_raw.get("heading_font_family", "PT Sans"),
-        mono_font_family=tokens_raw.get("mono_font_family", "PT Mono"),
+        body_font_family=tokens_raw.get("body_font_family", "Source Serif 4"),
+        heading_font_family=tokens_raw.get("heading_font_family", "Source Sans 3"),
+        mono_font_family=tokens_raw.get("mono_font_family", "Source Code Pro"),
         body_font_size_pt=tokens_raw.get("body_font_size_pt", 10.5),
         heading_font_sizes=heading_sizes,
         line_height_em=tokens_raw.get("line_height_em", 1.45),
@@ -168,7 +168,7 @@ def main() -> int:
 
     renderer = TypstRenderer()
     if args.dump_plan:
-        pages = renderer._build_page_data(manuscript, plan, {}, None)
+        pages = renderer._build_page_data(manuscript, plan, {}, None)[0]
         capacity = renderer._page_capacity_lines(plan.design_tokens)
         dump = {
             "capacity_lines": capacity,

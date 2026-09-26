@@ -22,6 +22,7 @@ from editorial_studio.core.models import (
     SemanticRole,
 )
 from editorial_studio.core.config import load_config
+from editorial_studio.renderer.accounting import ContentAccount, account_content
 
 # ── Editorial palette ───────────────────────────────────────────────────────
 # Warm paper / ink / brass / terracotta. Brand profiles may override any of
@@ -44,11 +45,14 @@ DEFAULT_PALETTE: dict[str, str] = {
 }
 
 # Typst falls back down the list, so a missing family degrades to a sibling
-# rather than silently substituting a default sans.
+# rather than silently substituting a default sans. Every entry must name the
+# requested family first: these three listed only the siblings, so a plan asking
+# for "Source Serif 4" was handed ["PT Serif", ...] and the book came out in PT
+# on every page the grid did not set itself.
 FONT_FALLBACKS: dict[str, list[str]] = {
-    "source serif 4": ["PT Serif", "Charter", "Georgia"],
-    "source sans 3": ["PT Sans", "Avenir Next", "Helvetica Neue", "Arial"],
-    "source code pro": ["PT Mono", "DejaVu Sans Mono", "Andale Mono"],
+    "source serif 4": ["Source Serif 4", "PT Serif", "Charter", "Georgia"],
+    "source sans 3": ["Source Sans 3", "PT Sans", "Avenir Next", "Helvetica Neue", "Arial"],
+    "source code pro": ["Source Code Pro", "PT Mono", "DejaVu Sans Mono", "Andale Mono"],
     "pt serif": ["PT Serif", "Charter", "Georgia"],
     "pt sans": ["PT Sans", "Avenir Next", "Helvetica Neue", "Arial"],
     "pt mono": ["PT Mono", "DejaVu Sans Mono", "Andale Mono"],
@@ -114,7 +118,14 @@ ANSWER_AREA_LINE_LINES = 0.89
 WORKBOOK_CHROME_LINES = 6.0
 # Fraction of the physical page the flow planner will fill. See
 # TypstRenderer._page_capacity_lines.
-PAGE_FILL_HEADROOM = 0.94
+PAGE_FILL_HEADROOM = 0.92
+
+# Families built around one block that must actually be present. Offering a page
+# a family whose ingredient it does not have renders an empty panel and pushes
+# the body off the sheet. See TypstRenderer._only_where_ingredient_present.
+_FAMILIES_REQUIRING_BLOCK = frozenset({
+    "framed-feature", "pull-quote-page", "feature-quote",
+})
 
 # (main-column width fraction, headroom fraction) for each composed page family.
 #
@@ -290,6 +301,44 @@ def _strip_label(text: str) -> str:
     return _BLOCK_LABEL.sub("", str(text).strip()).strip()
 
 
+# A case study in the source format is one blob of prose whose paragraphs are
+# prefixed with their region: "Situation: ...", "Analysis: ...", "Decision: ...",
+# "Lesson: ...". Recovering the regions from that shape lets the case-study
+# family compose named panels when the manuscript has not declared them, which
+# is what kept the panel blank for a case whose metadata was empty.
+_LABELLED_PART = re.compile(
+    r"^(Situation|Analysis|Decision|Lesson)\s*:\s*", re.IGNORECASE
+)
+
+
+def _split_labelled(text: str) -> dict[str, str]:
+    """Return {"Situation": ..., "Analysis": ...} for a labelled case study."""
+    out: dict[str, str] = {}
+    current = ""
+    for chunk in re.split(r"\n\s*\n|\n", str(text or "")):
+        chunk = chunk.strip()
+        if not chunk:
+            continue
+        m = _LABELLED_PART.match(chunk)
+        if m:
+            current = m.group(1).title()
+            out[current] = _LABELLED_PART.sub("", chunk).strip()
+        elif current:
+            out[current] = (out[current] + " " + chunk).strip()
+        else:
+            out.setdefault("Situation", chunk)
+    return out
+
+
+def _lead_sentence(text: str, limit: int = 90) -> str:
+    """The opening clause of a block, for use as a heading when none is declared."""
+    flat = " ".join(str(text or "").split())
+    if not flat:
+        return ""
+    head = re.split(r"(?<=[.!?])\s+", flat)[0]
+    return head if len(head) <= limit else head[: limit - 1].rsplit(" ", 1)[0] + "…"
+
+
 # Blocks that read as one unit and are never split across a page break.
 # A worked example is one paragraph made of sentences; the family wants them
 # split so it can lay out a stem, a numbered procedure and a closing note.
@@ -320,6 +369,50 @@ _BACK_MATTER_LABELS = frozenset({
     "glossary", "references", "bibliography", "index", "appendix",
     "about the author", "about the editor", "notes", "further reading",
 })
+
+# A semantic role that names a section rather than contributing content. A block
+# carrying one of these is a label; if nothing follows it, the section is
+# declared but never written.
+_SECTION_LABEL_ROLES = frozenset({
+    SemanticRole.GLOSSARY,
+    SemanticRole.REFERENCE,
+    SemanticRole.BIBLIOGRAPHY,
+    SemanticRole.INDEX,
+    SemanticRole.APPENDIX,
+    SemanticRole.BACK_MATTER,
+    SemanticRole.FRONT_MATTER,
+})
+
+# A heading that names the structure rather than reading as content: the title
+# page's own heading, a chapter's. These are consumed by the page that presents
+# them, so their absence from the page body is by design, not a loss.
+_STRUCTURAL_ROLES = frozenset({
+    SemanticRole.TITLE,
+    SemanticRole.SUBTITLE,
+    SemanticRole.AUTHOR,
+    SemanticRole.CHAPTER,
+})
+
+
+def _has_content_below(label_block, candidates: list) -> bool:
+    """Whether any unplaced block follows ``label_block`` and is real content.
+
+    Order is the manuscript's. A label followed by prose, a table, a list or an
+    example has a section; a label followed by another label, or by nothing,
+    does not.
+    """
+    try:
+        start = candidates.index(label_block)
+    except ValueError:
+        return False
+    for later in candidates[start + 1:]:
+        if later.content_type == ContentType.HEADING:
+            return False
+        if later.semantic_role in _SECTION_LABEL_ROLES:
+            return False
+        if str(later.content).strip():
+            return True
+    return False
 
 _UNSPLITTABLE = frozenset({ContentType.EXERCISE, ContentType.WORKED_EXAMPLE})
 
@@ -419,7 +512,15 @@ class TypstRenderer:
                         }
 
             # Build page-by-page data structure from editorial plan
-            page_data = self._build_page_data(manuscript, plan, asset_map, assets_dir)
+            page_data, consumed_claims = self._build_page_data(
+                manuscript, plan, asset_map, assets_dir
+            )
+
+            # Account for every block the manuscript contained against the pages
+            # that were actually built. A block that reached no page is a
+            # dropped block, and the caller is entitled to hear about it.
+            account = account_content(manuscript, page_data,
+                                      claims=consumed_claims)
 
             content_data = {
                 "title": manuscript.title,
@@ -466,12 +567,15 @@ class TypstRenderer:
             result = subprocess.run(cmd, capture_output=True, text=True, cwd=str(work_dir), timeout=300)
 
             if result.returncode != 0:
-                return {"success": False, "error": result.stderr, "output_path": ""}
+                return {"success": False, "error": result.stderr, "output_path": "",
+                        "content_account": account.to_dict()}
 
             if not output_path_abs.exists():
-                return {"success": False, "error": "PDF not generated", "output_path": ""}
+                return {"success": False, "error": "PDF not generated", "output_path": "",
+                        "content_account": account.to_dict()}
 
-            return {"success": True, "error": "", "output_path": str(output_path_abs)}
+            return {"success": True, "error": "", "output_path": str(output_path_abs),
+                    "content_account": account.to_dict()}
 
         finally:
             # Set EBOOK_KEEP_TYPST=1 to keep the work directory. Page families
@@ -503,7 +607,9 @@ class TypstRenderer:
                     shutil.copy2(src, dst)
                     asset_map[asset.id] = f"assets/{src.name}"
 
-            page_data = self._build_page_data(manuscript, plan, asset_map, assets_dir)
+            page_data, _consumed_claims = self._build_page_data(
+                manuscript, plan, asset_map, assets_dir
+            )
 
             content_data = {
                 "title": manuscript.title,
@@ -582,8 +688,11 @@ class TypstRenderer:
         """Return a Typst font stack: requested family first, then siblings."""
         name = str(family or "").strip()
         if not name:
-            return ["PT Serif"]
-        stack = FONT_FALLBACKS.get(name.lower(), [name])
+            return ["Source Serif 4", "PT Serif", "Charter", "Georgia"]
+        # Copied, not aliased: appending to the table's own list grew it a little
+        # further on every call, so the stacks a later page saw depended on how
+        # many pages had already been typeset.
+        stack = list(FONT_FALLBACKS.get(name.lower(), [name]))
         for extra in ("PT Serif", "PT Sans", "PT Mono"):
             if extra not in stack:
                 stack.append(extra)
@@ -897,7 +1006,27 @@ class TypstRenderer:
             out += ["framed-feature", "text-visual-split", "asymmetric-grid"]
 
         seen: set[str] = set()
-        return [f for f in out if not (f in seen or seen.add(f))]
+        ordered = [f for f in out if not (f in seen or seen.add(f))]
+        return self._only_where_ingredient_present(ordered, blocks)
+
+    @staticmethod
+    def _only_where_ingredient_present(families: list[str], blocks: list) -> list[str]:
+        """Drop families whose defining block is not on the page.
+
+        A family is a composition built around one ingredient: a framed feature
+        needs a quotation, a data-table page needs a table, a workbook page needs
+        an exercise. Offering a page a family it has no ingredient for produces
+        an empty panel where the feature should be, which is not a layout the
+        planner measured and not a page the reader can read -- the body is pushed
+        down by furniture that carries nothing, and a full page then runs past
+        the bottom margin.
+        """
+        has_quote = any(
+            b.content_type.value in ("quotation", "pull_quote") for b in blocks
+        )
+        if has_quote:
+            return families
+        return [f for f in families if f not in _FAMILIES_REQUIRING_BLOCK] or ["reading"]
 
     def _page_layout_for(self, blocks: list, rotation: int = 0,
                          capacity: float | None = None) -> str:
@@ -981,18 +1110,41 @@ class TypstRenderer:
             value = str(brief.get(brief_key, "") or "").strip()
             if value:
                 terms[term_key] = value
-        # The one sentence the system writes itself is composed from the nouns
-        # above, so it stays true to the subject instead of describing a
-        # different one.
+        # The one sentence the system composes for itself must not assume a
+        # subject. It is built from the publication's own noun, and it says
+        # only what is true of any figure: the labels come from the brief's
+        # vocabulary, so a reader can check the figure against the subject.
         unit = terms["unit"]
         terms["figure_note"] = (
-            f"Read the boundaries of the problem before the {unit} itself. "
-            f"Structure, access and dependency decide what any {unit} can be "
-            f"used for, and they belong in the record before the decision is."
+            f"Each band above is one {terms['unit_of_work']} from this "
+            f"publication, in the order it appears. The labels are drawn from "
+            f"the publication's own vocabulary: a {unit}, its "
+            f"{terms['artifact']}, and the {terms['measure']} tracked against "
+            f"it."
         )
         return terms
 
 
+
+    def _wants_landscape(self, family: str, group: list) -> bool:
+        """Whether a page earns a landscape sheet.
+
+        The extra 87mm of measure is worth having only when something on the
+        page is genuinely too wide for portrait. A wide table is. A drawn
+        process strip wider than 2:1 is, because Typst's A4 measure renders a
+        960x300 strip at roughly 6pt labels. A short paragraph is not, however
+        the family was nominated: rotating a case study that fills a quarter of
+        a portrait page produced six 297mm sheets in an 85-page portrait book,
+        each holding one paragraph and 78% blank.
+        """
+        if family not in LANDSCAPE_FIGURE_FAMILIES:
+            return False
+        for block in group:
+            if block.content_type == ContentType.TABLE:
+                return True
+            if block.content_type == ContentType.IMAGE_INSTRUCTION:
+                return True
+        return False
 
     def _partition(self, blocks: list, capacity: float) -> list[tuple[list, str]]:
         """Split ordered blocks into pages, each with the family it will use.
@@ -1054,10 +1206,27 @@ class TypstRenderer:
             # the one case where joining is strictly better.
             atomic = any(b.content_type in _UNSPLITTABLE for b in item)
             introduces = len(current) == 1 and current[0].content_type == ContentType.HEADING
-            joins_heading = (atomic and introduces
-                             and used + weight <= self._family_budget(family, capacity))
-            if not joins_heading and (
-                    atomic or used + weight > self._family_budget(family, capacity)):
+            budget = self._family_budget(family, capacity)
+            fits = used + weight <= budget + 0.01
+            joins_heading = atomic and introduces and fits
+            # An atomic block earns a page of its own only when the page before
+            # it is already full. If the break would leave that page mostly
+            # empty, the empty page is the worse outcome: seven case-study pages
+            # came out at 22% full because the exercise that followed them could
+            # not join, and each break was the atomic rule firing on a page that
+            # had room to spare. The exemption is deliberately narrow. It covers
+            # exercises only, because an exercise card flows inside whatever
+            # family holds it, and it requires the pair to fill most of the page
+            # so exercises cannot quietly accumulate. A worked example is left
+            # out on purpose: it is a page's climax, its family exists to give it
+            # an inputs strip and a result panel, and letting one join a
+            # case-study page cost the book a structured calculation.
+            # `_fit_answer_space` then trims the ruled response area to whatever
+            # is genuinely left over.
+            joins_short_page = (any(b.content_type == ContentType.EXERCISE for b in item)
+                                and fits and used + weight >= budget * 0.8)
+            if not (joins_heading or joins_short_page) and (
+                    atomic or used + weight > budget):
                 pages.append((current, family))
                 rotation += 1
                 start(item)
@@ -1189,7 +1358,8 @@ class TypstRenderer:
         return page
 
     def _build_page_data(self, manuscript: Manuscript, plan: EditorialPlan,
-                         asset_map: dict[str, str], asset_dir: Path | None = None) -> list[dict[str, Any]]:
+                         asset_map: dict[str, str], asset_dir: Path | None = None
+                         ) -> tuple[list[dict[str, Any]], dict[str, str]]:
         """Build the page sequence for the book.
 
         The editorial plan expresses intent (which chapter, which layout family,
@@ -1371,7 +1541,7 @@ class TypstRenderer:
                 if layout == "diagram-page":
                     page["figure_index"] = self._count_so_far(pages, "diagram-page") + 1
                 page["family_label"] = FAMILY_LABELS.get(layout, "")
-                if layout in LANDSCAPE_FIGURE_FAMILIES:
+                if self._wants_landscape(layout, group):
                     # Published with the orientation, because a page takes its
                     # size from the settings in force where it starts and the
                     # plan is what decides the sheet.
@@ -1388,7 +1558,7 @@ class TypstRenderer:
                     if figure:
                         page["illustration"] = figure
                         page["figure_caption"] = figure["caption"]
-                        if layout in LANDSCAPE_FIGURE_FAMILIES:
+                        if self._wants_landscape(layout, group):
                             page["orientation"] = "landscape"
                 self._fit_answer_space(group, capacity)
                 if layout == "workbook-exercise":
@@ -1417,15 +1587,31 @@ class TypstRenderer:
             push(recap, [])
 
         # ── Back matter ──────────────────────────────────────────────────────
+        # Blocks that a section page consumed as its own title are recorded
+        # here rather than left to look like losses.
+        consumed_claims: dict[str, str] = {}
+
         glossary_entries = [
             {"term": str(b.metadata.get("term", "")).strip() or self._term_from(b),
              "definition": str(b.content).strip()}
             for b in manuscript.content_blocks
             if b.content_type == ContentType.DEFINITION
         ]
+        glossary_title = next(
+            (str(b.content).strip() for b in manuscript.content_blocks
+             if b.content_type == ContentType.HEADING
+             and b.semantic_role == SemanticRole.GLOSSARY
+             and str(b.content).strip()),
+            "Glossary",
+        )
         if glossary_entries:
+            for b in manuscript.content_blocks:
+                if (b.content_type == ContentType.HEADING
+                        and b.semantic_role == SemanticRole.GLOSSARY
+                        and str(b.content).strip()):
+                    consumed_claims[b.id] = "glossary section title"
             page = self._make_page(next_number(), PagePurpose.GLOSSARY, "reference-page", [])
-            page["glossary_data"] = {"entries": glossary_entries}
+            page["glossary_data"] = {"entries": glossary_entries, "title": glossary_title}
             push(page, [])
 
         # References are whatever the manuscript marks as one: a block of
@@ -1448,6 +1634,9 @@ class TypstRenderer:
             "",
         )
         if reference_entries:
+            for b in reference_blocks:
+                if b.content_type == ContentType.HEADING and str(b.content).strip():
+                    consumed_claims[b.id] = "references section title"
             page = self._make_page(next_number(), PagePurpose.REFERENCES, "reference-page", [])
             page["references_data"] = {"entries": reference_entries,
                                        "title": reference_title}
@@ -1457,7 +1646,74 @@ class TypstRenderer:
         back["back_cover_data"] = self._build_back_cover_data(manuscript, tokens)
         push(back, [])
 
-        return pages
+        # ── Nothing is dropped ───────────────────────────────────────────────
+        # Every rule above can exclude a block: a section consumed it as a
+        # title, a back-matter filter skipped it, a chapter role was filtered
+        # out. Those are all reasonable, and all of them are silent. So the
+        # blocks still unplaced after the whole book has been composed are
+        # gathered here and typeset rather than discarded. A publication that
+        # says something should say all of it; where a block lands is a layout
+        # decision, and losing it is not one.
+        #
+        # A heading is the exception, and deliberately so. A section heading
+        # with nothing under it is not content that lost its page -- it is a
+        # heading promising a section the manuscript never wrote. Typesetting it
+        # would print the promise and hide the absence, which is worse than
+        # either rendering the content or reporting the gap. Those are reported
+        # to the caller instead, by the content account.
+        placed_ids = {
+            str(blk.get("id"))
+            for page in pages
+            for blk in (page.get("blocks") or [])
+            if isinstance(blk, dict) and blk.get("id")
+        }
+        leftover = [
+            b for b in manuscript.content_blocks
+            if b.id not in placed_ids and b.id not in consumed_claims
+        ]
+
+        # A block that did not reach the page body is not automatically a
+        # section label. First settle the ones with a known destination -- the
+        # heading an opener is built from, front matter the title and contents
+        # pages express -- so the orphan test below only ever sees blocks that
+        # genuinely have nowhere to go.
+        for block in leftover:
+            if block.semantic_role in _STRUCTURAL_ROLES:
+                consumed_claims[block.id] = (
+                    f"structural heading carried by the {block.semantic_role.value} "
+                    f"opener or title page"
+                )
+            elif (block.matter or "body") == "front":
+                consumed_claims[block.id] = (
+                    "front matter expressed by the cover, title, imprint and "
+                    "contents pages"
+                )
+
+        candidates = [b for b in leftover if b.id not in consumed_claims]
+        orphan_headings, spill = [], []
+        for block in candidates:
+            is_heading = block.content_type == ContentType.HEADING
+            is_bare_label = (
+                is_heading or block.semantic_role in _SECTION_LABEL_ROLES
+            ) and not _has_content_below(block, candidates)
+            (orphan_headings if is_bare_label else spill).append(block)
+
+        for block in orphan_headings:
+            consumed_claims[block.id] = (
+                "orphaned section heading: the manuscript declares this section "
+                "but supplies no content under it"
+            )
+        if spill:
+            overflow = self._make_page(
+                next_number(), PagePurpose.APPENDIX, "reading", [],
+                None, {"overflow": True},
+            )
+            overflow["blocks"] = [
+                self._serialize_block(b, asset_map) for b in spill
+            ]
+            push(overflow, [])
+
+        return pages, consumed_claims
 
     def _term_from(self, block) -> str:
         """Derive a glossary term from a definition block that omits one."""
@@ -1474,12 +1730,12 @@ class TypstRenderer:
         names the book's subject vocabulary, so it reads correctly whatever the
         manuscript is about.
         """
-        from editorial_studio.renderer.illustrations import parcel_map_svg
+        from editorial_studio.renderer.illustrations import layered_figure_svg
 
         name = f"chapter_{chapter:02d}_plate.svg"
         target = asset_dir / name
         try:
-            parcel_map_svg(title, sections[:4], target)
+            layered_figure_svg(title, sections[:4], target)
         except Exception:  # artwork must never break a build
             return None
         unit = domain.get("unit", "item")
@@ -1773,10 +2029,63 @@ class TypstRenderer:
             else:
                 serialized["worked_example"] = ex
         elif block.content_type == ContentType.CASE_STUDY:
+            # A case study carries named regions -- situation, analysis, decision and
+            # the lesson -- so the family can compose them instead of flattening the
+            # block into one paragraph. The manuscript's older shape put everything
+            # in `content` with empty metadata, so the regions are derived from the
+            # prose when they are not declared, and a case that declares nothing at
+            # all still renders its text rather than an empty panel.
+            meta = block.metadata
+            declared = any(str(meta.get(k, "")).strip()
+                           for k in ("situation", "analysis", "decision", "lesson"))
+            if declared:
+                situation = str(meta.get("situation", "") or meta.get("context", ""))
+                analysis = str(meta.get("analysis", ""))
+                decision = str(meta.get("decision", ""))
+                lesson = str(meta.get("lesson", ""))
+                title = str(meta.get("title", "")) or self._lead_sentence(block.content)
+            else:
+                parts = _split_labelled(block.content)
+                situation = parts.get("Situation", "")
+                analysis = parts.get("Analysis", "")
+                decision = parts.get("Decision", "")
+                lesson = parts.get("Lesson", "")
+                title = self._lead_sentence(block.content)
             serialized["case_study"] = {
-                "title": block.metadata.get("title", ""),
-                "context": block.metadata.get("context", ""),
+                "title": title,
+                "context": situation,
+                "situation": situation,
+                "analysis": analysis,
+                "decision": decision,
+                "lesson": lesson,
+                "basis": str(meta.get("basis", "")),
             }
+        elif block.content_type == ContentType.WORKED_EXAMPLE:
+            ex = self._worked_example(block)
+            if not ex["steps"]:
+                # A source tags its section summaries as worked examples: "This
+                # chapter explores ...", "<Section> is a fundamental component
+                # of ...". There is no calculation in them, so a worked-example
+                # page could only draw a numeral and a label and then stand
+                # empty. Without steps it is prose, and it is set as prose.
+                text = str(block.content or "").strip()
+                if text.lower().startswith("worked example:"):
+                    text = re.sub(r"^worked\s+example\s*:\s*", "", text,
+                                  flags=re.IGNORECASE)
+                serialized["type"] = "paragraph"
+                serialized["content"] = text
+            else:
+                # The declared title, the labelled result and the hypothetical
+                # basis note travel with the steps so the family can label the
+                # calculation and state that the figures are illustrative.
+                meta = block.metadata
+                ex = dict(ex)
+                if str(meta.get("title", "")).strip():
+                    ex["title"] = str(meta["title"]).strip()
+                if str(meta.get("result", "")).strip():
+                    ex["result"] = str(meta["result"]).strip()
+                ex["basis"] = str(meta.get("basis", ""))
+                serialized["worked_example"] = ex
         elif block.content_type == ContentType.REFERENCE:
             serialized["reference"] = {
                 "text": block.content,

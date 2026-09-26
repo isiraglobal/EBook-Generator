@@ -40,6 +40,47 @@ class QAEngine:
         self.temp_dir = Path(self.config.get("storage", {}).get("temp_root", "data/temp")) / "qa"
         self.temp_dir.mkdir(parents=True, exist_ok=True)
 
+    def check_content_accounting(
+        self,
+        manuscript: Any,
+        render_result: dict[str, Any],
+    ) -> list[QAIssue]:
+        """Report every content block that reached no page.
+
+        This is the check that catches silent loss. Layout defects are visible
+        on the page; a dropped block is invisible precisely because the page
+        came out looking fine. The renderer's own account is the input, so this
+        compares what the manuscript asked for against what the renderer says it
+        placed, and reports the difference.
+        """
+        account = (render_result or {}).get("content_account")
+        if not account:
+            return []
+        issues: list[QAIssue] = []
+        for entry in account.get("unaccounted", []):
+            issues.append(
+                QAIssue(
+                    id=f"qa_content_drop_{entry['block_id']}",
+                    page_number=0,
+                    severity=QASeverity.ERROR,
+                    category="content_not_rendered",
+                    message=(
+                        f"Content block {entry['block_id']} "
+                        f"({entry['content_type']}/{entry['semantic_role']}) "
+                        f"is in the manuscript but in no rendered page: "
+                        f"{entry.get('preview', '')}"
+                    ),
+                    location={"block_id": entry["block_id"],
+                              "chapter": entry.get("chapter", 0)},
+                    suggested_fix=(
+                        "Give the block a page, or remove it from the manuscript. "
+                        "It must not be silently discarded."
+                    ),
+                    created_at=datetime.now(),
+                )
+            )
+        return issues
+
     def inspect_publication(
         self,
         job: RenderJob,

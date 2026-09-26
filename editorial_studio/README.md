@@ -124,7 +124,7 @@ Built-in brand profiles:
 
 | Profile | Use Case | Typography | Colors |
 |---------|----------|------------|--------|
-| `landnow` | Land investment publications | Source Serif 4 + Source Sans 3 | Navy + Brass |
+| `institutional_editorial` | Formal reports and manuals | Source Serif 4 + Source Sans 3 | Navy + Brass |
 | `institutional` | Financial reports | Source Serif 4 + Source Sans 3 | Navy |
 | `educational` | Courses & workbooks | PT Serif + PT Sans | Teal |
 | `scientific` | Technical guides | IBM Plex Serif + Sans | IBM Blue |
